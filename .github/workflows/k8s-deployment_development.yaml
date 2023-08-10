@@ -15,6 +15,7 @@ env:
   NAMESPACE: shopolah-development
   DOMAIN: epicstartups.co
   SUBDOMAIN: shopolah-v1
+  HOSTNAME: shopolah-v1.epicstartups.co
   DOMAIN_NAME: shopolah-v1.epicstartups.co
 
 jobs:
@@ -73,21 +74,21 @@ jobs:
           kubectl apply -f $GITHUB_WORKSPACE/k8s-config/issuer.yaml
           fi
 
-      - name: Upsert A Record
-        run: |
-          RECORDS=$(doctl compute domain records list $DOMAIN)
-          while read -r line; do
-            if [[ $line == *"$SUBDOMAIN"* && $line == *"A "* ]]; then
-              RECORD_ID=$(echo $line | awk '{print $1}')
-              echo "A record for $SUBDOMAIN exists. Updating record $RECORD_ID ..."
-              if ! test -z "$NEW_SUBDOMAIN"; then
-                doctl compute domain records update $DOMAIN --record-id $RECORD_ID --record-type A --record-data $EPICNESS_INGRESS_IP --record-name $SUBDOMAIN
-              else
-                echo "NEW_SUBDOMAIN key and value is not set to update this record. A record stays the same - $SUBDOMAIN..."
-              fi
-              exit 0
-            fi
-          done <<< "$RECORDS"
-          echo "A record for $SUBDOMAIN does not exist. Creating record..."
-          doctl compute domain records create $DOMAIN --record-type A --record-data $EPICNESS_INGRESS_IP --record-name $SUBDOMAIN
-          exit 1
+      # - name: Upsert A Record
+      #   run: |
+      #     RECORDS=$(doctl compute domain records list $DOMAIN)
+      #     while read -r line; do
+      #       if [[ $line == *"$SUBDOMAIN"* && $line == *"A "* ]]; then
+      #         RECORD_ID=$(echo $line | awk '{print $1}')
+      #         echo "A record for $SUBDOMAIN exists. Updating record $RECORD_ID ..."
+      #         if ! test -z "$NEW_SUBDOMAIN"; then
+      #           doctl compute domain records update $DOMAIN --record-id $RECORD_ID --record-type A --record-data $EPICNESS_INGRESS_IP --record-name $SUBDOMAIN
+      #         else
+      #           echo "NEW_SUBDOMAIN key and value is not set to update this record. A record stays the same - $SUBDOMAIN..."
+      #         fi
+      #         exit 0
+      #       fi
+      #     done <<< "$RECORDS"
+      #     echo "A record for $SUBDOMAIN does not exist. Creating record..."
+      #     doctl compute domain records create $DOMAIN --record-type A --record-data $EPICNESS_INGRESS_IP --record-name $SUBDOMAIN
+      #     exit 1

@@ -9,10 +9,10 @@ metadata:
 spec:
   tls:
     - hosts:
-        - <HOSTNAME>
+        - <DOMAIN_NAME>
       secretName: <IMAGE_NAME>-letsencrypt-nginx
   rules:
-    - host: <HOSTNAME>
+    - host: <DOMAIN_NAME>
       http:
         paths:
           - path: /
