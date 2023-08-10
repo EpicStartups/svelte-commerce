@@ -1,0 +1,9 @@
+# use configmap to store .env
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: <IMAGE_NAME>-environments
+  namespace: <NAMESPACE>
+data:
+  owner-connection-string: postgresql://postgres:potsgres@10.245.129.87:5432/get_class_production
+  tollguru-api-url: https://dev.TollGuru.com/v1/calc

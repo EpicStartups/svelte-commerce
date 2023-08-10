@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-<IMAGE_NAME>
+  namespace: <NAMESPACE>
+  annotations:
+    cert-manager.io/issuer: <IMAGE_NAME>-letsencrypt-nginx
+    nginx.ingress.kubernetes.io/proxy-body-size: 8m
+spec:
+  tls:
+    - hosts:
+        - <HOSTNAME>
+      secretName: <IMAGE_NAME>-letsencrypt-nginx
+  rules:
+    - host: <HOSTNAME>
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: <IMAGE_NAME>
+                port:
+                  number: 8080
+  ingressClassName: nginx

@@ -1,0 +1,73 @@
+<script>
+import { LazyImg, ProductCard } from '$lib/components'
+import { onMount } from 'svelte'
+import { SplideSlide } from '@splidejs/svelte-splide'
+
+export let deals = []
+// console.log('deals', deals)
+
+let Splide
+$: innerWidth = 0
+let responsiveWidth = 0
+$: if (innerWidth >= 640) {
+	responsiveWidth = innerWidth - 17
+}
+
+onMount(async () => {
+	const SplideModule = await import('$lib/components/SplideJs.svelte')
+	Splide = SplideModule.default
+})
+</script>
+
+<svelte:window bind:innerWidth="{innerWidth}" />
+
+{#if deals.length}
+	<ul class="mb-5 sm:mb-10 p-0 list-none flex flex-col gap-5 sm:gap-10">
+		{#each deals as deal}
+			{#if deal}
+				<li>
+					<h2 class="p-3 py-5 text-center uppercase sm:px-10 md:py-10">
+						{deal.name}
+					</h2>
+
+					<div class="hidden sm:block">
+						<svelte:component
+							this="{Splide}"
+							options="{{
+								// autoplay: true,
+								autoWidth: true,
+								gap: '12px',
+								lazyLoad: true,
+								padding: '40px',
+								pagination: false,
+								perMove: 1,
+								// type: 'loop',
+								width: responsiveWidth || '100%'
+							}}">
+							{#each deal.products as p}
+								{#if p}
+									<SplideSlide>
+										<ProductCard product="{p}" />
+									</SplideSlide>
+								{/if}
+							{/each}
+						</svelte:component>
+					</div>
+
+					<div
+						class="flex w-[98vw] items-start justify-start gap-3 overflow-x-auto sm:hidden scrollbar-none">
+						<ul class="flex w-full list-none items-start gap-2">
+							{#each deal.products as p, px}
+								{#if p}
+									<li class="w-[210px] shrink-0">
+										<ProductCard product="{p}" />
+									</li>
+								{/if}
+							{/each}
+						</ul>
+					</div>
+				</li>
+			{/if}
+		{/each}
+	</ul>
+{/if}

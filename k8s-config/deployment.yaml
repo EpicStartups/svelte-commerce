@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: <IMAGE_NAME>
+  namespace: <NAMESPACE>
+  labels:
+    app: <IMAGE_NAME>
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: <IMAGE_NAME>
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: <IMAGE_NAME>
+    spec:
+      containers:
+        - name: <IMAGE_NAME>
+          image: <IMAGE>
+          imagePullPolicy: 'Always'
+          env:
+            - name: PUBLIC_STRIPE_PUBLIC_KEY
+              valueFrom:
+                configMapKeyRef:
+                  name: <IMAGE_NAME>-environments
+                  key: PUBLIC_STRIPE_PUBLIC_KEY
+            - name: PUBLIC_APP_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: <IMAGE_NAME>-environments
+                  key: PUBLIC_APP_URL
+            - name: PUBLIC_SELECTED_SERVICE
+              valueFrom:
+                configMapKeyRef:
+                  name: <IMAGE_NAME>-environments
+                  key: PUBLIC_SELECTED_SERVICE
+            - name: PUBLIC_CORE_CURRENCY_CODE
+              valueFrom:
+                configMapKeyRef:
+                  name: <IMAGE_NAME>-environments
+                  key: PUBLIC_CORE_CURRENCY_CODE
+            - name: PUBLIC_CORE_CURRENCY_SYMBOL
+              valueFrom:
+                configMapKeyRef:
+                  name: <IMAGE_NAME>-environments
+                  key: PUBLIC_CORE_CURRENCY_SYMBOL
+            - name: PUBLIC_CORE_DIMENTION_UNITS
+              valueFrom:
+                configMapKeyRef:
+                  name: <IMAGE_NAME>-environments
+                  key: PUBLIC_CORE_DIMENTION_UNITS
+            - name: PUBLIC_CORE_WEIGHT_UNIT
+              valueFrom:
+                configMapKeyRef:
+                  name: <IMAGE_NAME>-environments
+                  key: PUBLIC_CORE_WEIGHT_UNIT
+            - name: PUBLIC_MEDUSAJS_API_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: <IMAGE_NAME>-environments
+                  key: PUBLIC_MEDUSAJS_API_URL
+
+          ports:
+            - containerPort: 8080

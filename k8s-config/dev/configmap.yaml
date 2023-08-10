@@ -1,0 +1,15 @@
+# use configmap to store .env
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: <IMAGE_NAME>-environments
+  namespace: <NAMESPACE>
+data:
+  PUBLIC_STRIPE_PUBLIC_KEY: pk_test_51NY21mHkUB4CqSb3C9W6ut8PL2OGVUU0fw9s9uU7mUXKpHxNzepVGlq5HxJzBgTLXnH7HpxkZ7sY1HS52YP3qkGY0032ATENua
+  PUBLIC_APP_URL: https://shopolah-v1.epicstartups.co
+  PUBLIC_SELECTED_SERVICE: MEDUSAJS
+  PUBLIC_CORE_CURRENCY_CODE: USD
+  PUBLIC_CORE_CURRENCY_SYMBOL: $
+  PUBLIC_CORE_DIMENTION_UNITS: cm
+  PUBLIC_CORE_WEIGHT_UNIT: g
+  PUBLIC_MEDUSAJS_API_URL: https://shopolah-medusa-v1.epicstartups.co

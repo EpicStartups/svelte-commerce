@@ -1,0 +1,93 @@
+name: Deploy App to K8S Cluster
+on:
+  push:
+    branches:
+      - develop
+
+env:
+  DO_TOKEN: ${{ secrets.DO_TOKEN }}
+  DO_CLUSTER_ID: ${{ secrets.DO_CLUSTER_ID }}
+  DO_REGISTRY_NAME: ${{ secrets.DO_REGISTRY_NAME }}
+  DO_CLUSTER_NAME: ${{ secrets.DO_CLUSTER_NAME }}
+  EPICNESS_INGRESS_IP: ${{ secrets.EPICNESS_INGRESS_IP }}
+  DOCKERFILE: Dockerfile.development
+  IMAGE_NAME: shopolah-medusa-fe
+  NAMESPACE: shopolah-development
+  DOMAIN: epicstartups.co
+  SUBDOMAIN: shopolah-v1
+  DOMAIN_NAME: shopolah-v1.epicstartups.co
+
+jobs:
+  build:
+    name: App to DOCR and k8s
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout master
+        uses: actions/checkout@main
+
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ env.DO_TOKEN }}
+
+      - name: Build container image
+        run: |
+          docker build -t ${{ env.DO_REGISTRY_NAME }}/${{ env.IMAGE_NAME }}:$(echo $GITHUB_SHA | head -c7) . --file $DOCKERFILE
+
+      - name: Log in to DigitalOcean Container Registry with short-lived credentials
+        run: doctl registry login --expiry-seconds 1200
+
+      - name: Push image to DigitalOcean Container Registry
+        run: |
+          docker push ${{ env.DO_REGISTRY_NAME }}/${{ env.IMAGE_NAME }}:$(echo $GITHUB_SHA | head -c7)
+
+      - name: Update configuration files
+        run: |
+          sed -i -e 's|<IMAGE_NAME>|${{ env.IMAGE_NAME }}|' -e 's|<NAMESPACE>|${{ env.NAMESPACE }}|' $GITHUB_WORKSPACE/k8s-config/dev/configmap.yaml
+          TAG=$(echo $GITHUB_SHA | head -c7) && sed -i -e 's|<IMAGE>|${{ env.DO_REGISTRY_NAME }}/${{ env.IMAGE_NAME }}:'${TAG}'|' \
+          -e 's|<IMAGE_NAME>|${{ env.IMAGE_NAME }}|' -e 's|<NAMESPACE>|${{ env.NAMESPACE }}|' $GITHUB_WORKSPACE/k8s-config/deployment.yaml
+          sed -i -e 's|<IMAGE_NAME>|${{ env.IMAGE_NAME }}|' -e 's|<NAMESPACE>|${{ env.NAMESPACE }}|' -e 's|<DOMAIN_NAME>|${{ env.DOMAIN_NAME }}|' $GITHUB_WORKSPACE/k8s-config/ingress.yaml
+          sed -i -e 's|<IMAGE_NAME>|${{ env.IMAGE_NAME }}|' -e 's|<NAMESPACE>|${{ env.NAMESPACE }}|' $GITHUB_WORKSPACE/k8s-config/issuer.yaml
+          sed -i -e 's|<NAMESPACE>|${{ env.NAMESPACE }}|' $GITHUB_WORKSPACE/k8s-config/namespace.yaml
+          sed -i -e 's|<IMAGE_NAME>|${{ env.IMAGE_NAME }}|' -e 's|<NAMESPACE>|${{ env.NAMESPACE }}|' $GITHUB_WORKSPACE/k8s-config/dev/secrets.yaml
+          sed -i -e 's|<IMAGE_NAME>|${{ env.IMAGE_NAME }}|' -e 's|<NAMESPACE>|${{ env.NAMESPACE }}|' $GITHUB_WORKSPACE/k8s-config/service.yaml
+
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 ${{ secrets.DO_CLUSTER_NAME }}
+
+      - name: Deploy to DigitalOcean Kubernetes
+        run: |
+          kubectl apply -f $GITHUB_WORKSPACE/k8s-config/namespace.yaml  
+          kubectl apply -f $GITHUB_WORKSPACE/k8s-config/dev/configmap.yaml  
+          kubectl apply -f $GITHUB_WORKSPACE/k8s-config/dev/secrets.yaml 
+          kubectl apply -f $GITHUB_WORKSPACE/k8s-config/deployment.yaml
+          kubectl apply -f $GITHUB_WORKSPACE/k8s-config/ingress.yaml
+          kubectl apply -f $GITHUB_WORKSPACE/k8s-config/service.yaml
+          if ! kubectl get deployment -n ${{ env.NAMESPACE }} ${{ env.IMAGE_NAME }} > /dev/null 2>&1; then
+          kubectl rollout restart deployment/${{ env.IMAGE_NAME }} -n ${{ env.NAMESPACE }}
+          fi
+
+      - name: TLS Certificate - Let's Encrypt Issuer
+        run: |
+          if ! kubectl get issuer ${{ env.IMAGE_NAME }}-letsencrypt-nginx -n ${{ env.NAMESPACE }} > /dev/null 2>&1; then
+          kubectl apply -f $GITHUB_WORKSPACE/k8s-config/issuer.yaml
+          fi
+
+      - name: Upsert A Record
+        run: |
+          RECORDS=$(doctl compute domain records list $DOMAIN)
+          while read -r line; do
+            if [[ $line == *"$SUBDOMAIN"* && $line == *"A "* ]]; then
+              RECORD_ID=$(echo $line | awk '{print $1}')
+              echo "A record for $SUBDOMAIN exists. Updating record $RECORD_ID ..."
+              if ! test -z "$NEW_SUBDOMAIN"; then
+                doctl compute domain records update $DOMAIN --record-id $RECORD_ID --record-type A --record-data $EPICNESS_INGRESS_IP --record-name $SUBDOMAIN
+              else
+                echo "NEW_SUBDOMAIN key and value is not set to update this record. A record stays the same - $SUBDOMAIN..."
+              fi
+              exit 0
+            fi
+          done <<< "$RECORDS"
+          echo "A record for $SUBDOMAIN does not exist. Creating record..."
+          doctl compute domain records create $DOMAIN --record-type A --record-data $EPICNESS_INGRESS_IP --record-name $SUBDOMAIN
+          exit 1

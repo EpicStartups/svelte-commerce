@@ -1,0 +1,15 @@
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: <IMAGE_NAME>-letsencrypt-nginx
+  namespace: <NAMESPACE>
+spec:
+  acme:
+    email: admin@epicstartups.co
+    server: https://acme-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: <IMAGE_NAME>-letsencrypt-nginx-private-key
+    solvers:
+      - http01:
+          ingress:
+            class: nginx
