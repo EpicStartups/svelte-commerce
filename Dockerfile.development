@@ -1,8 +1,8 @@
 FROM node:16.13.1-alpine3.14 AS builder
 LABEL org.opencontainers.image.source https://github.com/epicstartups/<repo_name>
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci
+COPY package.json yarn.lock ./
+RUN yarn install
 COPY . .
 RUN npm run build && npm prune --production
 
