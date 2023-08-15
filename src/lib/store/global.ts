@@ -8,7 +8,7 @@ interface GlobalStore {
 const store = writable<GlobalStore>({})
 
 const setMe = (me?: Me) => {
-	console.log('me: ', me)
+	//console.log('me: ', me)
 	if (me) {
 		store.update((store) => {
 			return {

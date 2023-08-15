@@ -325,6 +325,7 @@ export interface MedusaAddress {
 	phone: string | null
 	metadata: Record<string, any> | null
 	email?: string | null
+	region_id?: string | null
 }
 
 export interface FetchPaymentSessionResp {
@@ -569,4 +570,17 @@ export interface MedusaOrder {
 	raw_discount_total: number
 	total: number
 	order_parent_id: string | null
+}
+
+export interface MedusaReview {
+	rating: number
+	id: number
+	created_ay: string
+	updated_at: string
+	customer_id: string
+	heading: string
+	description: string
+	order_id: string
+	product_id: string
+	product: MedusaProduct
 }

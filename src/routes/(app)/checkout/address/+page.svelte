@@ -4,8 +4,15 @@ import { invalidateAll } from '$app/navigation'
 import SelectAddress from '../_SelectAddress.svelte'
 import SEO from '$lib/components/SEO/index.svelte'
 import type { MedusaAddress } from '$lib/services/medusa/types'
+import { postMedusajsApi } from '$lib/utils/server'
+import { AddressService, CartService } from '$lib/services'
+import { updateBilling } from '$lib/services/medusa/cart-service'
+import { mapMedusajsCart } from '$lib/services/medusa/medusa-utils'
+import { onMount } from 'svelte'
+import { fetchShippingOptions, setShippingOption } from '$lib/services/medusa/shipping-options'
 
 export let data
+let selectedAddress: MedusaAddress | null = null;
 // console.log('zzzzzzzzzzzzzzzzzz', data)
 
 const seoProps = {
@@ -14,28 +21,47 @@ const seoProps = {
 }
 
 function addressChanged(address: MedusaAddress) {
-	console.log("evt: ", address)
 	data.selectedAddress = address
+	selectedAddress = address;
 }
 
 function updateSelectedAddress(selectedAdress: MedusaAddress | null) {
-	// if (selectedAdress) {
-	// 	console.log("here")
-	// 	setShippingAddress({
-	// 		cartId: data.cart.id,
-	// 		shippingId: selectedAdress.id
-	// 	}).catch((err) => {
-	// 		console.error(err)
-	// 	})
-	// }
+	if (selectedAdress) {
+		updateBilling({
+			cartId: data.cart.id,
+			addressId: selectedAdress.id
+		}).then((newCart) => {
+			fetchShippingOptions({
+				regionId: newCart.region_id,
+				is_return: false
+			}).then((options) => {
+				if (options.length > 0) {
+					setShippingOption({
+						cartId: newCart.id,
+						shippingOptionId: options[0].id
+					}).then((updatedCart) => {
+						console.log("newcart: ", updatedCart)
+						data.cart = mapMedusajsCart(updatedCart)
+					})
+				}
+			})
 
+		}).catch((err) => {
+			console.error(err)
+		})
+	}
+	//console.log("selectedAddress: ", selectedAdress.region_id)
 }
 
 async function refreshAddress() {
 	invalidateAll()
 }
 
-$: updateSelectedAddress(data.selectedAddress)
+onMount(() => {
+	selectedAddress = data.selectedAddress ?? null
+})
+
+$: updateSelectedAddress(selectedAddress)
 </script>
 
 <SEO {...seoProps} />
@@ -57,7 +83,7 @@ $: updateSelectedAddress(data.selectedAddress)
 							loading="{data.loading}"
 							address="{ads}"
 							cart={data.cart}
-							selectedAddress={undefined}
+							selectedAddress={selectedAddress}
 							on:deleteAddress="{refreshAddress}"
 							on:addressChanged="{({ detail: {address} }) => addressChanged(address)}" />
 					{/each}

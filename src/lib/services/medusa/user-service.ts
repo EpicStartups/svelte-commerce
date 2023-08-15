@@ -13,6 +13,7 @@ export const fetchMeData = async ({
 		const sid = cookies.get('connect.sid')
 		const response: { customer: MedusaProfile } = await getMedusajsApi(`customers/me`, null, sid)
 		const customer = response.customer
+		//console.log('customer: ', customer)
 
 		const me: Me = {
 			firstName: customer.first_name,
@@ -23,8 +24,11 @@ export const fetchMeData = async ({
 			id: customer.id
 		}
 
+		//console.log('me: ', me)
+
 		return me
 	} catch (e) {
+		console.error('e: ', e)
 		return null
 	}
 }
