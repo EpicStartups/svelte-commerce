@@ -20,19 +20,19 @@ export async function load({ params, parent, locals, url, request, cookies }) {
 		throw redirect(307, redirectUrl)
 	}
 
-	const cartRes = await CartService.fetchRefreshCart({
-		cookies,
-		storeId: locals['store']?.id,
-		server: true,
-		sid: cookies.get('connect.sid'),
-		origin: locals['origin']
-	})
-	//console.log('cartRes: ', cartRes)
-	let cart = mapMedusajsCart(cartRes)
-
-	locals['cart'] = cart
-
 	try {
+		const cartRes = await CartService.fetchRefreshCart({
+			cookies,
+			storeId: locals['store']?.id,
+			server: true,
+			sid: cookies.get('connect.sid'),
+			origin: locals['origin']
+		})
+		//console.log('cartRes: ', cartRes)
+		let cart = mapMedusajsCart(cartRes)
+
+		locals['cart'] = cart
+
 		const id = url.searchParams.get('address')
 
 		const address = await AddressService.fetchAddress({
@@ -49,7 +49,7 @@ export async function load({ params, parent, locals, url, request, cookies }) {
 			cartId: cart.id,
 			addressId: address.id
 		})
-		console.log('newCart')
+		//console.log('newCart: ', newCart)
 		cart = mapMedusajsCart(newCart)
 		locals['cart'] = cart
 
@@ -77,6 +77,8 @@ export async function load({ params, parent, locals, url, request, cookies }) {
 			is_return: false
 		})
 
+		//console.log('shipping options: ', shippingOptions)
+
 		let err: any = undefined
 		let prescription: any = undefined
 		return {
@@ -92,6 +94,7 @@ export async function load({ params, parent, locals, url, request, cookies }) {
 			medusaCart: newCart
 		}
 	} catch (e) {
+		console.log('error: ', e)
 		if (e) {
 			throw redirect(307, '/checkout/address')
 		}
