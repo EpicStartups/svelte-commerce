@@ -2,9 +2,9 @@ import type { Cart, Error } from '$lib/types'
 import { deleteMedusajsApi, getMedusajsApi, postMedusajsApi } from '$lib/utils/server'
 import { error } from '@sveltejs/kit'
 import { mapMedusajsCart } from './medusa-utils'
-import { REGION_ID } from '.'
+import { AddressService, REGION_ID } from '.'
 import { fetchShippingOptions } from './shipping-options'
-import type { MedusaCart } from './types'
+import type { MedusaAddress, MedusaCart } from './types'
 import GlobalStore from '$lib/store/global'
 import { handleApiError } from '$lib/utils'
 import { setShippingOption } from './shipping-options'
@@ -110,6 +110,7 @@ export const addToCartService = async ({
 	storeId,
 	server = false,
 	cookies,
+	me,
 	sid = null
 }: any) => {
 	try {
@@ -122,30 +123,50 @@ export const addToCartService = async ({
 		}
 		let res: any = {}
 		if (!cart_id) {
-			const shippingOptions = await fetchShippingOptions({
-				regionId: REGION_ID,
-				is_return: false
-			})
-
-			console.log('shippingOPts: ', shippingOptions)
-
-			const cartRes: { cart: MedusaCart } = await postMedusajsApi(
-				`carts`,
-				{
-					region_id: REGION_ID
-				},
-				sid
-			)
-
-			if (shippingOptions && shippingOptions.length > 0) {
-				const cart = await setShippingOption({
-					sid,
-					cartId: cartRes.cart.id,
-					shippingOptionId: shippingOptions[0].id
+			let defaultAddress: MedusaAddress | undefined
+			try {
+				console.log('sid: ', sid)
+				const shippingAddresses = await AddressService.fetchAddresses({
+					sid
 				})
+				defaultAddress = shippingAddresses.selectedAddress
+			} catch {
+				console.log('creating cart for visitor...')
 			}
 
-			cart_id = cartRes.cart?.id
+			if (defaultAddress && defaultAddress.region_id) {
+				const shippingOptions = await fetchShippingOptions({
+					regionId: defaultAddress.region_id,
+					is_return: false
+				})
+
+				const cartRes: { cart: MedusaCart } = await postMedusajsApi(
+					`carts`,
+					{
+						region_id: defaultAddress.region_id
+					},
+					sid
+				)
+
+				if (shippingOptions && shippingOptions.length > 0) {
+					const cart = await setShippingOption({
+						sid,
+						cartId: cartRes.cart.id,
+						shippingOptionId: shippingOptions[0].id
+					})
+				}
+
+				cart_id = cartRes.cart?.id
+			} else {
+				const cartRes: { cart: MedusaCart } = await postMedusajsApi(
+					`carts`,
+					{
+						region_id: REGION_ID
+					},
+					sid
+				)
+				cart_id = cartRes.cart?.id
+			}
 		}
 
 		const res_data: { cart: MedusaCart } = await postMedusajsApi(
@@ -153,6 +174,8 @@ export const addToCartService = async ({
 			body,
 			sid
 		)
+
+		//if (res_data.cart.ad)
 
 		//console.log('resdata: ', res_data.cart.sh)
 

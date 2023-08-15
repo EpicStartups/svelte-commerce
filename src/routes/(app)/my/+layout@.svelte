@@ -11,7 +11,7 @@ import menu from '$lib/config/menu'
 import SidebarDashboard from './_SidebarDashboard.svelte'
 
 export let data
-console.log("data2: ", data)
+
 $: ({ url, isHome, q, currentPage, me, cart, store } = data)
 
 let openSidebar = false

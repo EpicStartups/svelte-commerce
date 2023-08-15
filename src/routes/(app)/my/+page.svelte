@@ -15,7 +15,7 @@ const seoProps = {
 
 export let data
 // console.log('zzzzzzzzzzzzzzzzzz', data)
-console.log("data: ", data)
+// console.log("data: ", data)
 </script>
 
 <SEO {...seoProps} />
@@ -91,7 +91,7 @@ console.log("data: ", data)
 				{#await data.streamed?.reviews}
 					<Skeleton />
 				{:then reviews}
-					<!-- <a
+					<a
 						href="/my/reviews?sort=-updatedAt"
 						aria-label="Click to visit my reviews"
 						class="col-span-1 relative flex items-end justify-between overflow-hidden rounded-lg bg-gradient-to-r from-secondary-500 to-cyan-600 p-5 text-white shadow shadow-purple-500/30">
@@ -102,7 +102,7 @@ console.log("data: ", data)
 								<span class="text-xl font-semibold">{reviews?.count}</span>
 
 								<span class="text-sm">
-									Total {#if reviews?. > 1} reviews {:else} review {/if}
+									Total {#if reviews?.count > 1} reviews {:else} review {/if}
 								</span>
 							</div>
 						</div>
@@ -110,7 +110,7 @@ console.log("data: ", data)
 						<div class="absolute right-0 bottom-0 -m-5 overflow-hidden lg:-m-7">
 							<img src="{dashboardReviews}" alt="" class="h-28 w-28 opacity-50 lg:h-32 lg:w-32" />
 						</div>
-					</a> -->
+					</a>
 				{:catch err} 
 					<p>{err}</p>
 				

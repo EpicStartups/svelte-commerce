@@ -9,10 +9,11 @@ import { updatePaymentProvider } from './cart-service'
 
 export const fetchOrders = async ({ origin, storeId, server = false, sid = null }: any) => {
 	try {
+		console.log('sid: ', sid)
 		// const med: { orders: MedusaOrder[]; count: number; offset: number; limit: number } =
 		// 	await getMedusajsApi(`customers/me/orders`, {}, sid)
 		const med: { orders: MedusaOrder[]; count: number; offset: number; limit: number } =
-			await getMedusajsApi('customers/me/orders', {}, sid)
+			await getMedusajsApi('customers/me/orders', null, sid)
 		const res = med.orders.filter(
 			(order) => order.order_parent_id && order.order_parent_id !== null
 		)

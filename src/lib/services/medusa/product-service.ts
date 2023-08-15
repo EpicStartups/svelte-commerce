@@ -74,12 +74,9 @@ export const fetchProduct = async ({
 		const med: FetchProductsResp = await getMedusajsApi(
 			`products?handle=${slug}&expand=variants,variants.prices,images&currency_code=myr`
 		)
-		console.log('med: ', med)
-		console.log('variants, ', med.products[0].variants[1])
 		if (med.count !== 1) {
 			throw error(400, `there are ${med.count} products for ${slug}`)
 		}
-		console.log('processed: ', mapMedusajsProduct(med.products[0], variant, currency))
 		return mapMedusajsProduct(med.products[0], variant, currency)
 	} catch (e) {
 		if (typeof e.status === 'number' && e.status >= 400 && e.status <= 599) {

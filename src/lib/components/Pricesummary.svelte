@@ -46,10 +46,7 @@ function submit() {
 				<span>Total</span>
 
 				<span>
-					{currency(
-						cart.formattedAmount?.subtotal?.value || cart.formattedAmount?.subtotal,
-						cart.formattedAmount?.subtotal?.currency || $page.data?.store?.currencySymbol
-					)}
+					{cart.formattedAmount.subtotal.value}
 				</span>
 			</div>
 

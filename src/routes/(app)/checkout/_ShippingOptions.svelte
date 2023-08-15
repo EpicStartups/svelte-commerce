@@ -11,7 +11,7 @@ import type { Currency } from "$lib/utils/currency"
 export let shippingOptions: MedusaShippingOption[];
 export let currency: string;
 export let cartId: string;
-
+export let selectedShippingOption: MedusaShippingOption;
 let loading: boolean = false;
 
 const onChange = (option: ShippingOption) => {
@@ -30,6 +30,7 @@ const onChange = (option: ShippingOption) => {
 }
 
 $: processed = mapMedusaJsShippingOptions(shippingOptions, currency.toUpperCase() as Currency).sort((a, b) => a.amount.raw - b.amount.raw)
+$: processOptions = selectedShippingOption ? selectedShippingOption.id : undefined;
 </script>
 
 <h2 class="mb-5">Shipping Options
@@ -46,10 +47,10 @@ $: processed = mapMedusaJsShippingOptions(shippingOptions, currency.toUpperCase(
             <label
                 class="flex w-full cursor-pointer items-center gap-2 rounded border border-zinc-200 p-3 shadow-md transition duration-300 hover:bg-primary-50 sm:gap-4">
                 <input
-                    
+                    bind:group="{processOptions}"
                     type="radio"
-                    value="{so}"
-                    name="group"
+                    value="{so.id}"
+                    name="shipping-option"
                     class="h-4 w-4 focus:outline-none focus:ring-0 focus:ring-offset-0"
                    on:change|preventDefault="{() => onChange(so)}"
                 />

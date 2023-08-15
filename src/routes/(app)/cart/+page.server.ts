@@ -35,6 +35,8 @@ export const load: PageServerLoad = async ({ url, request, locals, cookies, depe
 				is_return: false
 			})
 
+			console.log('res: ', res)
+
 			return {
 				shippingOptions,
 				cart
@@ -70,6 +72,7 @@ const add: Action = async ({ request, cookies, locals }) => {
 		return fail(400, { invalid: true })
 	}
 	try {
+		const me = locals['me']
 		let cart = await CartService.addToCartService({
 			pid,
 			vid: currentVariantId || vid,
@@ -79,10 +82,12 @@ const add: Action = async ({ request, cookies, locals }) => {
 			storeId: locals['store']?.id,
 			server: true,
 			origin: locals['origin'],
+			me,
+			sid: cookies.get('connect.sid'),
 			cookies // This is a special case to pass complete cookie
 		})
 
-		console.log('cart: ', cart)
+		//return
 
 		if (linkedItems?.length) {
 			for (const i of linkedItems) {
@@ -93,6 +98,7 @@ const add: Action = async ({ request, cookies, locals }) => {
 					storeId: locals['store']?.id,
 					server: true,
 					origin: locals['origin'],
+					me,
 					cookies // This is a special case to pass complete cookie
 				})
 			}

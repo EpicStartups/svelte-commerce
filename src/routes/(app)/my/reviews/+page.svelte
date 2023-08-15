@@ -1,15 +1,4 @@
-<style>
-.frosted {
-	backdrop-filter: blur(12px);
-	background-color: hsla(0, 0%, 100%, 0.3);
-}
-
-.h-rem-empty {
-	height: 70vh;
-}
-</style>
-
-<script>
+<script lang="ts">
 import { date, toast } from '$lib/utils'
 import { del } from '$lib/utils/api'
 import { goto, invalidateAll } from '$app/navigation'
@@ -19,6 +8,7 @@ import { Pagination, LazyImg } from '$lib/components'
 import { PrimaryButton } from '$lib/ui'
 import noOnlineReviewAnimate from '$lib/assets/no/online-review-animate.svg'
 import SEO from '$lib/components/SEO/index.svelte'
+import { deleteReview } from '$lib/services/medusa/review-service.js'
 
 const seoProps = {
 	title: 'Dashboard - Reviews ',
@@ -30,32 +20,30 @@ export let data
 let typingTimer,
 	loading = false
 
-function callSearch(search) {
+function callSearch(search: string) {
 	clearTimeout(typingTimer)
 	typingTimer = setTimeout(() => {
 		searchData(search)
 	}, 300)
 }
 
-async function searchData(search) {
+async function searchData(search: string) {
 	let u = new URL($page.url)
 	u.searchParams.set('search', search.toString())
 	goto(u.toString())
 }
 
-async function sortNow(sort) {
+async function sortNow(sort: string) {
 	let u = new URL($page.url)
 	u.searchParams.set('sort', sort.toString())
 	goto(u.toString())
 }
 
-async function remove(id) {
+async function remove(id: string) {
 	try {
 		toast('Removing the selected review please wait...', 'info')
-		await del(`reviews?id=${id}&store=${$page.data.store?.id}`, $page.data.origin)
+		await deleteReview({id})
 		toast('Removed the review successfully', 'success')
-		// await refreshData()
-		invalidateAll()
 	} catch (e) {
 		if (e.message === 'You must be logged in') {
 			const url = '/'
@@ -71,11 +59,9 @@ async function remove(id) {
 <SEO {...seoProps} />
 
 <div class="w-full">
-	{#if data.reviews?.isFetching}
+	{#if data.isFetching}
 		Loading....
-	{:else if data.reviews?.errors}
-		{data.reviews.errors}
-	{:else if data.reviews?.data?.myReviews?.count}
+	{:else if data.reviews.count}
 		<div>
 			<header
 				class="mb-5 flex flex-col items-start md:items-center justify-between md:flex-row gap-2">
@@ -104,15 +90,15 @@ async function remove(id) {
 			</header>
 
 			<div class="flex flex-col gap-2 sm:gap-4">
-				{#if data.reviews?.data?.myReviews?.data}
-					{#each data.reviews.data.myReviews.data as review}
-						{#if review.listing}
+				{#if data.reviews.data}
+					{#each data.reviews.data as review}
+
 							<div class="frosted rounded-lg border p-4 shadow-lg md:p-6">
 								<div class="mb-2 flex w-full">
 									<div class="mr-2 w-20 sm:mr-5 sm:w-32">
 										<LazyImg
-											src="{review.listing?.img}"
-											alt="{review.listing?.name || ''}"
+											src="{review.product.thumbnail}"
+											alt="Picture of {review.product?.title || ''}"
 											width="128"
 											class="h-full w-full object-contain object-top" />
 									</div>
@@ -120,21 +106,12 @@ async function remove(id) {
 									<div class="relative flex h-auto w-full flex-1 flex-col">
 										<div class="mb-2 flex gap-2">
 											<a
-												href="{`/product/${review.listing?.slug}`}"
+												href="{`/product/${review.product.handle}`}"
 												aria-label="Click to view the product details"
 												class="flex-1 font-semibold">
-												{review.listing?.name}
+												{review.product.title}
 											</a>
 
-											{#if $page?.data?.store?.isFnb && review.listing?.foodType}
-												<div>
-													{#if review.listing?.foodType === 'veg'}
-														<img src="/product/veg.png" alt="veg" class="h-5 w-5" />
-													{:else if review.listing?.foodType === 'nonveg'}
-														<img src="/product/non-veg.png" alt="non veg" class="h-5 w-5" />
-													{/if}
-												</div>
-											{/if}
 										</div>
 
 										<div class="mb-2 flex flex-row items-center">
@@ -170,14 +147,15 @@ async function remove(id) {
 											</div>
 										</div>
 
+										<h3>{review.heading}</h3>
 										<p class="mb-2">
-											<i>- {review.message}</i>
+											<i>- {review.description}</i>
 										</p>
 
 										<span class="text-xs text-zinc-500">
 											<!-- <TimeAgo date="{+review.updatedAt}" /> -->
 
-											{date(review.updatedAt)}
+											{date(review.updated_at)}
 										</span>
 									</div>
 								</div>
@@ -185,7 +163,7 @@ async function remove(id) {
 								<div class="flex justify-end">
 									<button
 										class="w-9 rounded-full bg-zinc-100 p-2 text-xs text-zinc-500 transition duration-300 hover:bg-zinc-200"
-										on:click="{() => remove(review.id)}">
+										on:click="{() => remove(review.id.toString())}">
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
 											class="h-5 w-5"
@@ -199,14 +177,14 @@ async function remove(id) {
 									</button>
 								</div>
 							</div>
-						{/if}
+
 					{/each}
 				{/if}
 			</div>
 
 			<Pagination
 				count="{Math.ceil(
-					(data.reviews?.data?.myReviews?.count || 1) / data.reviews?.data?.myReviews?.pageSize
+					(data.reviews.count || 1) / data.reviews.pageSize
 				)}"
 				current="{data?.currentPage || 1}" />
 		</div>
@@ -224,3 +202,13 @@ async function remove(id) {
 		</div>
 	{/if}
 </div>
+
+
+<style>
+.frosted {
+	backdrop-filter: blur(12px);
+	background-color: hsla(0, 0%, 100%, 0.3);
+}
+
+
+</style>

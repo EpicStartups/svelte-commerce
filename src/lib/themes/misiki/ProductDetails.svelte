@@ -269,82 +269,6 @@ function handleSelectedLinkiedProducts(e) {
 	// console.log('selectedLinkiedProducts', selectedLinkiedProducts)
 }
 
-// This is used only for customized product else cart?/add
-
-async function addToBag(p, customizedImg, customizedJson) {
-	try {
-		loading = true
-		cartButtonText = 'Adding...'
-
-		let cart = await CartService.addToCartService({
-			pid: p.id,
-			vid: p.id,
-			qty: 1,
-			options: selectedOptions,
-			customizedImg: customizedImg,
-			storeId: $page.data.store?.id,
-			customizedData: customizedJson,
-			origin: $page.data.origin,
-			server: isServer,
-			cookies
-		})
-		if (selectedLinkiedProducts?.length) {
-			for (const i of selectedLinkiedProducts) {
-				cart = await CartService.addToCartService({
-					pid: i,
-					vid: i,
-					qty: 1,
-					storeId: $page.data.store?.id,
-					origin: $page.data.origin,
-					server: isServer,
-					cookies
-				})
-			}
-		}
-
-		const response = await fetch('/server/cart')
-		cart = await response.json()
-
-		if (cart) {
-			const cookieCart = {
-				cartId: cart?.cart_id,
-				// items: cart?.items,
-				qty: cart?.qty,
-				tax: cart?.tax,
-				subtotal: cart?.subtotal,
-				total: cart?.total,
-				currencySymbol: cart?.currencySymbol,
-				discount: cart?.discount,
-				savings: cart?.savings,
-				selfTakeout: cart?.selfTakeout,
-				shipping: cart?.shipping,
-				unavailableItems: cart?.unavailableItems,
-				formattedAmount: cart?.formattedAmount
-			}
-			cookies.set('cartId', cookieCart.cartId, { path: '/' })
-			cookies.set('cartQty', cookieCart.qty, { path: '/' })
-			// cookies.set('cart', JSON.stringify(cookieCart), { path: '/' })
-			// cartButtonText = 'Added To Cart'
-			bounceItemFromTop = true
-		}
-
-		cartButtonText = 'Go to Cart'
-		p.qty < 0 ? fireGTagEvent('remove_from_cart', cart) : fireGTagEvent('add_to_cart', cart)
-
-		await invalidateAll()
-
-		// const res = await getAPI('carts/my')
-	} catch (e) {
-		// toast(e, 'error')
-		cartButtonText = 'Error Add To Cart'
-	} finally {
-		loading = false
-		// await delay(1000)
-		cartButtonText = 'Add to Bag'
-		bounceItemFromTop = false
-	}
-}
-
 // let windowHeight
 // let cartButtonPosition = 0
 // onMount(() => {
@@ -611,7 +535,7 @@ async function updateVariant(variant) {
 								{data.product.price.value}
 							</span>
 
-							{#if data.product?.mrp.raw / 100 > currentVariantPrice.raw}
+							{#if data.product?.mrp.raw / 100 > currentVariantPrice}
 								<span class="whitespace-nowrap text-zinc-500">
 									<strike>
 										{data.product.mrp.value}
@@ -1047,140 +971,33 @@ async function updateVariant(variant) {
 
 				<!-- select options  -->
 
-				{#await data.streamed?.moreProductDetails}
-					<div class="mb-5">
-						<Skeleton small={true} />
-					</div>
-				{:then value}
-					{#if value.options?.length > 0}
-						<div
-							class="sizeSelector mb-5 flex flex-col gap-3 text-sm"
-							class:shake-animation="{shake}">
-							{#each value.options as o}
-								<div class="flex flex-col items-start sm:flex-row">
-									<h6 class="mb-1 w-full shrink-0 font-medium sm:mb-0 sm:w-52">
-										{o.name}
-									</h6>
-
-									<!-- dropdown -->
-									{#if o.inputType == 'dropdown'}
-										<select
-											bind:value="{selectedOptions[o._id]}"
-											class="w-full max-w-xs flex-1 rounded border border-zinc-200 py-1.5 text-sm font-light placeholder-zinc-400 transition duration-300 focus:outline-none hover:bg-white">
-											{#each o.values as i}
-												<option value="{i._id}">
-													{i.name}
-												</option>
-											{/each}
-										</select>
-
-										<!-- textbox -->
-									{:else if o.inputType == 'textbox'}
-										<Textbox bind:value="{selectedOptions[o._id]}" type="text" maxlength={5000} />
-
-										<!-- date -->
-									{:else if o.inputType == 'date'}
-										<Textbox id="start" bind:value="{selectedOptions[o._id]}" type="date" maxlength={5000}  />
-
-										<!-- daterange -->
-										<!-- {:else if o.inputType == 'daterange'}
-									<span>Date range picker is not found</span> -->
-
-										<!-- <date-picker
-									bind:value="{selectedOptions[o.id]}"
-									class="max-w-xs flex-1"
-									type="date"
-									:disabled-date="disabledBeforeTodayAndAfterAWeek"
-									range
-									@change="$emit('optionChanged', selectedOptions)"></date-picker> -->
-
-										<!-- textarea -->
-									{:else if o.inputType == 'textarea'}
-										<Textarea bind:value="{selectedOptions[o._id]}" />
-
-										<!-- size -->
-									{:else if o.inputType == 'size'}
-										<div class="flex flex-wrap">
-											{#each o.values as v}
-												<RadioSize value="{v._id}" bind:modelValue="{selectedOptions[o._id]}">
-													<span class="text-zinc-500">{v.name}</span>
-												</RadioSize>
-											{/each}
-										</div>
-
-										<!-- color -->
-									{:else if o.inputType == 'color'}
-										<div class="flex flex-wrap gap-4">
-											{#each o.values as v}
-												<RadioColor value="{v._id}" bind:modelValue="{selectedOptions[o._id]}">
-													<span class="text-zinc-500">{v.name}</span>
-												</RadioColor>
-											{/each}
-										</div>
-										<!-- radio -->
-									{:else if o.inputType == 'radio'}
-										<div class="flex flex-wrap gap-4">
-											{#each o.values as v}
-												<Radio value="{v._id}" bind:modelValue="{selectedOptions[o._id]}">
-													<span class="text-zinc-500">{v.name}</span>
-												</Radio>
-											{/each}
-										</div>
-
-										<!-- checkbox -->
-									{:else if o.inputType == 'checkbox'}
-										<div class="flex flex-wrap gap-4">
-											{#each o.values as v, i}
-												<Radio value="{v._id}" bind:modelValue="{selectedOptions[o._id]}">
-													<span class="text-zinc-500">{v.name}</span>
-												</Radio>
-												<!-- <Checkbox value="{v._id}" bind:modelValue="{selectedOptions[o._id]}">
-													<span class="text-zinc-500">{v.name}</span>
-												</Checkbox> -->
-											{/each}
-										</div>
-									{/if}
-								</div>
-							{/each}
-						</div>
-					{/if}
-				{:catch error}
-					{error?.message}
-				{/await}
 
 				<!-- Product details (short description) -->
 
-				{#await data.streamed?.moreProductDetails}
-					<Skeleton extraSmall />
-				{:then value}
-					{#if value.description}
-						<div>
-							<div class="mb-2 flex items-center gap-2 uppercase">
-								<h5>Product Details</h5>
+				<div>
+					<div class="mb-2 flex items-center gap-2 uppercase">
+						<h5>Product Details</h5>
 
-								<svg
-									xmlns="http://www.w3.org/2000/svg"
-									class="h-5 w-5"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke="currentColor"
-									stroke-width="1">
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
-									></path>
-								</svg>
-							</div>
+						<svg
+							xmlns="http://www.w3.org/2000/svg"
+							class="h-5 w-5"
+							fill="none"
+							viewBox="0 0 24 24"
+							stroke="currentColor"
+							stroke-width="1">
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
+							></path>
+						</svg>
+					</div>
 
-							<p class="prose max-w-none">
-								{@html value.description}
-							</p>
-						</div>
-					{/if}
-				{:catch error}
-					<Error err="{error}" />
-				{/await}
+					<p class="prose max-w-none">
+						
+						{@html data.product.description}
+					</p>
+				</div>
 
 				<!-- Linked Products -->
 

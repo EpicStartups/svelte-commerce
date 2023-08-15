@@ -40,6 +40,8 @@ async function addressChanged(address: MedusaAddress) {
 		address
 	})
 }
+
+$: processedAddressed = selectedAddress ? selectedAddress.id : undefined;
 </script>
 
 <Error err="{err}" />
@@ -47,13 +49,13 @@ async function addressChanged(address: MedusaAddress) {
 {#if loading}
 	<AddressSkeleton />
 {:else if address}
-	<div class="border-b p-4 sm:p-6">
+	<div class="border-b p-4 sm:p-6">	
 		<label class="flex w-full cursor-pointer flex-row gap-2 sm:gap-4">
 			<input
-				bind:group="{selectedAddress}"
+				bind:group="{processedAddressed}"
 				type="radio"
 				value={address.id}
-				name="group"
+				name="address"
 				class="mt-1.5 h-4 w-4 focus:outline-none focus:ring-0 focus:ring-offset-0"
 				on:change|preventDefault="{() => addressChanged(address)}" 
 			/>

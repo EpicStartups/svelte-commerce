@@ -89,7 +89,7 @@ export async function load({ params, parent, locals, url, request, cookies }) {
 			paymentSessions,
 			err,
 			prescription,
-			medusaCart: cartRes
+			medusaCart: newCart
 		}
 	} catch (e) {
 		if (e) {

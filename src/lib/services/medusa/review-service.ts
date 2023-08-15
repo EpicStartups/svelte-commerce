@@ -1,6 +1,8 @@
-import { getMedusajsApi } from '$lib/utils/server'
+import { deleteMedusajsApi, getMedusajsApi } from '$lib/utils/server'
 import { serializeNonPOJOs } from '$lib/utils/validations'
 import { error } from '@sveltejs/kit'
+import type { MedusaReview } from './types'
+import { handleApiError } from '$lib/utils'
 
 export const fetchReviews = async ({
 	origin,
@@ -13,16 +15,18 @@ export const fetchReviews = async ({
 	sid = null
 }: any) => {
 	try {
-		const res = await getMedusajsApi('reviews/me', {}, sid)
-
-		console.log('res: ', res)
+		const res: { reviews: MedusaReview[]; count: number; offset: number } = await getMedusajsApi(
+			'reviews/me?expand=product',
+			{},
+			sid
+		)
 
 		return {
-			// data: res.data || [],
-			// count: res.count,
-			// pageSize: res.pageSize,
-			// noOfPage: res.noOfPage,
-			// page: res.page
+			data: res.reviews,
+			count: res.count,
+			pageSize: 10,
+			noOfPage: res.count > 0 ? res.count / 10 > 1 ?? 1 : 1,
+			page: res.offset > 0 ? Math.floor(res.offset / 10) + 1 : 1
 		}
 	} catch (e) {
 		throw error(e.status, e.message)
@@ -85,5 +89,19 @@ export const saveReview = async ({
 		return res
 	} catch (e) {
 		throw error(e.status, e.message)
+	}
+}
+
+interface DeleteReviewInput {
+	sid?: string | null
+	id: string
+}
+export const deleteReview = async (input: DeleteReviewInput) => {
+	try {
+		const res = await deleteMedusajsApi(`reviews/${input.id}`, null, input.sid ?? null)
+		console.log('deleteRes: ', res)
+		return res
+	} catch (err) {
+		throw handleApiError(err)
 	}
 }

@@ -205,6 +205,7 @@ function checkIfStripeCardValid({ detail }) {
 				shippingOptions={data.shippingOptions}
 				currency={data.paymentSessions.data.region.currency_code}
 				cartId={data.cart.id}
+				selectedShippingOption={data.medusaCart.shipping_methods[0].shipping_option}
 			/>
 
 
