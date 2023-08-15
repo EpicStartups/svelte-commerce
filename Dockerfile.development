@@ -1,17 +1,30 @@
-FROM node:16.20-alpine3.18 AS builder
-LABEL org.opencontainers.image.source https://github.com/epicstartups/<repo_name>
-WORKDIR /app
-COPY package.json yarn.lock ./
-RUN yarn install
-COPY . .
-RUN npm run build
+##### Stage 1 - Development - Generate dist folder
+FROM node:16 AS builder
 
-FROM node:16.20-alpine3.18 AS production
-USER node:node
-WORKDIR /app
-COPY --from=builder --chown=node:node /app/build ./build
-COPY --from=builder --chown=node:node /app/node_modules ./node_modules
-COPY --chown=node:node package.json .
+RUN npm install -g pnpm
+
+# Add timezone
+RUN apt-get install -yq tzdata && \
+    ln -fs /usr/share/zoneinfo/Asia/Singapore /etc/localtime && \
+    dpkg-reconfigure -f noninteractive tzdata
+    
+WORKDIR /usr/app
+COPY package.json ./
+COPY .npmrc ./
+ENV PUPPETEER_SKIP_DOWNLOAD="true"
+RUN pnpm install --force
+RUN cp -R node_modules prod_node_modules
+COPY . .
+RUN pnpm run build
+##### Stage 2 - Production
+FROM builder as production
+WORKDIR /usr/app
+COPY --from=builder /usr/app/prod_node_modules ./node_modules
+COPY --from=builder /usr/app/package*.json ./
+ENV PUPPETEER_SKIP_DOWNLOAD="true"
+ENV NODE_ENV=production
+ENV ENV_FILE=.env
 ENV PORT 8080
 EXPOSE 8080
-CMD ["node","build"]
+COPY --from=builder /usr/app/.svelte-kit ./.svelte-kit
+CMD [ "pnpm", "start" ]
