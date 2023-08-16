@@ -1,4 +1,6 @@
-export const REGION_ID = 'reg_01H7TEAFPCDZKBXP43KBF2AE65'
+import { DEFAULT_REGION_ID } from '$lib/config'
+
+export const REGION_ID = DEFAULT_REGION_ID
 export * as AddressService from './address-service'
 export * as AutocompleteService from './autocomplete-service'
 export * as BannersService from './banners-service'

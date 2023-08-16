@@ -1,16 +1,17 @@
 import { env } from '$env/dynamic/public'
+import {
+	PUBLIC_MEDUSAJS_API_URL,
+	PUBLIC_STRIPE_PUBLIC_KEY,
+	PUBLIC_APP_URL,
+	PUBLIC_DEFAULT_REGION_ID,
+	PUBLIC_SELECTED_SERVICE
+} from '$env/static/public'
 
 export * from './website'
 export const adminUrl = 'https://admin.litekart.in'
 export const alert = 'The High Performance and Scalable Ecommerce'
 export const authorInfo = {
-	author: 'Swadesh Behera',
-	facebookAuthorPage: `https://www.facebook.com/codenx`,
-	facebookPageName: 'codenx',
-	githubPage: 'itswadesh',
-	linkedinProfile: 'itswadesh',
-	telegramUsername: 'itswadesh',
-	twitterUsername: 'itswadesh'
+	author: 'EpicStartups'
 }
 export const currency = { symbol: '$', code: 'USD' }
 export const currencyCode = env.PUBLIC_CORE_CURRENCY_CODE || 'USD'
@@ -47,8 +48,8 @@ export const mediaqueries = {
 export const provider = env.PUBLIC_API_PROVIDER || 'Medusa' // 'Medusa' 'Woocommerce' 'Bigcommerce'
 export const searchbarText = 'Search for brands categories & more'
 export const SHOPIFY_BASE_URL = `https://api.shopify.com`
-export const siteShortTitle = 'Litekart' // used as SchemaOrg siteTitleAlt
-export const siteTitle = 'Litekart'
+export const siteShortTitle = 'Shopolah' // used as SchemaOrg siteTitleAlt
+export const siteTitle = 'Shopolah'
 export const sorts = [
 	{ name: 'Recomended', val: null },
 	{ name: `What's New`, val: '-updatedAt' },
@@ -62,7 +63,7 @@ export const sorts = [
 export const weightUnit = env.PUBLIC_CORE_WEIGHT_UNIT || 'g'
 export const WWW_URL = env.PUBLIC_WWW_URL || env.PUBLIC_LITEKART_DOMAIN
 
-export const MEDUSAJS_BASE_URL = `${env.PUBLIC_MEDUSAJS_API_URL}/store`
+export const MEDUSAJS_BASE_URL = `${PUBLIC_MEDUSAJS_API_URL}/store`
 
 export const BIG_COMMERCE_STORE_HASH = env.PUBLIC_BIG_COMMERCE_STORE_HASH || 'ftelcymxrh'
 export const BIG_COMMERCE_ACCESS_TOKEN =
@@ -101,11 +102,12 @@ export const slotMarginProduct = 'lg:mt-20'
 export const isCors = true
 
 // Stripe
-export const stripePublicKey = env.PUBLIC_STRIPE_PUBLIC_KEY || ''
+export const stripePublicKey = PUBLIC_STRIPE_PUBLIC_KEY || ''
 
 // Varni config
 // export const slotMarginGeneral = 'mt-14 sm:mt-20 lg:mt-0'
 // export const slotMarginGeneralWithHelloBar = 'mt-14 sm:mt-20 lg:mt-0'
 // export const slotMarginProduct = 'mt-14 sm:mt-20 lg:mt-0'
 
-export const appUrl = env.PUBLIC_APP_URL || ''
+export const appUrl = PUBLIC_APP_URL || ''
+export const DEFAULT_REGION_ID = PUBLIC_DEFAULT_REGION_ID
