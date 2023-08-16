@@ -19,6 +19,8 @@ export let data: Data
 
 let clazz = ''
 export { clazz as class }
+
+
 </script>
 
 <div class="w-full {clazz} pb-20">
@@ -214,7 +216,7 @@ export { clazz as class }
 
 									<td class="p-3">
 										<span class="whitespace-nowrap font-semibold uppercase text-primary-500">
-											{order.status}
+											{order.status === "pending" ? "processing" : order.status}
 										</span>
 									</td>
 								</tr>

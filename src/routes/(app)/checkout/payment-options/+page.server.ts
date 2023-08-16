@@ -28,10 +28,12 @@ export async function load({ params, parent, locals, url, request, cookies }) {
 			sid: cookies.get('connect.sid'),
 			origin: locals['origin']
 		})
-		//console.log('cartRes: ', cartRes)
+		console.log('cartRes: ', cartRes)
 		let cart = mapMedusajsCart(cartRes)
 
 		locals['cart'] = cart
+
+		console.log('cart: ', cart)
 
 		const id = url.searchParams.get('address')
 
@@ -42,14 +44,14 @@ export async function load({ params, parent, locals, url, request, cookies }) {
 			sid: cookies.get('connect.sid')
 		})
 
-		//console.log('address: ', address)
+		console.log('address: ', address)
 
 		const newCart = await updateBilling({
 			sid: cookies.get('connect.sid'),
 			cartId: cart.id,
 			addressId: address.id
 		})
-		//console.log('newCart: ', newCart)
+		console.log('newCart: ', newCart)
 		cart = mapMedusajsCart(newCart)
 		locals['cart'] = cart
 
@@ -59,7 +61,7 @@ export async function load({ params, parent, locals, url, request, cookies }) {
 			sid: cookies.get('connect.sid')
 		})
 
-		//console.log('payment methods: ', paymentMethods)
+		console.log('payment methods: ', paymentMethods)
 
 		const paymentSessions = await PaymentMethodService.fetchPaymentSessions({
 			storeId: locals['store'].id,
@@ -68,7 +70,7 @@ export async function load({ params, parent, locals, url, request, cookies }) {
 			cartId: cartRes.id
 		})
 
-		//console.log('payment sessions: ', paymentSessions.cart.payment_sessions)
+		console.log('payment sessions: ', paymentSessions.cart.payment_sessions)
 
 		const shippingOptions = await ShippingOptionsService.fetchShippingOptions({
 			regionId: REGION_ID,
@@ -77,7 +79,7 @@ export async function load({ params, parent, locals, url, request, cookies }) {
 			is_return: false
 		})
 
-		//console.log('shipping options: ', shippingOptions)
+		console.log('shipping options: ', shippingOptions)
 
 		let err: any = undefined
 		let prescription: any = undefined

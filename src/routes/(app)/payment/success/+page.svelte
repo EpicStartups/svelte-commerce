@@ -110,11 +110,11 @@ onMount(async () => {
 				<ul class="mx-auto mb-5 flex max-w-max flex-col gap-2 sm:mb-10">
 					<li>
 						<p class="flex items-start gap-2">
-							<span class="w-36 shrink-0"> Order No </span>
+							<!-- <span class="w-36 shrink-0"> Order No </span>
 
 							<span>
-								: &nbsp; {data.order?.display_id}
-							</span>
+								: &nbsp; {data.order?.}
+							</span> -->
 						</p>
 					</li>
 
@@ -165,7 +165,7 @@ onMount(async () => {
 
 				<div class="mb-5 flex flex-wrap items-center justify-center gap-2 sm:mb-10 sm:gap-5">
 						<a
-							href={`/my/orders/${data.order.id}`}
+							href={`/my/orders`}
 							rel="noopener"
 							aria-label="Click to view the order details"
 							data-sveltekit-preload-data>
