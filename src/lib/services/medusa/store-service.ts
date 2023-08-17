@@ -25,7 +25,10 @@ import {
 	weightUnit,
 	IMAGE_CDN_URL
 } from '$lib/config'
+import { getMedusajsApi } from '$lib/utils/server'
+import { error } from '@sveltejs/kit'
 import { fetchInit } from './init-service'
+import type { MedusaStore } from './types'
 
 export const getStoreData = async ({
 	cookieStore,
@@ -157,4 +160,21 @@ export const getStoreData = async ({
 	storeRes.storeOne = store
 	storeRes.megamenu = megamenu
 	return storeRes
+}
+
+interface GetShopByIdInput {
+	sid?: string | null
+	shopId: string
+}
+export const getShopById = async ({ sid = null, shopId }: GetShopByIdInput) => {
+	try {
+		const store: { store: MedusaStore } = await getMedusajsApi(`/fetch-store/${shopId}`, {}, sid)
+		return store.store
+	} catch (err) {
+		if (typeof err.status === 'number' && err.status >= 400 && err.status <= 599) {
+			throw error(err.status, err.message)
+		} else {
+			throw error(400, err)
+		}
+	}
 }

@@ -7,12 +7,7 @@ import Twitter from './Twitter.svelte'
 import { page } from '$app/stores'
 const {
 	author,
-	facebookAuthorPage,
-	facebookPageName,
-	githubPage,
-	linkedinProfile,
-	telegramUsername,
-	twitterUsername
+
 } = authorInfo
 
 const defaultAlt = 'LRNR'
@@ -85,9 +80,9 @@ const url = `${WWW_URL}/${slug}`
 
 let pageTitle
 if (title) {
-	pageTitle = `${title} - ${$page.data?.store?.websiteName}`
+	pageTitle = `${title} - Shopolah`
 } else {
-	pageTitle = `${$page.data?.store?.websiteName}`
+	pageTitle = `Shopolah`
 }
 
 const openGraphProps = {
@@ -101,7 +96,7 @@ const openGraphProps = {
 	pageTitle,
 	siteTitle: $page.data?.store?.websiteName,
 	url,
-	...(article ? { datePublished, lastUpdated, facebookPageName, facebookAuthorPage } : {})
+	...(article ? { datePublished, lastUpdated} : {})
 }
 const schemaOrgProps = {
 	article,
@@ -111,19 +106,14 @@ const schemaOrgProps = {
 	description,
 	entity,
 	entityMeta,
-	facebookPageName,
 	featuredImage,
-	githubPage,
 	lastUpdated,
-	linkedinProfile,
 	name: productName,
 	siteLanguage,
 	siteTitle: $page.data?.store?.websiteName,
 	siteTitleAlt: siteShortTitle,
 	siteUrl: WWW_URL,
-	telegramUsername,
 	title: pageTitle,
-	twitterUsername,
 	url,
 	addressCountry,
 	addressLocality,
@@ -161,7 +151,6 @@ const twitterProps = {
 	description: metaDescription,
 	article,
 	author,
-	twitterUsername,
 	image: twitterImage,
 	timeToRead
 }
@@ -201,7 +190,7 @@ const productProps = {
 	<!-- <html lang="{siteLanguage}"></html> -->
 </svelte:head>
 
-<Twitter {...twitterProps} />
+<!-- <Twitter {...twitterProps} /> -->
 
 <Product {...productProps} />
 

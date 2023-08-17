@@ -1,5 +1,7 @@
 <script lang="ts">
-export let categoryPool = []
+import type { Category } from "$lib/types"
+
+export let categoryPool: Category[] = []
 export let currentProductName = ''
 
 let clazz = ''

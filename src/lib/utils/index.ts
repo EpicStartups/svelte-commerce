@@ -3,6 +3,7 @@ import { toasts } from 'svelte-toasts'
 import type { ToastType } from 'svelte-toasts/types/common'
 import { goto } from '$app/navigation'
 import { error } from '@sveltejs/kit'
+import type { SeoProps, SeoPropsInput } from '$lib/types'
 
 let allToasts: any
 
@@ -207,4 +208,87 @@ export const handleApiError = (e: any) => {
 
 export const toPrice = (price: number) => {
 	return (price / 100).toFixed(2)
+}
+
+export function generateSeoProps(inputData: Partial<SeoProps>): SeoProps {
+	const defaultData: SeoProps = {
+		addressCountry: '',
+		addressLocality: '',
+		addressRegion: '',
+		alternateJsonHref: '',
+		alternateXml: { title: '', href: '' },
+		article: false,
+		brand: 'LRNR',
+		breadcrumbs: [],
+		canonical: '',
+		caption: '',
+		category: '',
+		contentUrl: '',
+		createdAt: null,
+		datePublished: null,
+		depth: { unitCode: '', value: '' },
+		description: '',
+		dnsPrefetch: '',
+		email: '',
+		entityMeta: null,
+		facebookPage: null,
+		featuredImage: {
+			url: '',
+			alt: '', // I used empty string for defaultAlt since its value wasn't provided
+			width: null,
+			height: null,
+			caption: 'Home page'
+		},
+		gtin: null,
+		height: { unitCode: '', value: '' },
+		id: null,
+		image: null,
+		keywords: '',
+		lastUpdated: null,
+		logo: '',
+		metaDescription: '',
+		msapplicationTileImage: '',
+		ogImage: {
+			url: '',
+			alt: '', // defaultAlt value
+			width: null,
+			height: null
+		},
+		ogImageSecureUrl: '',
+		ogImageType: '',
+		ogSiteName: '',
+		ogSquareImage: {
+			url: '',
+			alt: '', // defaultAlt value
+			width: null,
+			height: null
+		},
+		openingHours: ['Monday,Tuesday,Wednesday,Thursday,Friday,Saturday 10:00-20:00'],
+		popularity: 1000,
+		postalCode: '',
+		price: 1,
+		priceRange: '',
+		productAvailability: '',
+		productBrand: '',
+		productName: null,
+		productPriceAmount: null,
+		productPriceCurrency: '',
+		ratingCount: 1,
+		ratingValue: 5,
+		sku: null,
+		slug: '',
+		streetAddress: '',
+		timeToRead: 0,
+		title: '',
+		twitterImage: {
+			url: '',
+			alt: '' // defaultAlt value
+		},
+		updatedAt: null,
+		weight: { unitCode: '', value: '' },
+		width: { unitCode: '', value: '' },
+		wlwmanifestXmlHref: ''
+	}
+
+	return { ...defaultData, ...inputData }
 }

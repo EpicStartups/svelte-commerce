@@ -8,7 +8,8 @@ import type {
 	Item,
 	CartItem,
 	Cart,
-	ShippingOption
+	ShippingOption,
+	Store
 } from '$lib/types'
 import { toPrice } from '$lib/utils'
 import { formatCurrency, type Currency } from '$lib/utils/currency'
@@ -17,7 +18,8 @@ import type {
 	MedusaCart,
 	MedusaItem,
 	MedusaProduct,
-	MedusaShippingOption
+	MedusaShippingOption,
+	MedusaStore
 } from './types'
 export const mapMedusajsOrder = (o: any) => {
 	let tmp: any
@@ -110,6 +112,15 @@ export const mapMedusajsProduct = (
 		: variant.prices[0]
 	const currency2 = currency.toUpperCase() as Currency
 	const metadata = variant.metadata ?? {}
+	const store: Store = p.store
+		? {
+				id: p.store.id,
+				name: p.store.name,
+				slug: p.store.id,
+				banner: '',
+				icon: ''
+		  }
+		: undefined
 
 	const prod: Product = {
 		_id: p.id,
@@ -188,6 +199,7 @@ export const mapMedusajsProduct = (
 		categoryPool: undefined,
 		deliveryDetails: '',
 		isWishlisted: false,
+		store,
 		stock: variant.inventory_quantity
 	}
 	return prod
@@ -336,4 +348,19 @@ export const mapMedusaJsShippingOptions = (
 		})
 	}
 	return res
+}
+
+export const mapMedusaJsStore = (store: MedusaStore): Store => {
+	return {
+		id: store.id,
+		name: store.name,
+		icon: store.icon,
+		banner: store.banner,
+		slug: store.id,
+		products: store.products.map((product) =>
+			mapMedusajsProduct(product, undefined, store.default_currency_code)
+		),
+		createdAt: store.created_at,
+		defaultCurrency: store.default_currency_code
+	}
 }

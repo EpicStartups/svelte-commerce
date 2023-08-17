@@ -24,7 +24,7 @@ const dispatch = createEventDispatcher()
 const cookies = Cookie()
 
 export let me: Me, cart: Cart, data, showCartSidebar: boolean, openSidebar: boolean, store
-
+export let sticky: boolean = true;
 let clazz = ''
 export { clazz as class }
 
@@ -74,7 +74,7 @@ async function onSearchSubmit({ detail }) {
 
 <!-- {hellobar?.active?.val ? 'h-[88px] sm:h-28' : 'h-14 sm:h-20'} -->
 <nav
-	class="{clazz} minimum-width-rem sticky inset-x-0 top-0 w-full border-b bg-white shadow-xs
+	class="{clazz} minimum-width-rem  inset-x-0 top-0 w-full border-b bg-white shadow-xs
 	{hellobar?.active?.val && $page.data.store?.isHyperlocal
 		? 'h-[112px] sm:h-[136px] lg:h-[112px]'
 		: ''}
@@ -83,7 +83,9 @@ async function onSearchSubmit({ detail }) {
 		? 'h-[80px] sm:h-[104px] lg:h-[80px]'
 		: ''}
 	{!hellobar?.active?.val && !$page.data.store?.isHyperlocal ? 'h-[56px] sm:h-[80px]' : ''}
-	{showCartSidebar ? 'z-50 ' : 'z-40 delay-500'}">
+	{showCartSidebar ? 'z-50 ' : 'z-40 delay-500'}
+	{sticky ? "sticky" : ""}
+	">
 	<!-- hellobar -->
 
 	{#if hellobar?.active?.val}

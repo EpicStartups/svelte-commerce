@@ -43,6 +43,17 @@ interface EsProduct {
 	_source: Product
 }
 
+interface Store {
+	id?: string
+	name?: string
+	icon?: string
+	banner?: string
+	slug?: string
+	products?: Product[]
+	createdAt?: string
+	defaultCurrency?: string
+}
+
 interface Product {
 	id?: string
 	_id: string
@@ -50,7 +61,7 @@ interface Product {
 	barcode: string
 	brand?: Brand
 	brandName?: string
-	categoryPool: Category
+	categoryPool?: Category
 	countryOfOrigin: string
 	crossSells?: Product[]
 	deliveryDetails: string
@@ -116,6 +127,7 @@ interface Product {
 	taxRates?: number
 	typeId?: string
 	expiryDate?: string
+	store?: Store
 }
 
 interface Brand {
@@ -143,7 +155,7 @@ interface Category {
 	id?: string
 	name: string
 	slug: string
-	children: [Category]
+	children?: [Category]
 	link?: string
 	active?: boolean
 	new?: boolean
@@ -719,4 +731,98 @@ interface ShippingOption {
 		code: string
 	}[]
 	taxAmount: FormattedAmount
+}
+
+interface SeoProps {
+	addressCountry: string
+	addressLocality: string
+	addressRegion: string
+	alternateJsonHref: string
+	alternateXml: {
+		title: string
+		href: string
+	}
+	article: boolean
+	brand: string
+	breadcrumbs: any[]
+	canonical: string
+	caption: string
+	category: string
+	contentUrl: string
+	createdAt: any
+	datePublished: any
+	depth: {
+		unitCode: string
+		value: string
+	}
+	description: string
+	dnsPrefetch: string
+	email: string
+	entityMeta: any
+	facebookPage: any
+	featuredImage: {
+		url: string
+		alt: string
+		width: any
+		height: any
+		caption: string
+	}
+	gtin: any
+	height: {
+		unitCode: string
+		value: string
+	}
+	id: any
+	image: any
+	keywords: string
+	lastUpdated: any
+	logo: string
+	metaDescription: string
+	msapplicationTileImage: string
+	ogImage: {
+		url: string
+		alt: string
+		width: any
+		height: any
+	}
+	ogImageSecureUrl: string
+	ogImageType: string
+	ogSiteName: string
+	ogSquareImage: {
+		url: string
+		alt: string
+		width: any
+		height: any
+	}
+	openingHours: string[]
+	popularity: number
+	postalCode: string
+	price: number
+	priceRange: string
+	productAvailability: string
+	productBrand: string
+	productName: any
+	productPriceAmount: any
+	productPriceCurrency: string
+	ratingCount: number
+	ratingValue: number
+	sku: any
+	slug: string
+	streetAddress: string
+	timeToRead: number
+	title: string
+	twitterImage: {
+		url: string
+		alt: string
+	}
+	updatedAt: any
+	weight: {
+		unitCode: string
+		value: string
+	}
+	width: {
+		unitCode: string
+		value: string
+	}
+	wlwmanifestXmlHref: string
 }

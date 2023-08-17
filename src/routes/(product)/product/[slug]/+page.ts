@@ -7,14 +7,20 @@ export async function load({ params, url, parent }) {
 	const { slug } = params
 	const variant =
 		url.searchParams.get('variant') !== '' ? url.searchParams.get('variant') : undefined
-	const { zip, sid, origin, store, me } = await parent()
+	const parentData = await parent()
+	const zip = parentData['zip']
+	const sid = parentData['sid']
+	const origin = parentData['origin']
+	const store = parentData['store']
+	const me = parentData['me']
 	if (store?.isSecureCatalogue && !me) {
 		throw redirect(307, `/auth/login?ref=${url?.pathname}`)
 	}
 	const storeId = store?.id
 	const page = url.searchParams.get('page') || 1
+
 	return {
-		product: ProductService.fetchProduct({
+		product: ProductService.fetchProduct3({
 			origin,
 			server: isServer,
 			sid,

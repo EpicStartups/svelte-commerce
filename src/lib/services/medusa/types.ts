@@ -34,6 +34,10 @@ export interface MedusaStore {
 	default_location_id: any
 	metadata: Record<string, any> | null
 	default_sales_channel_id: string
+	payment_link_template?: any
+	banner?: string
+	icon?: string
+	products?: MedusaProduct[]
 }
 
 export type MedusaValue = {

@@ -74,6 +74,7 @@ export const fetchProduct = async ({
 		const med: FetchProductsResp = await getMedusajsApi(
 			`products?handle=${slug}&expand=variants,variants.prices,images&currency_code=myr`
 		)
+		console.log('med: ', med.products[0])
 		if (med.count !== 1) {
 			throw error(400, `there are ${med.count} products for ${slug}`)
 		}
@@ -101,6 +102,32 @@ export const fetchProduct2 = async ({ origin, slug, id, server = false, sid = nu
 		res = mapMedusajsProduct(productArray[0]) // assuming we only want the first product in the array
 
 		return res || {}
+	} catch (e) {
+		if (typeof e.status === 'number' && e.status >= 400 && e.status <= 599) {
+			throw error(e.status, e.message)
+		} else {
+			throw error(400, e)
+		}
+	}
+}
+
+export const fetchProduct3 = async ({
+	origin,
+	slug,
+	id,
+	server = false,
+	sid = null,
+	variant,
+	currency
+}: FetchProductInput) => {
+	try {
+		const med: { product: MedusaProduct } = await getMedusajsApi(
+			`fetch-product?handle=${slug}&currency_code=myr`
+		)
+		if (!med.product) {
+			throw error(400, `there are no product for ${slug}`)
+		}
+		return mapMedusajsProduct(med.product, variant, currency)
 	} catch (e) {
 		if (typeof e.status === 'number' && e.status >= 400 && e.status <= 599) {
 			throw error(e.status, e.message)

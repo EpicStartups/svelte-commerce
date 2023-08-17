@@ -472,8 +472,14 @@ async function updateVariant(variant) {
 					<div class="mb-2 flex flex-wrap items-center justify-between gap-2">
 						<!-- Brand -->
 
-						{#if data.product?.brand?.name}
-							<h3>{data.product?.brand?.name}</h3>
+						{#if data.product?.store?.name}
+							<a 
+							href={`/shop/${data.product.store.id}`} 
+							class="font-bold text-lg underline underline-offset-4 decoration-2"
+							data-sveltekit-preload-data
+							>
+								{data.product?.store?.name}
+							</a>
 						{/if}
 
 						<!-- Social share button -->
