@@ -13,6 +13,8 @@ export const alert = 'The High Performance and Scalable Ecommerce'
 export const authorInfo = {
 	author: 'EpicStartups'
 }
+export const GOOGLE_CLIENT_ID =
+	'414060469322-n4raqj2rdbjhegvrtdk6mhbdm4sd0oc7.apps.googleusercontent.com'
 export const currency = { symbol: '$', code: 'USD' }
 export const currencyCode = env.PUBLIC_CORE_CURRENCY_CODE || 'USD'
 export const currencySymbol = env.PUBLIC_CORE_CURRENCY_SYMBOL || '$'

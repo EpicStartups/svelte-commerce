@@ -64,7 +64,7 @@ onMount(() => {
 				verified: onetap.verified,
 				active: onetap.active
 			}
-			await cookies.set('me', me, { path: '/' })
+			cookies.set('me', me, { path: '/' })
 			let r = ref || '/'
 			if (browser) goto(r)
 		}
