@@ -17,7 +17,7 @@ export async function load({ parent }) {
 		server: isServer
 	})
 	const products = await ProductService.fetchProducts({ origin })
-
+	//console.log('products: ', products)
 	return {
 		streamed: {
 			home: HomeService.fetchHome({ origin, storeId: store?.id, server: isServer }),

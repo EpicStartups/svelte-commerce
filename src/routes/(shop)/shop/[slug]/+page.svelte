@@ -1,12 +1,5 @@
 <script lang="ts">
 // import { getMegamenuFromStore } from '$lib/store/megamenu'
-import { browser } from '$app/environment'
-import { CategoriesMobile, Hero, HeroBanners, PickedBanners } from '$lib/theme-config'
-import { CategoryService } from '$lib/services'
-import { Footer, MobileFooter } from '$lib/components'
-import { onMount } from 'svelte'
-import { page } from '$app/stores'
-import { Skeleton, Textbox } from '$lib/ui'
 import { generateSeoProps, toast } from '$lib/utils'
 import dayjs from 'dayjs'
 import Fuse from 'fuse.js'
@@ -31,15 +24,29 @@ let seoProps = generateSeoProps({
 
 <div class="w-100 h-[500px] bg-gray-300 relative flex justify-center items-center">
 
-	<h1 class="text-3xl font-bold">
+	<h1 class="text-3xl font-bold relative z-[50]">
 		{data.shop.name}
 	</h1>
 
+	{#if data.shop.banner}
+		<img 
+			class="w-[100%] h-[100%] object-cover absolute top-0 bottom-0 left-0 right-0"
+			src={data.shop.banner}
+			alt={`banner for ${data.shop.name}`}
+		/>
+	{/if}
 </div>
 
 <div class="w-100 sticky top-0 h-[100px] bg-gray-100 px-12 flex flex-row justify-between items-center">
-	<div class="w-[100px] h-[60px] bg-black">
 
+	<div class="w-[100px] h-[60px]">
+		{#if data.shop.icon}
+			<img 
+			class="w-[100%] h-[100%] object-contain"
+			src={data.shop.icon}
+			alt={`icon for ${data.shop.name}`}
+			/>
+		{/if}
 	</div>
 </div>
 
@@ -51,11 +58,11 @@ let seoProps = generateSeoProps({
 		{#each data.shop.products as product}
 			<a 
 			href={`/product/${product.slug}`}
-			class="w-100 h-[400px] grid grid-rows-[250px_auto] shadow hover:shadow-md rounded-xl"
+			class="w-100 h-[400px] grid grid-rows-[250px_auto] shadow hover:shadow-md rounded-xl overflow-hidden"
 			data-sveltekit-preload-data
 			>
 				<div class="w-100 h-100">
-					<img class="w-[100%] h-[100%] object-contain" src={product.img} alt={`thumbnail of ${product.name}`}/>
+					<img class="w-[100%] h-[100%] object-cover" src={product.img} alt={`thumbnail of ${product.name}`}/>
 				</div>
 				<div class="flex flex-col justify-between items-start px-4 py-6">
 					<div>
