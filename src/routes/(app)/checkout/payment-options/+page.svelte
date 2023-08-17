@@ -135,8 +135,8 @@ async function submit(pm) {
 			// })
 			// const options = {
 			// 	key: rp.keyId, // Enter the Key ID generated from the Dashboard
-			// 	name: 'Litekart.in',
-			// 	description: 'Payment for Litekart',
+			// 	name: 'Shopolah',
+			// 	description: 'Payment for Shopolah',
 			// 	image: logo,
 			// 	amount: rp.amount,
 			// 	order_id: rp.id,
@@ -159,7 +159,7 @@ async function submit(pm) {
 			// 	prefill: {
 			// 		name: `${data.me.firstName} ${data.me.lastName}`,
 			// 		phone: data.me.phone,
-			// 		email: data.me.email || 'help@litekart.in',
+			// 		email: data.me.email || 'help@shopolah.com',
 			// 		contact: data.me.phone
 			// 	},
 			// 	notes: {

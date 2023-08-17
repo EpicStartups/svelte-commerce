@@ -13,6 +13,7 @@ export async function load({ params, parent, url }) {
 			storeId: store?.id,
 			server: isServer,
 			sid
-		})
+		}),
+		slug
 	}
 }

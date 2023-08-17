@@ -62,8 +62,8 @@ let media = data.vendor?.banners[0]
 					class="share-button"
 					text="{text}"
 					url="{url}"
-					hashtags="litekart"
-					via="litekart"
+					hashtags="shopolah"
+					via="Shopolah"
 					related="mobile cover,t-shirt,key chain " />
 			</li>
 
@@ -107,8 +107,8 @@ let media = data.vendor?.banners[0]
 						class="share-button"
 						text="{text}"
 						url="{url}"
-						hashtags="litekart"
-						via="litekart"
+						hashtags="shopolah"
+						via="shopolah"
 						related="mobile cover,t-shirt,key chain " />
 				</li>
 

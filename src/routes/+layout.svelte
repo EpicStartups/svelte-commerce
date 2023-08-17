@@ -91,8 +91,8 @@ onMount(async () => {
 	<link rel="shortcut icon" type="image/x-icon" href="{$page.data.store.favicon}" />
 	<meta name="theme-color" content="{$page.data.store.themeColor}" />
 	<link rel="apple-touch-icon" href="{$page.data.store.favicon}" />
-	<meta name="apple-mobile-web-app-title" content="{$page.data.store.websiteName}" />
-	<meta name="application-name" content="{$page.data.store.websiteName}" />
+	<meta name="apple-mobile-web-app-title" content="Shopolah" />
+	<meta name="application-name" content="Shopolah" />
 	<link
 		href="https://fonts.googleapis.com/css2?family={$page.data.store
 			.fontFamily}:wght@100;200;300;400;500;600;700;800;900&display=swap"
@@ -160,78 +160,39 @@ onMount(async () => {
 	<PreloadingIndicator />
 {/if}
 
-{#if !$page?.data?.store}
-	<!-- If store not found -->
 
-	<div class="h-screen w-full bg-white flex items-center justify-center">
-		<a
-			href="https://litekart.in/"
-			class="fixed top-0 inset-x-0 z-10 p-5 px-10 flex items-center justify-center border-b shadow-md">
-			<img
-				src="/litekart-rectangular-logo-black.png"
-				alt=""
-				class="h-10 w-auto object-contain object-center" />
-		</a>
-
-		<div class="flex items-center justify-center p-10 bg-white text-center">
-			<img src="/no/no_store_found.png" alt="" class="h-80 w-auto object-contain object-center" />
-		</div>
+<section class="minimum-width-rem relative flex min-h-screen flex-col bg-white antialiased">
+	<div class="h-rem w-full flex-1">
+		<slot />
 	</div>
-{:else if !$page.data?.store?.closed}
-	<!-- If store found and is not closed -->
+</section>
 
-	<section class="minimum-width-rem relative flex min-h-screen flex-col bg-white antialiased">
-		<div class="h-rem w-full flex-1">
-			<slot />
-		</div>
-	</section>
+<!-- <PartytownSnippet /> -->
 
-	<!-- <PartytownSnippet /> -->
-
-	{#if showBackToTopButton}
-		<BackToTop />
-	{/if}
-
-	{#if $page.data.store?.whatsappChatButton?.active?.val && $page.data.store?.whatsappChatButton?.phone?.val}
-		<a
-			href="https://api.whatsapp.com/send?phone={$page.data.store?.whatsappChatButton?.phone?.val}"
-			target="_blank"
-			rel="noopener noreferrer"
-			class="fixed z-40 bottom-16 left-4">
-			<img
-				src="{whatsappIcon}"
-				alt=""
-				class="h-10 w-10 object-contain transform hover:scale-125 hover:-translate-y-2 transition duration-300" />
-		</a>
-	{/if}
-
-	<ToastContainer let:data>
-		<FlatToast data="{data}" />
-	</ToastContainer>
-
-	<!-- {#if ReloadPrompt}
-		<svelte:component this="{ReloadPrompt}" />
-	{/if} -->
-{:else}
-	<!-- If store found and is closed -->
-
-	<div class="h-screen w-full bg-white flex items-center justify-center">
-		<div
-			class="fixed top-0 inset-x-0 z-10 p-5 px-10 flex items-center justify-center border-b shadow-md">
-			<LazyImg src="{$page.data.store.logo}" class="h-10 w-auto object-contain object-center" />
-		</div>
-
-		<div class="flex items-center justify-center p-10 bg-white text-center">
-			<div
-				class="p-10 flex flex-col gap-2 items-center justify-center border-4 rounded-3xl shadow-2xl">
-				<img src="{storeClosed}" alt="" class="h-52 w-auto object-contain object-center" />
-
-				<p>
-					{$page.data.store.closedMessage}
-				</p>
-			</div>
-		</div>
-	</div>
+{#if showBackToTopButton}
+	<BackToTop />
 {/if}
+
+{#if $page.data.store?.whatsappChatButton?.active?.val && $page.data.store?.whatsappChatButton?.phone?.val}
+	<a
+		href="https://api.whatsapp.com/send?phone={$page.data.store?.whatsappChatButton?.phone?.val}"
+		target="_blank"
+		rel="noopener noreferrer"
+		class="fixed z-40 bottom-16 left-4">
+		<img
+			src="{whatsappIcon}"
+			alt=""
+			class="h-10 w-10 object-contain transform hover:scale-125 hover:-translate-y-2 transition duration-300" />
+	</a>
+{/if}
+
+<ToastContainer let:data>
+	<FlatToast data="{data}" />
+</ToastContainer>
+
+<!-- {#if ReloadPrompt}
+	<svelte:component this="{ReloadPrompt}" />
+{/if} -->
+
 
 <FetchInit />

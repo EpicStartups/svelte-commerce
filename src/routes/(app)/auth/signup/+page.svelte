@@ -25,11 +25,11 @@ let ref = $page?.url?.searchParams.get('ref')
 let role = $page?.url?.searchParams.get('role') || 'admin'
 let store = $page?.url?.searchParams.get('store') || undefined
 let newResistration = {
-	firstName: IS_DEV ? 'Swadesh' : '',
-	lastName: IS_DEV ? 'Behera' : '',
-	email: IS_DEV ? 'hi@litekart.in' : '',
-	password: IS_DEV ? 'litekart' : '',
-	passwordConfirmation: IS_DEV ? 'litekart' : ''
+	firstName: IS_DEV ? '' : '',
+	lastName: IS_DEV ? '' : '',
+	email: IS_DEV ? '' : '',
+	password: IS_DEV ? '' : '',
+	passwordConfirmation: IS_DEV ? '' : ''
 }
 let loading = false
 let showPassword = false
@@ -96,7 +96,7 @@ async function submit(n) {
 			store: res.store
 		}
 
-		await cookies.set('me', me, { path: '/' })
+		cookies.set('me', me, { path: '/' })
 		// $page.data.me = me
 		await invalidateAll()
 
@@ -123,12 +123,9 @@ async function submit(n) {
 				class="max-h-16 max-w-[160px] object-contain object-center" />
 		{:else}
 			<h1
-				class="bg-gradient-to-b from-primary-500 to-primary-700 bg-clip-text text-3xl font-extrabold text-transparent underline decoration-zinc-800">
-				{#if $page.data.store?.websiteName}
-					{$page.data.store?.websiteName}
-				{:else}
-					Litekart
-				{/if}
+				class="bg-gradient-to-b from-primary-500 to-primary-700 bg-clip-text text-3xl font-extrabold text-transparent underline decoration-zinc-800"
+			>
+				Shopolah
 			</h1>
 		{/if}
 	</a>

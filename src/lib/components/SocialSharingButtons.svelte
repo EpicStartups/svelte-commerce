@@ -121,8 +121,8 @@ const copyToClipboard = (link) => {
 					class="share-button"
 					text="{productName}"
 					url="{url}"
-					hashtags="litekart"
-					via="litekart"
+					hashtags="shopolah"
+					via="shopolah"
 					related="mobile cover,t-shirt,key chain " />
 			</li>
 

@@ -23,7 +23,7 @@ export async function load({ cookies, locals, params, url }) {
 				state: null,
 				firstName: 'Test Name',
 				lastName: 'Test Last Name',
-				email: 'test@litekart.in',
+				email: 'test@shopolah.co',
 				phone: '8888888888',
 				address: 'fake address',
 				country: 'IN',

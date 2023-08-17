@@ -3,7 +3,7 @@ import { toasts } from 'svelte-toasts'
 import type { ToastType } from 'svelte-toasts/types/common'
 import { goto } from '$app/navigation'
 import { error } from '@sveltejs/kit'
-import type { SeoProps, SeoPropsInput } from '$lib/types'
+import type { SeoProps } from '$lib/types'
 
 let allToasts: any
 

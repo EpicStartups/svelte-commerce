@@ -10,19 +10,24 @@ let showCartSidebar = false
 <div class="{showCartSidebar || openSidebar ? 'h-screen overflow-hidden' : 'h-full'}">
 	<div class="hidden lg:block">
 		<Nav
-			me="{data.me}"
-			cart="{data.cart}"
-			store="{data.store}"
-			q="{data.q}"
+			me="{data["me"]}"
+			cart="{data["cart"]}"
+			store="{data["store"]}"
+			data={data}
 			bind:showCartSidebar="{showCartSidebar}"
 			bind:openSidebar="{openSidebar}" />
 	</div>
 
-	<PageTransitions url="{data.url}">
+	<PageTransitions url="{data["url"]}">
 		<slot />
 	</PageTransitions>
 
 	<div class="hidden md:block">
-		<Footer />
+		<Footer 
+			me={data["me"]}
+			store={data["store"]}
+			megamenu={[]}
+			popularSearches={undefined}
+		/>
 	</div>
 </div>

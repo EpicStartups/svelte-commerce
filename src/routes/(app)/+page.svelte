@@ -34,78 +34,26 @@ import dayjs from 'dayjs'
 import PincodeInputBox from '$lib/themes/misiki/PincodeInputBox.svelte'
 import SEO from '$lib/components/SEO/index.svelte'
 import Skeleton from '$lib/ui/Skeleton.svelte'
+import { generateSeoProps } from '$lib/utils'
 
 const cookies = Cookie()
 let today = dayjs(new Date()).toISOString()
 
 export let data
 
-let seoProps = {
-	// addressCountry: 'India',
-	// addressLocality: 'Semiliguda, Koraput',
-	// addressRegion: 'Odisha',
-	// alternateJsonHref: '',
-	// alternateXml: { title: '', href: '' },
-	brand: $page.data.store?.title,
-	// breadcrumbs: '',
-	caption: $page.data.store?.title,
-	category: $page.data.store?.title,
-	contentUrl: $page.data.store?.logo,
+let seoProps = generateSeoProps({
+	brand: data.store?.title,
+	caption: data.store?.title,
+	category: data.store?.title,
+	contentUrl: data.store?.logo,
 	createdAt: today,
-	// depth: { unitCode: '', value: '' },
-	email: `${$page?.data?.store?.email}`,
-	// entityMeta: '',
-	// facebookPage: '',
-	// gtin: '',
-	// height: '',
-	id: $page?.url?.href,
-	image: $page.data.store?.logo,
-	logo: $page.data.store?.logo,
-	ogSquareImage: { url: '', width: 56, height: 56 },
+	id: data.url?.href,
+	image: data.store?.logo,
+	ogSquareImage: {url: "", width: 56, height: 56, alt: "Square Logo"},
 	openingHours: ['Monday,Tuesday,Wednesday,Thursday,Friday,Saturday 08:00-13:00'],
-	// popularity: product.popularity,
-	// postalCode: '764036',
-	// price: product.price,
-	// priceRange: `${product.price}-${product.mrp}`,
-	// ratingCount: 1,
-	// ratingValue: +product.ratings + 1,
-	// sku: product.sku,
-	// streetAddress: 'Padmajyoti Marg, Nandapur Road',
 	timeToRead: 0,
-	updatedAt: today,
-	// weight: { unitCode: '', value: '' },
-	// width: { unitCode: '', value: '' },
-	// wlwmanifestXmlHref: '',
-	metaDescription: $page.data.store?.metaDescription,
-	// article: false,
-	canonical: `${$page?.url.href}`,
-	datePublished: today,
-	description: $page.data.store?.description,
-	dnsPrefetch: `//cdn.jsdelivr.net`,
-	// entityMeta: null,
-	featuredImage: {
-		url: $page.data.store?.logo,
-		width: 675,
-		height: 380,
-		caption: $page.data.store?.title
-	},
-	keywords: $page.data.store?.keywords,
-	lastUpdated: today,
-	msapplicationTileImage: $page.data.store?.logo,
-	ogImage: { url: $page.data.store?.logo, width: 128, height: 56 },
-	ogImageSecureUrl: `${$page?.data?.store?.logo}`,
-	ogImageType: 'image/jpeg',
-	ogSiteName: `${$page.data.origin}/sitemap/sitemap.xml`,
-	// productAvailability: `${product.stock}`,
-	productBrand: $page.data.store?.title,
-	productName: $page.data.store?.title,
-	// productPriceAmount: `${product.price}`,
-	productPriceCurrency: `${$page?.data?.store?.currencyCode}`,
-	slug: `/`,
-	// timeToRead: 0,
-	title: $page.data.store?.title,
-	twitterImage: { url: $page.data.store?.logo }
-}
+	updatedAt: today
+})
 
 let showFooter = false
 let showPinCodeEntryModal = false

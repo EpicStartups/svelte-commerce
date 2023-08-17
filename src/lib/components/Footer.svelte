@@ -590,15 +590,6 @@ async function getPages() {
 				<span>
 					© {$page.data.store?.websiteName}
 				</span>
-				<span>
-					Powered by <a
-						href="{$page.data.store?.saasDomain || 'https://litekart.in'}"
-						rel="external"
-						class="hover:underline"
-						target="_blank">
-						{$page.data.store?.saasName || 'Litekart'}
-					</a>
-				</span>
 			</p>
 
 			<div class="flex items-center justify-center gap-4">

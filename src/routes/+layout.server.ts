@@ -30,7 +30,17 @@ export const load: LayoutServerLoad = async ({ url, locals, cookies }) => {
 		}
 
 		// me,
-		return { ...locals, pathname }
+		return {
+			...locals,
+			me: locals['me'],
+			currentPage: locals['currentPage'],
+			q: locals['q'],
+			sid: locals['sid'],
+			cartQty: locals['cartQty'],
+			url: locals['url'],
+			zip: locals['zip'],
+			pathname
+		}
 	} catch (e) {
 		throw error(
 			404,

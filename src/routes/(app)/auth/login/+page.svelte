@@ -34,15 +34,15 @@ let isMobile = false
 let loading = false
 let maxlength = null
 let otpRequestSend = false
-let password = IS_DEV ? 'litekart' : ''
-let phone = IS_DEV ? '8249028220' : ''
+let password = IS_DEV ? '' : ''
+let phone = IS_DEV ? '' : ''
 let ref = $page?.url?.searchParams.get('ref')
 let resendAfter = 0
 let selectedCountry = data.countries[0]
 let showDropDown = false
 let showPassword = false
 let type = 'password'
-let value = email ? email : IS_DEV ? 'hi@litekart.in' : null
+let value = email ? email : IS_DEV ? 'your_email@gmail.com' : null
 
 onMount(() => {
 	googleOneTap(
@@ -225,12 +225,9 @@ function changeNumber() {
 				class="max-h-16 max-w-[160px] object-contain object-center" />
 		{:else}
 			<h1
-				class="bg-gradient-to-b from-primary-500 to-primary-700 bg-clip-text text-3xl font-extrabold text-transparent underline decoration-zinc-800">
-				{#if $page.data.store?.websiteName}
-					{$page.data.store?.websiteName}
-				{:else}
-					Litekart
-				{/if}
+				class="bg-gradient-to-b from-primary-500 to-primary-700 bg-clip-text text-3xl font-extrabold text-transparent underline decoration-zinc-800"
+			>
+				Shopolah
 			</h1>
 		{/if}
 	</a>
