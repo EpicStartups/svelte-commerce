@@ -1,5 +1,6 @@
 <script lang="ts">
 import { Footer, Nav } from '$lib/theme-config'
+import {Footer as FooterV2} from "$lib/components"
 import { PageTransitions } from '$lib/components'
 
 export let data
@@ -21,6 +22,7 @@ let openSidebar = false
 	</PageTransitions>
 
 	<div class="hidden lg:block">
-		<Footer />
+		<!-- <Footer /> -->
+		<FooterV2 />
 	</div>
 </div>

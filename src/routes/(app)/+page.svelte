@@ -40,6 +40,7 @@ import Categories from "$lib/sections/home/categories.svelte";
 import Benefits from '$lib/sections/home/benefits.svelte';
 import FeaturedProduct from '$lib/sections/home/featuredProduct.svelte'
 import Join from '$lib/sections/home/join.svelte'
+import { Footer as FooterV2 } from '$lib/components'
 
 const cookies = Cookie()
 let today = dayjs(new Date()).toISOString()
@@ -117,7 +118,8 @@ onMount(() => {
 		{/if}
 		
 		{#await data?.streamed.products then products}
-			<div class="flex flex-row justify-around items-center flex-wrap gap-8 w-100 max-w-[1800px] px-5 py-8 mx-auto">
+			<h1 class="text-center mt-20 mb-8 font-jost text-4xl">All Products</h1>
+			<div class="flex flex-row justify-around items-center flex-wrap gap-8 w-100 max-w-[1800px] px-5 py-8 mx-auto">	
 			{#each products.products as product}
 				<a href={`product/${product.slug}`} class="h-[500px] w-[350px] overflow-hidden">
 					<img 
@@ -291,9 +293,9 @@ onMount(() => {
 
 		<!-- Legal Footer Information -->
 
-		<LegalFooterInformation />
+		<!-- <LegalFooterInformation /> -->
 
-		<div class="h-10 sm:h-20 w-full"></div>
+		<!-- <div class="h-10 sm:h-20 w-full"></div> -->
 
 		<!-- Footer mobile show hide toggle -->
 
@@ -320,6 +322,7 @@ onMount(() => {
 			{#if showFooter}
 				<div transition:slide="{{ duration: 300 }}">
 					<Footer />
+					<!-- <FooterV2 /> -->
 				</div>
 			{/if}
 		</div>
