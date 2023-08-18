@@ -97,19 +97,19 @@ async function getMegaMenu() {
 				<a
 					href="{category.link || `/${category.slug}` || '_'}"
 					aria-label="Click to visit category related products page"
-					class="{clazz} items-center relative flex shrink-0 justify-center gap-1 whitespace-nowrap border-b-4 border-transparent p-2
-                	{index % 6 == 0 ? 'hover:border-yellow-500' : ''}
-                	{index % 6 == 1 ? 'hover:border-purple-500' : ''}
-                	{index % 6 == 2 ? 'hover:border-red-500' : ''}
-                	{index % 6 == 3 ? 'hover:border-green-500' : ''}
-                	{index % 6 == 4 ? 'hover:border-pink-500' : ''}
-                	{index % 6 == 5 ? 'hover:border-blue-500' : ''}
-                	{index % 6 == 0 && selectedCategory === category.name ? 'border-yellow-500' : ''}
-                	{index % 6 == 1 && selectedCategory === category.name ? 'border-purple-500' : ''}
-                	{index % 6 == 2 && selectedCategory === category.name ? 'border-red-500' : ''}
-                	{index % 6 == 3 && selectedCategory === category.name ? 'border-green-500' : ''}
-                	{index % 6 == 4 && selectedCategory === category.name ? 'border-pink-500' : ''}
-                	{index % 6 == 5 && selectedCategory === category.name ? 'border-blue-500' : ''}">
+					class="{clazz} transition-all font-jost mt-2 items-center relative flex shrink-0 justify-center gap-1 whitespace-nowrap border-b-4 border-transparent p-2
+                	{index % 6 == 0 ? 'hover:border-primary-900' : ''}
+                	{index % 6 == 1 ? 'hover:border-primary-900' : ''}
+                	{index % 6 == 2 ? 'hover:border-primary-900' : ''}
+                	{index % 6 == 3 ? 'hover:border-primary-900' : ''}
+                	{index % 6 == 4 ? 'hover:border-primary-900' : ''}
+                	{index % 6 == 5 ? 'hover:border-primary-900' : ''}
+                	{index % 6 == 0 && selectedCategory === category.name ? 'border-primary-900' : ''}
+                	{index % 6 == 1 && selectedCategory === category.name ? 'border-primary-900' : ''}
+                	{index % 6 == 2 && selectedCategory === category.name ? 'border-primary-900' : ''}
+                	{index % 6 == 3 && selectedCategory === category.name ? 'border-primary-900' : ''}
+                	{index % 6 == 4 && selectedCategory === category.name ? 'border-primary-900' : ''}
+                	{index % 6 == 5 && selectedCategory === category.name ? 'border-primary-900' : ''}">
 					<!-- Root category -->
 
 					<span>{category.name}</span>
@@ -148,13 +148,7 @@ async function getMegaMenu() {
 									<a
 										href="{c.link || `/${c.slug}` || '_'}"
 										aria-label="Click to visit category related products page"
-										class="mb-2 block w-full font-semibold
-										{index % 6 == 0 ? 'text-yellow-500 ' : ''}
-										{index % 6 == 1 ? 'text-purple-500 ' : ''}
-										{index % 6 == 2 ? 'text-red-500 ' : ''}
-                                    	{index % 6 == 3 ? 'text-green-500 ' : ''}
-                                    	{index % 6 == 4 ? 'text-pink-500 ' : ''}
-                                    	{index % 6 == 5 ? 'text-blue-500 ' : ''}">
+										class="mb-2 block w-full font-semibold text-primary-900">
 										{c.name}
 									</a>
 

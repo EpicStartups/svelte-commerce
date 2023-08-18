@@ -19,6 +19,7 @@ import Cookie from 'cookie-universal'
 import menu from '$lib/config/menu'
 import PincodeInputBox from '$lib/themes/misiki/PincodeInputBox.svelte'
 import userEmptyProfile from '$lib/assets/user-empty-profile.png'
+import Logo from "$lib/assets/shopolah-logo.png";
 
 const dispatch = createEventDispatcher()
 const cookies = Cookie()
@@ -124,24 +125,11 @@ async function onSearchSubmit({ detail }) {
 			<!-- Website Logo/Name -->
 
 			<a href="/" aria-label="Go to home" class="block shrink-0">
-				{#if $page?.data?.store?.logo}
-					<LazyImg
-						src="{$page?.data?.store?.logo}"
-						alt="logo"
-						height="64"
-						aspect_ratio="4:1"
-						class="max-h-10 sm:max-h-16 max-w-[160px] object-contain object-left" />
-				{:else if $page?.data?.store?.websiteName}
-					<h2
-						class="bg-gradient-to-b from-primary-500 to-secondary-500 bg-clip-text text-transparent truncate w-40 sm:w-auto sm:max-w-sm">
-						{$page?.data?.store?.websiteName}
-					</h2>
-				{:else}
-					<img
-						src="{logo}"
-						alt="logo"
-						class="max-h-10 sm:max-h-16 w-40 object-contain object-left" />
-				{/if}
+				<img 
+					class="h-[35px] object-cover"
+					src={Logo}
+					alt="logo of Shopolah"
+				/>
 			</a>
 
 			{#if $page.data.store?.isHyperlocal}
@@ -181,7 +169,7 @@ async function onSearchSubmit({ detail }) {
 
 		<!-- Search box -->
 
-		<div class="hidden w-full min-w-[200px] max-w-4xl flex-1 lg:block">
+		<div class="hidden w-full min-w-[200px] max-w-4xl flex-1 lg:block font-jost">
 			<Autocomplete
 				placeholder="{$page?.data?.store?.searchbarText || 'Search...'}"
 				on:search="{onSearchSubmit}" />
@@ -231,7 +219,7 @@ async function onSearchSubmit({ detail }) {
 					></path>
 				</svg>
 
-				<span class="hidden text-center text-xs font-semibold tracking-wider lg:block"> Cart </span>
+				<span class="hidden text-center font-semibold tracking-wider lg:block font-jost tracking-widest text-xs"> Cart </span>
 
 				{#if $page.data?.cartQty > 0}
 					<div
@@ -267,7 +255,7 @@ async function onSearchSubmit({ detail }) {
 							></path>
 						</svg>
 
-						<span class="hidden text-center text-xs font-semibold tracking-wider lg:block">
+						<span class="hidden text-center text-xs font-semibold tracking-widest lg:block font-jost">
 							Account
 						</span>
 					</a>
@@ -275,7 +263,7 @@ async function onSearchSubmit({ detail }) {
 					{#if showDropdownAccount}
 						<ul
 							transition:slide="{{ duration: 300 }}"
-							class="absolute z-50 top-20 right-0 flex min-w-max flex-col rounded-b border bg-white p-2 text-sm shadow-inner">
+							class="absolute z-50 top-20 right-0 flex min-w-max flex-col rounded-b border bg-white p-2 text-sm shadow-inner font-jost">
 							<li class="mb-2 border-b py-2 px-4">
 								<a
 									href="/my/profile"
@@ -342,7 +330,7 @@ async function onSearchSubmit({ detail }) {
 									}}">
 									<button
 										type="submit"
-										class="w-full cursor-pointer rounded py-2 px-4 text-left transition duration-300 focus:outline-none hover:bg-zinc-100">
+										class="w-full cursor-pointer rounded py-2 px-4 text-left transition duration-300 focus:outline-none hover:bg-zinc-100 text-red-600">
 										Logout
 									</button>
 								</form>
@@ -396,7 +384,7 @@ async function onSearchSubmit({ detail }) {
 							></path>
 						</svg>
 
-						<span class="hidden text-center text-xs font-semibold tracking-wider lg:block">
+						<span class="hidden text-center text-xs font-semibold tracking-widest lg:block font-jost">
 							Login
 						</span>
 					</button>

@@ -48,7 +48,7 @@ const changeTab = (tab: Tab) => {
 <section class="home-featured-product lg:py-24 py-16 bg-primary-300 min-h-[500px] font-jost">
     <h2 class="text-center text-2xl">FEATURED PRODUCTS</h2>
 
-    <div class="w-[100%] max-w-[500px] mx-auto flex justify-between items-center flex-wrap mt-8">
+    <div class="w-[100%] max-w-[600px] mx-auto flex justify-center items-center flex-wrap mt-8 px-8 gap-10">
         <button 
             class={`${active === "men" ? "underline underline-offset-8 decoration-primary-900 decoration-2" : "text-black/50"} transition-all`}
             on:click|preventDefault="{() => changeTab("men")}"

@@ -56,7 +56,7 @@ $: processedAddressed = selectedAddress ? selectedAddress.id : undefined;
 				type="radio"
 				value={address.id}
 				name="address"
-				class="mt-1.5 h-4 w-4 focus:outline-none focus:ring-0 focus:ring-offset-0"
+				class="mt-1.5 h-4 w-4 focus:outline-none focus:ring-0 focus:ring-offset-0 focus:ring-primary-900"
 				on:change|preventDefault="{() => addressChanged(address)}" 
 			/>
 

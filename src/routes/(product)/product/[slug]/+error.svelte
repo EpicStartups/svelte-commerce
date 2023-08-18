@@ -12,6 +12,7 @@ h1 {
 <script>
 import { page } from '$app/stores'
 import errAnimated from '$lib/assets/no/error.svg'
+import Button2 from '$lib/components/buttons/Button2.svelte'
 import PrimaryButton from '$lib/ui/PrimaryButton.svelte'
 </script>
 
@@ -85,7 +86,9 @@ import PrimaryButton from '$lib/ui/PrimaryButton.svelte'
 
 	<div class="mt-5 sm:mt-10">
 		<a href="/" aria-label="Click here to go back home" data-sveltekit-preload-data>
-			<PrimaryButton class="px-10">Home</PrimaryButton>
+			<Button2 className="bg-primary-900 px-8">
+				Home
+			</Button2>
 		</a>
 	</div>
 </div>

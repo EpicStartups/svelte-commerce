@@ -396,7 +396,7 @@ async function updateVariant(variant) {
 	url="{$page?.url?.href}"
 	store="{$page?.data?.store}" />
 
-<div class="min-h-screen lg:p-10">
+<div class="min-h-screen lg:p-10 font-jost">
 	<div class="md:container md:mx-auto flex flex-col gap-5">
 		<div class="hidden lg:flex items-center justify-between gap-2">
 			<!-- Breadcrumb -->
@@ -557,8 +557,7 @@ async function updateVariant(variant) {
 						</div>
 
 						{#await data.streamed?.moreProductDetails then value}
-						<p>{"RM"}</p>
-							<h6 class="text-brand-500">
+							<h6 class="text-brand-500 tracking-wider">
 								{#if value?.igst}
 									Inclusive {currency(value?.igst, "RM")} GST
 								{:else}
@@ -939,8 +938,8 @@ async function updateVariant(variant) {
 											type="button"
 											class="reltive flex flex-col items-center justify-center text-center border rounded py-2 px-4 text-sm font-medium uppercase group transition duration-300 focus:outline-none
 											{v?.id === currentVariantId
-												? 'bg-primary-500 border-primary-500 text-white'
-												: 'bg-transparent border-zinc-300 hover:border-primary-500'}"
+												? 'bg-primary-900 border-primary-900 text-white'
+												: 'bg-transparent border-zinc-300 hover:border-primary-900'}"
 											on:click="{() => updateVariant(v)}">
 											<span class="w-full truncate">
 												{v?.title}

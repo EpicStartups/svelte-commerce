@@ -189,7 +189,7 @@ function moveAllUnavailableItemsToWishlist() {
 
 <SEO {...seoProps} />
 
-<section class="min-h-screen w-full px-3 py-5 sm:p-10">
+<section class="min-h-screen w-full px-3 py-5 sm:p-10 font-jost">
 	<div class="container mx-auto max-w-6xl">
 		{#if data.loadingCart}
 			<div class="flex flex-col gap-5">

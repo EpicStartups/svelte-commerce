@@ -57,7 +57,7 @@ function handleClick() {
 		? 'cursor-not-allowed border-zinc-400 bg-zinc-400 opacity-40'
 		: 'opacity-100 hover:border-opacity-80 hover:bg-opacity-80'}
 	{!disabled && blackBackground ? 'border-black bg-black' : ''}		  
-	{!disabled && !blackBackground ? 'border-primary-500 bg-primary-500' : ''}		  
+	{!disabled && !blackBackground ? 'border-primary-900 bg-primary-900' : ''}		  
     "
 	class:active:scale-95="{clickEffect && !disabled}"
 	class:applyRoundedNone="{roundedNone}"

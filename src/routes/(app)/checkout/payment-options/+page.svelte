@@ -193,7 +193,7 @@ function checkIfStripeCardValid({ detail }) {
 
 <SEO {...seoProps} />
 
-<div class="container mx-auto min-h-screen w-full max-w-6xl p-3 py-5 sm:p-10">
+<div class="container mx-auto min-h-screen w-full max-w-6xl p-3 py-5 sm:p-10 font-jost">
 	<CheckoutHeader selected="payment" />
 
 	<Error err="{data.err}" />

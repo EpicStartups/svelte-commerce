@@ -58,9 +58,9 @@ export let selected = null
 		{#if selected == 'address'}
 			<div class="flex flex-col items-center text-center">
 				<div
-					class="mx-auto flex h-8 w-8 items-center justify-center rounded-full border border-primary-500 text-center {selected ===
+					class="mx-auto flex h-8 w-8 items-center justify-center rounded-full border border-primary-900 text-center {selected ===
 					'address'
-						? 'bg-primary-500  text-white'
+						? 'bg-primary-900  text-white'
 						: 'bg-white text-primary-500  '}">
 					<!-- {#if isPrescription}
 						3
@@ -99,10 +99,10 @@ export let selected = null
 		{#if selected == 'payment'}
 			<div class="flex flex-col items-center text-center">
 				<div
-					class="mx-auto flex h-8 w-8 items-center justify-center rounded-full border border-primary-500 text-center {selected ===
+					class="mx-auto flex h-8 w-8 items-center justify-center rounded-full border border-primary-900 text-center {selected ===
 					'payment'
-						? 'bg-primary-500  text-white '
-						: 'bg-white text-primary-500 '}">
+						? 'bg-primary-900 text-white '
+						: 'bg-white text-primary-900 '}">
 					<!-- {#if isPrescription}
 						4
 					{:else}

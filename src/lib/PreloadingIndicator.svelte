@@ -13,7 +13,7 @@
 	left: 0;
 	top: 0;
 	height: 100%;
-	background-color: #5cb85c;
+	background-color: #FF5500;
 	transition: width 0.4s;
 }
 

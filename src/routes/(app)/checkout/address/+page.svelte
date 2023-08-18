@@ -66,7 +66,7 @@ $: updateSelectedAddress(selectedAddress)
 
 <SEO {...seoProps} />
 
-<div class="container mx-auto min-h-screen w-full max-w-6xl p-3 py-5 sm:p-10">
+<div class="container mx-auto min-h-screen w-full max-w-6xl p-3 py-5 sm:p-10 font-jost">
 	<Error err="{data.err}" />
 
 	<CheckoutHeader selected="address" />
