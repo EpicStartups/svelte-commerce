@@ -2,6 +2,20 @@
 .minimum-width-rem {
 	min-width: 360px;
 }
+
+@font-face {
+	font-family: 'Jost';
+	src: url('../lib/assets/fonts/jost/Jost-Italic-VariableFont_wght.ttf') format('truetype');
+	font-weight: normal;
+	font-style: italic;
+}
+
+@font-face {
+	font-family: 'Jost';
+	src: url('../lib/assets/fonts/jost/Jost-VariableFont_wght.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
+}
 </style>
 
 <script lang="ts">
