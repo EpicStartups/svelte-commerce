@@ -33,7 +33,8 @@
 	"dependencies": {
 		"@stripe/stripe-js": "1.54.2",
 		"@sveltejs/adapter-node": "1.3.1",
-		"@vite-pwa/sveltekit": "0.2.5"
+		"@vite-pwa/sveltekit": "0.2.5",
+		"svelte-icons": "2.1.0"
 	},
 	"devDependencies": {
 		"@beyonk/svelte-facebook-pixel": "3.0.1",

@@ -35,6 +35,11 @@ import PincodeInputBox from '$lib/themes/misiki/PincodeInputBox.svelte'
 import SEO from '$lib/components/SEO/index.svelte'
 import Skeleton from '$lib/ui/Skeleton.svelte'
 import { generateSeoProps } from '$lib/utils'
+import Hero2 from "$lib/sections/home/hero.svelte";
+import Categories from "$lib/sections/home/categories.svelte";
+import Benefits from '$lib/sections/home/benefits.svelte';
+import FeaturedProduct from '$lib/sections/home/featuredProduct.svelte'
+import Join from '$lib/sections/home/join.svelte'
 
 const cookies = Cookie()
 let today = dayjs(new Date()).toISOString()
@@ -92,7 +97,12 @@ onMount(() => {
 		{#await data?.streamed?.home}
 			<div class="h-96 w-full bg-zinc-200 animate-pulse"></div>
 		{:then home}
-			<Hero banners="{home.banners}" />
+			<!-- <Hero banners="{home.banners}" /> -->
+			<Hero2 />
+			<Categories />
+			<Benefits />
+			<FeaturedProduct />
+			<Join />
 			<!-- <div class="h-96 w-full bg-red-500 animate-pulse"></div> -->
 		{/await}
 
@@ -137,7 +147,7 @@ onMount(() => {
 				<div class="hidden sm:block">
 					<!-- <CategoriesHome categories="{data.home?.categories}" /> -->
 
-					<CategoriesSlider title="Top Categories" categories="{home?.categories}" />
+					<!-- <CategoriesSlider title="Top Categories" categories="{home?.categories}" /> -->
 
 					<!-- <h2 class="p-3 py-5 text-center uppercase sm:px-10 md:py-10">TOP COLLECTIONS</h2>
 
@@ -199,7 +209,7 @@ onMount(() => {
 			</div>
 		{:then home}
 			{#if home?.heroBanners?.length}
-				<HeroBanners heroBanners="{home.heroBanners}" />
+				<!-- <HeroBanners heroBanners="{home.heroBanners}" /> -->
 			{/if}
 		{/await}
 
@@ -219,7 +229,7 @@ onMount(() => {
 			</div>
 		{:then home}
 			{#if home?.groupByBanner?.length > 0}
-				<PickedBanners banners="{home.groupByBanner}" />
+				<!-- <PickedBanners banners="{home.groupByBanner}" /> -->
 			{/if}
 		{/await}
 
@@ -230,7 +240,7 @@ onMount(() => {
 				</div>
 			{:then deals}
 				{#if deals?.data?.length}
-					<Deals deals="{deals.data}" />
+					<!-- <Deals deals="{deals.data}" /> -->
 				{/if}
 			{/await}
 		{/if}
@@ -241,43 +251,43 @@ onMount(() => {
 			</div>
 		{:then collections}
 			{#if collections?.data?.length}
-				<CollectionsGeneral collections="{collections.data}" />
+				<!-- <CollectionsGeneral collections="{collections.data}" /> -->
 			{/if}
 		{/await}
 
 		{#await data.streamed.home then home}
-			<HeroBannersCollage6 heroBanners="{home.heroBanners}" />
+			<!-- <HeroBannersCollage6 heroBanners="{home.heroBanners}" /> -->
 		{/await}
 
 		<!-- Popular products -->
 
-		<PopularProductsHome data="{data}" />
+		<!-- <PopularProductsHome data="{data}" /> -->
 
 		<!-- Trending products -->
 
-		<TrendingProductsHome data="{data}" />
+		<!-- <TrendingProductsHome data="{data}" /> -->
 
 		<!-- Trending products -->
 		<!-- Note: Write the categories with comma separation -->
-		<ProductGridShowCase topTitle="New Shop Items" title="Fashion" categories="fashion" />
+		<!-- <ProductGridShowCase topTitle="New Shop Items" title="Fashion" categories="fashion" /> -->
 
 		<!-- Collections Home -->
 
-		<CollectionsHome data="{data}" />
+		<!-- <CollectionsHome data="{data}" /> -->
 
 		<!-- Collections Home 2 -->
 
-		<CollectionsHome2 data="{data}" />
+		<!-- <CollectionsHome2 data="{data}" /> -->
 
 		<!-- Shop your stone -->
 
-		<ShopYourStone />
+		<!-- <ShopYourStone /> -->
 
 		<!-- <ProductTab /> -->
 
 		<!-- Customer feedback -->
 
-		<CustomerFeedback data="{data}" />
+		<!-- <CustomerFeedback data="{data}" /> -->
 
 		<!-- Legal Footer Information -->
 

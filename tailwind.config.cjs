@@ -8,9 +8,12 @@ module.exports = {
 					50: '#fbfbfb', // zinc shades
 					100: '#f0f0f2',
 					200: '#e6e6e9',
+					300: '#F9F8F5',
 					500: '#18181B',
 					600: '#0f0f11',
-					700: '#060606'
+					700: '#060606',
+					800: '#FF5400',
+					900: '#FF5500'
 				},
 				secondary: {
 					50: '#ff5a5a', // light red shades
@@ -29,6 +32,12 @@ module.exports = {
 					100: '#ffd8d8', // red shades
 					500: '#ff0000',
 					700: '#d80000'
+				},
+				dark: {
+					300: '#676565',
+					500: '#373840',
+					600: '#544842',
+					700: '#312620'
 				}
 			},
 			animation: {
@@ -65,7 +74,8 @@ module.exports = {
 				}
 			},
 			fontFamily: {
-				sans: ['Montserrat', 'Karla', 'Poppins', 'Inter', 'Roboto', 'sans'] // 'sans' is a fallback font in case the custom font isn't available
+				sans: ['Montserrat', 'Karla', 'Poppins', 'Inter', 'Roboto', 'sans'], // 'sans' is a fallback font in case the custom font isn't available
+				jost: ['Jost', 'Montserrat', 'Karla', 'Poppins', 'Inter', 'Roboto', 'sans']
 			}
 		}
 	},
