@@ -12,6 +12,8 @@ export async function load({ locals, cookies }) {
 			sid: cookies.get('connect.sid')
 		})
 
+		// console.log('res: ', res)
+
 		return {
 			orders: res.data,
 			count: res.count

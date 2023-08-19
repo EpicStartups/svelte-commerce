@@ -8,7 +8,7 @@ import noAddToCartAnimate from '$lib/assets/no/add-to-cart-animate.svg'
 import OrderListSkeleton from './_OrderListSkeleton.svelte'
 import productNonVeg from '$lib/assets/product/non-veg.png'
 import productVeg from '$lib/assets/product/veg.png'
-import type { MedusaOrder } from '$lib/services/medusa/types'
+import { FulfillmentStatus, type MedusaOrder } from '$lib/services/medusa/types'
 
 
 interface Data {
@@ -19,6 +19,26 @@ export let data: Data
 
 let clazz = ''
 export { clazz as class }
+
+const calcStatus = (order: MedusaOrder) => {
+	if (order.status === "completed" && order.payment_status === "captured") {
+		return "delivered"
+	}
+	if (order.status === "pending" && order.payment_status === "captured") {
+		switch (order.fulfillment_status) {
+			case FulfillmentStatus.NOT_FULFILLED:
+			case FulfillmentStatus.PARTIALLY_FULFILLED:
+			case FulfillmentStatus.FULFILLED:
+				return "processing"
+			case FulfillmentStatus.PARTIALLY_SHIPPED:
+				return "partially shipped"
+			case FulfillmentStatus.SHIPPED:
+				return "shipped"
+			default:
+				return "processing"
+		}
+	}
+}
 
 
 </script>
@@ -216,7 +236,7 @@ export { clazz as class }
 
 									<td class="p-3">
 										<span class="whitespace-nowrap font-semibold uppercase text-primary-500">
-											{order.status === "pending" ? "processing" : order.status}
+											{calcStatus(order)}
 										</span>
 									</td>
 								</tr>

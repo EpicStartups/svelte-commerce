@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 import { currency, date } from '$lib/utils'
 import { LazyImg } from '$lib/components'
 import { onMount } from 'svelte'
@@ -13,6 +13,7 @@ import productVeg from '$lib/assets/product/veg.png'
 import ReturnTracking from '../_ReturnTracking.svelte'
 import SEO from '$lib/components/SEO/index.svelte'
 import TransparentButton from '../_TransparentButton.svelte'
+import { FulfillmentStatus, type MedusaOrder } from '$lib/services/medusa/types'
 
 export let data
 
@@ -40,6 +41,26 @@ onMount(() => {
 	// deliveryBy = dayjs().add(7, 'day').format('dddd, MMM D, YYYY')
 	now = dayjs()
 })
+
+const calcStatus = (order: MedusaOrder) => {
+	if (order.status === "completed" && order.payment_status === "captured") {
+		return "delivered"
+	}
+	if (order.status === "pending" && order.payment_status === "captured") {
+		switch (order.fulfillment_status) {
+			case FulfillmentStatus.NOT_FULFILLED:
+			case FulfillmentStatus.PARTIALLY_FULFILLED:
+			case FulfillmentStatus.FULFILLED:
+				return "processing"
+			case FulfillmentStatus.PARTIALLY_SHIPPED:
+				return "partially shipped"
+			case FulfillmentStatus.SHIPPED:
+				return "shipped"
+			default:
+				return "processing"
+		}
+	}
+}
 </script>
 
 <SEO {...seoProps} />
@@ -49,7 +70,7 @@ onMount(() => {
 	{#if loading}
 		<OrderListSkeleton />
 	{:else if data.order}
-		<section>
+		<section class="font-jost tracking-wider">
 			<!-- <BackButton to="/my/orders?sort=-updatedAt" class="mb-2" /> -->
 
 			<div class="mb-5 overflow-hidden rounded border sm:mb-10">
@@ -83,7 +104,7 @@ onMount(() => {
 										<a
 											href="{`/product/${item.variant.product.handle}`}"
 											aria-label="Click to view the product details"
-											class="flex-1 hover:underline text-zinc-500">
+											class="flex-1 hover:underline underline-offset-8 transition-all decoration-primary-900 text-zinc-500">
 											{item.title}
 										</a>
 
@@ -107,25 +128,13 @@ onMount(() => {
 									{/if}
 
 									<div class="flex flex-wrap gap-1 items-center">
-										<!-- {#if item.variant}
-											<p>{item.variant.options}</p>
-											<p>
-												Size :
-
-												{item.size}
-											</p>
+										{#if item.variant}
+											<!-- <p>Variant: </p> -->
+											<p class="px-3 py-1 rounded bg-primary-900 text-white">{item.variant.title}</p>
 										{/if}
-
-										{#if item.color}
-											<p>
-												Color :
-
-												{item.color}
-											</p>
-										{/if} -->
 									</div>
 
-									{#if data.order.store}
+									<!-- {#if data.order.store}
 										<p>
 											Seller :
 
@@ -136,7 +145,7 @@ onMount(() => {
 												{data.order.store.name}
 											</a>
 										</p>
-									{/if}
+									{/if} -->
 
 									<!-- {#if item?.usedOptions?.length}
 										<div class="mt-2 flex flex-col gap-2">
@@ -180,7 +189,7 @@ onMount(() => {
 										{/if} -->
 									</div>
 
-									{#if data.order.status === 'delivered'}
+									{#if data.order.status === 'completed'}
 										<div class="mt-2 xl:mt-0 xl:w-1/3">
 											<a
 												href="/my/reviews/create?pid={item.variant.product_id}&oid={data.order.id}&ref=/product/{""}"
@@ -222,31 +231,31 @@ onMount(() => {
 							{/if}
 						</div>
 
-						<!-- <div>
+						<div>
 							<h5 class="mb-2">Billing Address</h5>
 
 							<p class="flex flex-col">
 								<span>
-									{data.order?.billing_address?.firstName}
-									{data.order?.billingAddress?.lastName}
+									{data.order?.billing_address?.first_name}
+									{data.order?.billing_address?.last_name}
 
 									<br />
 
-									{data.order?.billingAddress?.address}, {data.order?.billingAddress?.city},
-									{data.order?.billingAddress?.country}, {data.order?.billingAddress?.state}
+									{data.order?.billing_address?.address_1}, {data.order?.billing_address?.address_2},
+									{data.order?.billing_address?.province}, {data.order?.billing_address?.city}
 
 									<br />
 
-									{data.order?.billingAddress?.zip}
+									{data.order?.billing_address?.postal_code}
 								</span>
 							</p>
 
-							{#if data.order?.billingAddress?.phone}
+							{#if data.order?.billing_address?.phone}
 								<p>
-									{data.order?.billingAddress?.phone}
+									{data.order?.billing_address?.phone}
 								</p>
 							{/if}
-						</div> -->
+						</div>
 
 						<!-- <div>
 							<h5 class="mb-2">Vendor Details :</h5>
@@ -286,14 +295,15 @@ onMount(() => {
 				{/if} -->
 
 				<div class="mt-5 sm:mt-10 flex flex-wrap gap-10">
-					<!-- {#if data.orderTracking?.length}
-						<OrderTracking tracks="{data.orderTracking}" />
-					{/if} -->
+					{#if data.timelines && data.timelines.length}
+						<OrderTracking tracks="{data.timelines}" />
+					{/if}
 
 					<!-- {#if !data.order?.isReplaceOrReturn}
 					{:else}
 						<ReturnTracking order="{data.order}" />
 					{/if} -->
+					<!-- <ReturnTracking order="{data.order}" /> -->
 
 					<div class="flex flex-col gap-2">
 						<!-- {#if data.order?.invoiceLink}
@@ -323,6 +333,27 @@ onMount(() => {
 								<TransparentButton class="w-48" type="button" border>Return</TransparentButton>
 							</a>
 						{/if} -->
+							<!-- <a
+								href="/my/exchange?orderId=${data.order?.id}"
+								aria-label="Click to visit exchange"
+								class="block">
+								<TransparentButton class="w-48" type="button" border>Exchange</TransparentButton>
+							</a> -->
+						{#if calcStatus(data.order) === "processing"}
+							<a
+								href="/my/return?orderId=${data.order?.id}"
+								aria-label="Click to visit return"
+								class="block">
+								<TransparentButton class="w-48" type="button" border>Cancel</TransparentButton>
+							</a>
+						{:else}
+							<a
+								href="/my/return?orderId=${data.order?.id}"
+								aria-label="Click to visit return"
+								class="block">
+								<TransparentButton class="w-48" type="button" border>Return</TransparentButton>
+							</a>
+						{/if}
 					</div>
 				</div>
 			</div>

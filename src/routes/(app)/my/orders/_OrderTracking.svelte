@@ -1,21 +1,24 @@
-<style></style>
-
-<script>
+<script lang="ts">
 import { date } from '$lib/utils'
 import LazyImg from '$lib/components/Image/LazyImg.svelte'
+import type { TimelineEvent } from '$lib/utils/buildOrderTimeline'
+import dayjs from "dayjs";
 
-export let tracks
+export let tracks: TimelineEvent[];
+
+
+$: processedTracks = tracks.filter((track) => track.type !== "refund-required" && track.type !== "payment-required")
 </script>
 
 <div>
 	<h3 class="mb-4">Timeline</h3>
 
 	<div class="flex flex-col gap-2">
-		{#each tracks as t}
+		{#each processedTracks as t}
 			<div>
 				<div class="mb-2 flex items-start gap-4">
 					<div class="h-5 w-5 shrink-0 overflow-hidden rounded-full">
-						{#if t.icon}
+						<!-- {#if t.icon}
 							<LazyImg
 								src="{t.icon}"
 								width="20"
@@ -24,11 +27,12 @@ export let tracks
 								class="h-full w-full bg-zinc-100 object-contain object-center" />
 						{:else}
 							<div class="h-full w-full bg-zinc-200"></div>
-						{/if}
+						{/if} -->
+						<div class="h-full w-full bg-zinc-200"></div>
 					</div>
 
 					<h6 class="flex-1 gap-1 capitalize">
-						{t.title}
+						order {t.type}
 					</h6>
 				</div>
 
@@ -40,13 +44,13 @@ export let tracks
 					</div>
 
 					<div class="flex flex-1 flex-col gap-1">
-						{#if t.comment}
+						<!-- {#if t.comment}
 							<p class="first-letter:uppercase">
 								{t.comment}
 							</p>
-						{/if}
+						{/if} -->
 
-						<span class="text-xs text-zinc-500">{date(t.time)}</span>
+						<span class="text-xs text-zinc-500">{date(t.time.toString())}</span>
 					</div>
 				</div>
 			</div>

@@ -6,6 +6,7 @@ import type { Stripe, StripeCardNumberElement, StripeCardElement } from '@stripe
 import { CartService } from '.'
 import { appUrl } from '$lib/config'
 import { updatePaymentProvider } from './cart-service'
+import { handleApiError } from '$lib/utils'
 
 export const fetchOrders = async ({ origin, storeId, server = false, sid = null }: any) => {
 	try {
@@ -47,6 +48,30 @@ export const fetchOrder = async ({ origin, storeId, id, server = false, sid = nu
 	}
 }
 
+interface FetchOrderWithFulFillmentsInput {
+	sid?: string | null
+	id: string
+}
+export const fetchOrderWithFulFillments = async ({
+	sid = null,
+	id
+}: FetchOrderWithFulFillmentsInput) => {
+	try {
+		const med: { orders: MedusaOrder[] } = await getMedusajsApi(
+			`customers/me/orders?id=${id}&expand=items.variant.product,shipping_address,billing_address,fulfillments,fulfillments.tracking_links`,
+			{},
+			sid
+		)
+
+		if (med.orders.length !== 1) {
+			throw { status: 400, message: 'order is not single' }
+		}
+		return med.orders[0]
+	} catch (err) {
+		throw handleApiError(err)
+	}
+}
+
 export const fetchTrackOrder = async ({ origin, storeId, id, server = false, sid = null }: any) => {
 	try {
 		let res: any = {}
@@ -55,7 +80,7 @@ export const fetchTrackOrder = async ({ origin, storeId, id, server = false, sid
 
 		return res.data || []
 	} catch (e) {
-		throw error(e.status, e.message)
+		throw handleApiError(e)
 	}
 }
 

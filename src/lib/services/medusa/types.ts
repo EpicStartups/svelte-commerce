@@ -537,9 +537,10 @@ export interface MedusaShippingOptionData {
 export interface MedusaOrder {
 	id: string
 	created_at: string
-	status: string
-	fulfillment_status: string
-	payment_status: string
+	updated_at: string
+	status: OrderStatus
+	fulfillment_status: FulfillmentStatus
+	payment_status: PaymentStatus
 	display_id: number
 	cart_id: string | null
 	customer_id: string
@@ -551,7 +552,7 @@ export interface MedusaOrder {
 	claims: any[]
 	customer: any
 	discount: any[]
-	fulfillments: any[]
+	fulfillments: MedusaFulfillment[] | null
 	gift_card_transactions: any[]
 	gits_cards: any[]
 	items: MedusaItem[]
@@ -560,6 +561,7 @@ export interface MedusaOrder {
 	region: MedusaRegion
 	shipping_address: MedusaAddress
 	shipping_methods: any[]
+	billing_address: MedusaBillingAddress | null
 	store: MedusaStore
 	swaps: any[]
 	subtotal: number
@@ -587,4 +589,83 @@ export interface MedusaReview {
 	order_id: string
 	product_id: string
 	product: MedusaProduct
+}
+
+export interface MedusaFulfillment {
+	id: string
+	created_at: string
+	updated_at: string
+	claim_order_id: any
+	swap_id: any
+	order_id: string
+	no_notification: boolean
+	provider_id: string
+	location_id: string
+	tracking_numbers: any[]
+	data: any
+	shipped_at: string
+	canceled_at: any
+	metadata: Record<string, any>
+	idempotency_key: any
+	tracking_links: MedusaTrackingLink[] | null
+	items: MedusaItem[]
+}
+
+export interface MedusaTrackingLink {
+	id: string
+	created_at: string
+	updated_at: string
+	deleted_at: string | null
+	url: string | null
+	tracking_number: string
+	idempotency_key: any
+	metadata: Record<string, any>
+}
+
+export interface MedusaBillingAddress {
+	region_id: string
+	id: string
+	created_at: string
+	updated_at: string
+	deleted_at: string | null
+	customer_id: string
+	company: string | null
+	first_name: string
+	last_name: string
+	address_1: string
+	address_2: string | null
+	city: string
+	country_code: string
+	province: string
+	postal_code: string
+	phone: string
+	metadata: Record<string, any>
+}
+
+export enum OrderStatus {
+	PENDING = 'pending',
+	COMPLETED = 'completed',
+	ARCHIVED = 'archived',
+	CANCELED = 'canceled',
+	REQUIRES_ACTION = 'requires_action'
+}
+export enum FulfillmentStatus {
+	NOT_FULFILLED = 'not_fulfilled',
+	PARTIALLY_FULFILLED = 'partially_fulfilled',
+	FULFILLED = 'fulfilled',
+	PARTIALLY_SHIPPED = 'partially_shipped',
+	SHIPPED = 'shipped',
+	PARTIALLY_RETURNED = 'partially_returned',
+	RETURNED = 'returned',
+	CANCELED = 'canceled',
+	REQUIRES_ACTION = 'requires_action'
+}
+export enum PaymentStatus {
+	NOT_PAID = 'not_paid',
+	AWAITING = 'awaiting',
+	CAPTURED = 'captured',
+	PARTIALLY_REFUNDED = 'partially_refunded',
+	REFUNDED = 'refunded',
+	CANCELED = 'canceled',
+	REQUIRES_ACTION = 'requires_action'
 }
