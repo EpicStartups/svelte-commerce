@@ -22,7 +22,8 @@ const GBP = Intl.NumberFormat('en-GB', {
 	currency: 'GBP'
 })
 
-export const formatCurrency = (number: number | null, currency: Currency): FormattedAmount => {
+export const formatCurrency = (number: number | null, currencyVal: string): FormattedAmount => {
+	const currency = currencyVal.toUpperCase() as Currency
 	if (number === null) {
 		return {
 			value: `${currency}`,

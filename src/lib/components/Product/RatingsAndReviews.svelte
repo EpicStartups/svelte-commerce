@@ -3,9 +3,10 @@ import { date } from '$lib/utils'
 import { goto } from '$app/navigation'
 import LazyImg from '../Image/LazyImg.svelte'
 import ReviewGallery from './ReviewGallery.svelte'
+import type { Product } from '$lib/types'
 
-export let type
-export let product
+export let type: string
+export let product: Product
 export let reviewsSummary = {}
 export let reviews = {}
 
@@ -19,9 +20,9 @@ let selectedReviews = []
 let showGalleryModal = false
 
 $: if (type === 'product_review') {
-	selectedReviews = reviews.product?.data
+	selectedReviews = product.reviews
 } else {
-	selectedReviews = reviews.brand?.data
+	selectedReviews = product.rev
 }
 
 const handleSelectedProductGallery = (review, rx) => {
@@ -64,7 +65,7 @@ const handleSelectedProductGallery = (review, rx) => {
 	</div>
 
 	<div class="flex flex-col gap-5">
-		{#if reviewsSummary?.summary?.ratings_avg?.value > 0 || reviewsSummary?.reviews?.length}
+		{#if product?.reviews?.length && product.reviews.length > 0}
 			<div class="flex flex-col gap-5">
 				<!-- Ratings chart -->
 
@@ -72,9 +73,9 @@ const handleSelectedProductGallery = (review, rx) => {
 					<div
 						class="flex w-40 flex-col items-center justify-center border-r border-zinc-200 px-3 text-center">
 						<div class="mb-2 flex items-end gap-2">
-							<span class="text-4xl sm:text-5xl">
+							<!-- <span class="text-4xl sm:text-5xl">
 								{reviewsSummary?.summary?.ratings_avg?.value.toFixed(1).replace(/\.0+$/, '')}
-							</span>
+							</span> -->
 
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
@@ -87,16 +88,16 @@ const handleSelectedProductGallery = (review, rx) => {
 							</svg>
 						</div>
 
-						<p>
+						<!-- <p>
 							{reviewsSummary?.summary?.ratings_sum?.value} Verified Buyers
-						</p>
+						</p> -->
 					</div>
 
-					<div class="flex w-full max-w-xs flex-1 flex-col-reverse gap-2 px-3 text-xs">
-						{#each reviewsSummary?.summary?.rating_count?.buckets as r}
+					<!-- <div class="flex w-full max-w-xs flex-1 flex-col-reverse gap-2 px-3 text-xs">
+						{#each product.reviews as r}
 							<div class="flex items-center justify-center gap-2">
 								<div class="flex w-8 items-center gap-1">
-									<b>{r.key}</b>
+									<b>{r.title}</b>
 
 									<svg
 										xmlns="http://www.w3.org/2000/svg"
@@ -125,21 +126,21 @@ const handleSelectedProductGallery = (review, rx) => {
 								</span>
 							</div>
 						{/each}
-					</div>
+					</div> -->
 				</div>
 
 				<hr />
 
 				<!-- Customer Reviews -->
 
-				{#if selectedReviews?.length}
+				{#if product?.reviews?.length && product.reviews.length > 0}
 					<div>
 						<h5 class="mb-5 uppercase">
 							Customer Reviews ({selectedReviews?.length})
 						</h5>
 
 						<ul class="m-0 p-0 list-none flex flex-col gap-2">
-							{#each selectedReviews as review, rx}
+							{#each product.reviews as review, rx}
 								{#if rx <= 5}
 									<li class="flex items-start gap-2">
 										{#if review.rating}
@@ -168,7 +169,7 @@ const handleSelectedProductGallery = (review, rx) => {
 												</p>
 											{/if}
 
-											{#if review?.images?.length}
+											<!-- {#if review?.images?.length}
 												<button
 													type="button"
 													class="flex flex-wrap gap-1"
@@ -185,10 +186,10 @@ const handleSelectedProductGallery = (review, rx) => {
 													showPhotosModal="{openReviewImages[rx]}"
 													gallery="{selectedProductGallery}"
 													on:close="{() => (openReviewImages[rx] = false)}" />
-											{/if}
+											{/if} -->
 
 											<div class="flex flex-wrap items-center gap-1 text-zinc-500 text-xs">
-												{#if review.user?.firstName}
+												<!-- {#if review.user?.firstName}
 													<span>{review.user?.firstName}</span>
 
 													{#if review.user?.lastName}
@@ -196,7 +197,7 @@ const handleSelectedProductGallery = (review, rx) => {
 													{/if}
 
 													<span class="h-2.5 border-l border-zinc-200"></span>
-												{/if}
+												{/if} -->
 
 												{#if review.createdAt}
 													<span>{date(review.createdAt)}</span>

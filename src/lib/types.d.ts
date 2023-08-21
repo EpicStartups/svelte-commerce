@@ -128,6 +128,7 @@ interface Product {
 	typeId?: string
 	expiryDate?: string
 	store?: Store
+	reviews?: Review[]
 }
 
 interface Brand {
@@ -564,17 +565,17 @@ interface ReviewVote {
 	review: string
 }
 
-interface Review {
-	user: string
-	product: string
-	content: string
-	expand: {
-		user: User
-		'review_replies(review)': ReviewReply[] | undefined[]
-		'review_votes(review)': ReviewVote[]
-		reply?: Review
-	}
-}
+// interface Review {
+// 	user: string
+// 	product: string
+// 	content: string
+// 	expand: {
+// 		user: User
+// 		'review_replies(review)': ReviewReply[] | undefined[]
+// 		'review_votes(review)': ReviewVote[]
+// 		reply?: Review
+// 	}
+// }
 
 interface Error {
 	status: number
@@ -684,6 +685,7 @@ interface Review {
 	active: boolean
 	message: string
 	listing: string
+	title: string
 	pid: string
 	rating: number
 	store: string

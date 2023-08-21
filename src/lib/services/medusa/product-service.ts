@@ -127,6 +127,7 @@ export const fetchProduct3 = async ({
 		if (!med.product) {
 			throw error(400, `there are no product for ${slug}`)
 		}
+		//console.log('med: ', med.product.reviews)
 		return mapMedusajsProduct(med.product, variant, currency)
 	} catch (e) {
 		if (typeof e.status === 'number' && e.status >= 400 && e.status <= 599) {

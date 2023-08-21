@@ -1,4 +1,4 @@
-import { deleteMedusajsApi, getMedusajsApi } from '$lib/utils/server'
+import { deleteMedusajsApi, getMedusajsApi, postMedusajsApi } from '$lib/utils/server'
 import { serializeNonPOJOs } from '$lib/utils/validations'
 import { error } from '@sveltejs/kit'
 import type { MedusaReview } from './types'
@@ -101,6 +101,37 @@ export const deleteReview = async (input: DeleteReviewInput) => {
 		const res = await deleteMedusajsApi(`reviews/${input.id}`, null, input.sid ?? null)
 		console.log('deleteRes: ', res)
 		return res
+	} catch (err) {
+		throw handleApiError(err)
+	}
+}
+
+interface CreateReviewInput {
+	sid?: string | null
+	productId: string
+	orderId: string
+	heading: string
+	message: string
+	rating: number
+}
+export const createReview = async (input: CreateReviewInput) => {
+	try {
+		const res: { review: any } = await postMedusajsApi(
+			`reviews`,
+			{
+				order_id: input.orderId,
+				product_id: input.productId,
+				heading: input.heading,
+				description: input.message,
+				rating: input.rating
+			},
+			input.sid ?? null
+		)
+
+		console.log('review: ', res.review)
+		return {
+			review: res.review
+		}
 	} catch (err) {
 		throw handleApiError(err)
 	}

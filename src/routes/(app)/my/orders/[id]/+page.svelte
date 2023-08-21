@@ -14,6 +14,7 @@ import ReturnTracking from '../_ReturnTracking.svelte'
 import SEO from '$lib/components/SEO/index.svelte'
 import TransparentButton from '../_TransparentButton.svelte'
 import { FulfillmentStatus, type MedusaOrder } from '$lib/services/medusa/types'
+import { formatCurrency } from '$lib/utils/currency'
 
 export let data
 
@@ -46,6 +47,7 @@ const calcStatus = (order: MedusaOrder) => {
 	if (order.status === "completed" && order.payment_status === "captured") {
 		return "delivered"
 	}
+
 	if (order.status === "pending" && order.payment_status === "captured") {
 		switch (order.fulfillment_status) {
 			case FulfillmentStatus.NOT_FULFILLED:
@@ -60,6 +62,7 @@ const calcStatus = (order: MedusaOrder) => {
 				return "processing"
 		}
 	}
+	
 }
 </script>
 
@@ -119,14 +122,6 @@ const calcStatus = (order: MedusaOrder) => {
 										{/if} -->
 									</div>
 
-									{#if data.order.store.name}
-										<p>
-											Brand :
-
-											{data.order.store.name}
-										</p>
-									{/if}
-
 									<div class="flex flex-wrap gap-1 items-center">
 										{#if item.variant}
 											<!-- <p>Variant: </p> -->
@@ -169,7 +164,7 @@ const calcStatus = (order: MedusaOrder) => {
 										</div>
 									{/if} -->
 
-									<div class="flex flex-wrap items-center gap-2 text-xs">
+									<div class="flex flex-wrap items-center gap-2 text-xs mt-3">
 										<span class="text-base font-bold whitespace-nowrap">
 											{currency(item.total / 100, data.order.currency_code.toUpperCase())}
 										</span>
@@ -189,10 +184,14 @@ const calcStatus = (order: MedusaOrder) => {
 										{/if} -->
 									</div>
 
-									{#if data.order.status === 'completed'}
+									{#if data.order.status === 'completed' && data.order.reviews.find((review) => review.product_id === item.variant.product_id)}
+										<div>
+											<a href="/my/reviews" data-sveltekit-preload-data class="text-base">Product Reviewed</a>
+										</div>
+									{:else if data.order.status === "completed"}
 										<div class="mt-2 xl:mt-0 xl:w-1/3">
 											<a
-												href="/my/reviews/create?pid={item.variant.product_id}&oid={data.order.id}&ref=/product/{""}"
+												href="/my/reviews/create?handle={item.variant.product.handle}&oid={data.order.id}&ref=/my/orders/{data.order.id}"
 												aria-label="Click to visit rate & review product"
 												class="whitespace-nowrap font-semibold text-indigo-500 focus:outline-none hover:underline">
 												Rate & Review Product
@@ -205,6 +204,23 @@ const calcStatus = (order: MedusaOrder) => {
 					</div>
 
 					<div class="col-span-1 flex flex-col gap-5 p-5 lg:gap-10">
+						<div>
+							<h5 class="mb-2">Seller</h5>
+							<div class="grid grid-cols-[30px_auto] items-center gap-5">
+								{#if data.order.store?.icon}
+									<img
+									class="w-full object-cover"
+									src={data.order.store.icon}
+									alt={`picture of shop ${data.order.store.name} in Shopolah marketplace`}
+									/>
+								{:else}
+									<div class="bg-gray-200 h-[40px] w-[40px] rounded-full overflow-hidden">
+
+									</div>
+								{/if}
+								<a href={`/shop/${data.order.store.id}`} class="text-lg text-dark-700 hover:text-primary-900 transition-all">{data.order.store.name}</a>
+							</div>
+						</div>
 						<div>
 							<h5 class="mb-2">Delivery Address</h5>
 
@@ -255,6 +271,16 @@ const calcStatus = (order: MedusaOrder) => {
 									{data.order?.billing_address?.phone}
 								</p>
 							{/if}
+						</div>
+
+						<div>
+							<h5 class="mb-2">Receipt</h5>
+
+							<div class="flex flex-col">
+								<p>Subtotal: {formatCurrency(data.order.subtotal, data.order.currency_code.toUpperCase()).value}</p>
+								<p>Shipping: {formatCurrency(data.order.shipping_total, data.order.currency_code.toUpperCase()).value}</p>
+								<p>Total: {formatCurrency(data.order.total, data.order.currency_code.toUpperCase()).value}</p>
+							</div>
 						</div>
 
 						<!-- <div>

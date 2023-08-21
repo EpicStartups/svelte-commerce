@@ -167,6 +167,7 @@ export type MedusaProduct = {
 	store_id: string | null
 	store?: MedusaStore | null
 	profile: MedusaProfile
+	reviews?: MedusaReview[] | null
 }
 
 export type FetchProductsResp = {
@@ -576,6 +577,7 @@ export interface MedusaOrder {
 	raw_discount_total: number
 	total: number
 	order_parent_id: string | null
+	reviews?: MedusaReview[] | null
 }
 
 export interface MedusaReview {
@@ -589,6 +591,7 @@ export interface MedusaReview {
 	order_id: string
 	product_id: string
 	product: MedusaProduct
+	customer: MedusaCustomer
 }
 
 export interface MedusaFulfillment {

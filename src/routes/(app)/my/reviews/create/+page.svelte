@@ -1,6 +1,6 @@
-<script>
+<script lang="ts">
 import { Error, LazyImg } from '$lib/components'
-import { getExtension, toast } from '$lib/utils'
+import { generateSeoProps, getExtension, toast } from '$lib/utils'
 import { goto } from '$app/navigation'
 import { page } from '$app/stores'
 import { ReviewService } from '$lib/services'
@@ -10,14 +10,31 @@ import PrimaryButton from '$lib/ui/PrimaryButton.svelte'
 import SEO from '$lib/components/SEO/index.svelte'
 import Textarea from '$lib/ui/Textarea.svelte'
 
-const seoProps = {
-	title: 'Reviews Details',
-	description: 'Reviews Details'
+/*
+MODELS
+*/
+interface Review {
+	id: "new" | string,
+	pid: string,
+	oid: string,
+	heading: string,
+	message: string,
+	rating: 0 | 1 | 2 | 3 | 4 | 5 | null
+}
+interface ReviewFAQ {
+	question: string;
+	answer: string
 }
 
+/*
+VARIABLES
+*/ 
 export let data
-
-let information = [
+const seoProps = generateSeoProps({
+	title: "Reviews Details",
+	description: "Reviews Details"
+})
+const information: ReviewFAQ[] = [
 	{
 		question: `Have you used this business?`,
 		answer: `Your review should be about your experience with the business.`
@@ -31,77 +48,82 @@ let information = [
 		answer: `Your review should include facts. An honest opinion is always appreciated. If you have an issue with the business or service please contact us from the help centre.`
 	}
 ]
-
-let err = null
-let review = {
+let review: Review = {
 	id: 'new',
-	pid: data.product?._id,
-	oid: $page?.url?.searchParams.get('oid') || null,
+	pid: data.product.id,
+	oid: data.orderId,
 	message: '',
+	heading: "",
 	rating: null
 }
-let today = dayjs().format('YYYY-MM-DD')
-let file
-let folder = 'userdesigns'
-if (today) {
-	folder = `userdesigns/${today}`
-}
-let uploading = false
+let err: any = null
 let select = null
-let images = []
 
-function onSelect(i) {
+/*
+HANDLERS
+*/
+
+function onRatingSelect(i: number) {
 	select = i
-	review.rating = i + 1
+	review.rating = (i + 1) as any
 }
 
-async function uploadImageToS3() {
-	try {
-		err = null
-		uploading = true
+//let images = []
+// let today = dayjs().format('YYYY-MM-DD')
+// let uploading = false
+// let folder = 'userdesigns'
+// if (today) {
+// 	folder = `userdesigns/${today}`
+// }
+// let file
+// async function uploadImageToS3() {
+// 	try {
+// 		err = null
+// 		uploading = true
 
-		const response = await fetch('/server/files/upload', {
-			method: 'POST',
-			body: file[0],
-			headers: {
-				folder,
-				extension: getExtension(file[0]?.name),
-				'Content-Type': file[0].type || 'image/*'
-			}
-		})
+// 		const response = await fetch('/server/files/upload', {
+// 			method: 'POST',
+// 			body: file[0],
+// 			headers: {
+// 				folder,
+// 				extension: getExtension(file[0]?.name),
+// 				'Content-Type': file[0].type || 'image/*'
+// 			}
+// 		})
 
-		const res = await response.json()
-		if (res?.url) {
-			let imgs = [...images]
-			imgs.push(res?.url)
-			images = imgs
-		}
-	} catch (e) {
-		err = e
-	} finally {
-		uploading = false
+// 		const res = await response.json()
+// 		if (res?.url) {
+// 			let imgs = [...images]
+// 			imgs.push(res?.url)
+// 			images = imgs
+// 		}
+// 	} catch (e) {
+// 		err = e
+// 	} finally {
+// 		uploading = false
+// 	}
+// }
+
+async function saveReviewproduct(review: Review) {
+	if (!review.rating || review.rating as number === 0) {
+		alert("Please set a rating");
+		return;
 	}
-}
-
-async function saveReviewproduct(review) {
 	try {
 		err = null
-		toast('Sending your business rating and review', 'info')
-		review.store = $page.data.store?.id
+		toast('Sending your rating and review', 'info')
 
-		await ReviewService.saveReview({
-			id: review.id,
-			pid: review.pid,
-			oid: review.oid,
+		const createdReview = await ReviewService.createReview({
+			productId: review.pid,
+			orderId: review.oid,
+			heading: review.heading,
 			message: review.message,
-			rating: review.rating,
-			images,
-			storeId: $page.data.store?.id,
-			origin: $page.data.origin
+			rating: review.rating ?? 1
 		})
+		console.log("createdReview: ", createdReview);
 
 		toast('Successfully saved.', 'success')
-		if (data.product) goto(`${data.ref}#ratings-and-reviews`)
+		if (data.product) goto(`/product/${data.product.slug}`)
 	} catch (e) {
 		toast(e?.body?.message || e?.body, 'error')
 		err = e
@@ -112,7 +134,7 @@ async function saveReviewproduct(review) {
 
 <SEO {...seoProps} />
 
-<div>
+<div class="font-jost tracking-wider">
 	<BackButton to="{data.ref}" class="mb-2" />
 
 	<header class="mb-5 flex flex-col items-start md:items-center justify-between md:flex-row gap-2">
@@ -120,20 +142,21 @@ async function saveReviewproduct(review) {
 
 		{#if data.product}
 			<a
-				href="{data.ref || '##'}"
+				href="{`/product/${data.product.slug}`}"
 				aria-label="Click to view the product details"
 				class="mb-2 flex max-w-max flex-row items-center gap-4 text-sm text-zinc-500 lg:flex-row-reverse lg:text-right group">
 				<div
 					class="h-14 w-14 border border-zinc-200 rounded shadow-md flex items-center justify-center">
 					<LazyImg
 						src="{data.product?.img}"
-						alt="Business img"
+						alt={`image of ${data.product?.name}`}
 						height="48"
-						class="h-12 w-auto object-contain object-center text-xs" />
+						width="48"
+						class="h-full w-full object-contain object-center text-xs" />
 				</div>
 
 				<div class="flex-1">
-					<h6 class="font-semibold">{data.product?.brand?.name}</h6>
+					<h6 class="font-semibold">{data.product?.store?.name}</h6>
 
 					<span class="group-hover:underline">{data.product?.name}</span>
 				</div>
@@ -168,11 +191,11 @@ async function saveReviewproduct(review) {
 							{#each { length: 5 } as _, i}
 								<button
 									type="button"
-									class="focus:outline-none focus:ring-0 focus:ring-offset-0"
-									on:click="{() => onSelect(i)}">
+									class="focus:outline-none focus:ring-0 focus:ring-offset-0 text-primary-900"
+									on:click="{() => onRatingSelect(i)}">
 									<svg
 										class="block h-8 w-8
-        									{select >= i && select != null ? 'text-primary-500' : 'text-zinc-200'}"
+        									{select >= i && select != null ? 'text-primary-900' : 'text-zinc-200'}"
 										fill="currentColor"
 										xmlns="http://www.w3.org/2000/svg"
 										viewBox="0 0 20 20">
@@ -207,12 +230,24 @@ async function saveReviewproduct(review) {
 				</div>
 
 				<div>
-					<h4 class="mb-2 capitalize">Reviews this business</h4>
+					<h4>Title</h4>
+					<input
+						type="text"
+						maxlength="70"
+						class="p-2 w-full rounded border border-zinc-200 text-sm placeholder-zinc-400 transition duration-300 focus:outline-none focus:ring-1 focus:ring-primary-500"
+						required
+						placeholder="title"
+						bind:value="{review.heading}"
+					/>
+				</div>
+
+				<div>
+					<h4 class="mb-2 capitalize">Message</h4>
 
 					<Textarea placeholder="Description" bind:value="{review.message}" />
 				</div>
 
-				<div>
+				<!-- <div>
 					<h4 class="mb-2 capitalize">Upload Image</h4>
 
 					{#if images?.length}
@@ -260,10 +295,10 @@ async function saveReviewproduct(review) {
 								on:change="{uploadImageToS3}" />
 						</label>
 					</div>
-				</div>
+				</div> -->
 
 				<div class="ml-auto max-w-max">
-					<PrimaryButton type="submit" class="w-40">SUBMIT</PrimaryButton>
+					<PrimaryButton type="submit" class="w-40">RATE</PrimaryButton>
 				</div>
 			</div>
 		</form>

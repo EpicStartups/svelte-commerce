@@ -9,7 +9,8 @@ import type {
 	CartItem,
 	Cart,
 	ShippingOption,
-	Store
+	Store,
+	Review
 } from '$lib/types'
 import { toPrice } from '$lib/utils'
 import { formatCurrency, type Currency } from '$lib/utils/currency'
@@ -18,6 +19,7 @@ import type {
 	MedusaCart,
 	MedusaItem,
 	MedusaProduct,
+	MedusaReview,
 	MedusaShippingOption,
 	MedusaStore
 } from './types'
@@ -200,7 +202,8 @@ export const mapMedusajsProduct = (
 		deliveryDetails: '',
 		isWishlisted: false,
 		store,
-		stock: variant.inventory_quantity
+		stock: variant.inventory_quantity,
+		reviews: p.reviews ? p.reviews.map((review) => mapMedusaJsReview(review)) : undefined
 	}
 	return prod
 }
@@ -362,5 +365,20 @@ export const mapMedusaJsStore = (store: MedusaStore): Store => {
 		),
 		createdAt: store.created_at,
 		defaultCurrency: store.default_currency_code
+	}
+}
+
+export const mapMedusaJsReview = (review: MedusaReview): Review => {
+	return {
+		active: true,
+		message: review.description,
+		title: review.heading,
+		pid: review.product_id,
+		rating: review.rating,
+		user: `${review.customer.first_name} ${review.customer.last_name}`,
+		vendor: '',
+		variant: '',
+		listing: '',
+		store: ''
 	}
 }

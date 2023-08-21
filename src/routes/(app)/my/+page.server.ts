@@ -18,7 +18,7 @@ export async function load({ parent, cookies }) {
 		const reviews = await ReviewService.fetchReviews({
 			sid: cookies.get('connect.sid')
 		})
-		console.log('reviews: ', reviews)
+		//console.log('reviews: ', reviews)
 
 		return {
 			streamed: {

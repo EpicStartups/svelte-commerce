@@ -212,14 +212,17 @@ export const getMedusajsApi = async (endpoint: string, query?: any, sid?: any) =
 export const postMedusajsApi = async (endpoint: string, data: any, sid?: any) => {
 	try {
 		const ep = MEDUSAJS_BASE_URL + '/' + endpoint
+		let headers: HeadersInit = {
+			'Content-Type': 'application/json'
+		}
+		if (sid) {
+			headers.Cookie = `connect.sid=${sid}`
+		}
 		const response = await fetch(ep, {
 			method: 'POST',
 			credentials: 'include',
 			body: JSON.stringify(data || {}),
-			headers: {
-				'Content-Type': 'application/json',
-				Cookie: `connect.sid=${sid}`
-			}
+			headers
 		})
 
 		// const allHeaders = Object.fromEntries(response.headers.entries())

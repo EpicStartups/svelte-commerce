@@ -15,7 +15,7 @@ import { PageTransitions } from '$lib/components'
 import PreloadingIndicator from '$lib/PreloadingIndicator.svelte'
 </script>
 
-<section class="minimum-width-rem bg-white font-sans antialiased">
+<section class="minimum-width-rem bg-white font-jost tracking-wider antialiased">
 	<!-- Page transition commented because it was not removing the layout from the login page after navigating to my/index page -->
 
 	<PageTransitions url="{$page.data?.url}">
@@ -24,10 +24,10 @@ import PreloadingIndicator from '$lib/PreloadingIndicator.svelte'
 				<PreloadingIndicator />
 			{/if}
 
-			<div class="{$navigating ? 'h-screen' : 'h-full min-h-screen'} bg-primary-500">
+			<div class="{$navigating ? 'h-screen' : 'h-full min-h-screen'} bg-gray-200">
 				<div
 					in:scale="{{ duration: 150 }}"
-					class="frosted mx-auto flex h-full min-h-screen items-center justify-center overflow-y-auto p-5 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-400 sm:p-10 md:p-20">
+					class="mx-auto flex h-full min-h-screen items-center justify-center overflow-y-auto p-5 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-400 sm:p-10 md:p-20">
 					<slot />
 				</div>
 			</div>

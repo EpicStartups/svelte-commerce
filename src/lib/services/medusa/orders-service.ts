@@ -58,7 +58,7 @@ export const fetchOrderWithFulFillments = async ({
 }: FetchOrderWithFulFillmentsInput) => {
 	try {
 		const med: { orders: MedusaOrder[] } = await getMedusajsApi(
-			`customers/me/orders?id=${id}&expand=items.variant.product,shipping_address,billing_address,fulfillments,fulfillments.tracking_links`,
+			`customers/me/orders?id=${id}&expand=items.variant.product,shipping_address,billing_address,fulfillments,fulfillments.tracking_links,reviews`,
 			{},
 			sid
 		)

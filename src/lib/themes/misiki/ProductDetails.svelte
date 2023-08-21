@@ -37,6 +37,7 @@ import Radio from '$lib/ui/Radio.svelte'
 import RadioColor from '$lib/ui/RadioColor.svelte'
 import RadioSize from '$lib/ui/RadioSize.svelte'
 import RatingsAndReviews from '$lib/components/Product/RatingsAndReviews.svelte'
+import Rating from "$lib/components/Product/Ratings.svelte"
 import RecentlyViewedProductsSlider from '$lib/components/Product/RecentlyViewedProductsSlider.svelte'
 import SEO from '$lib/components/SEO/index.svelte'
 import SimilarProductsFromCategorySlug from './SimilarProductsFromCategorySlug.svelte'
@@ -46,6 +47,7 @@ import Textbox from '$lib/ui/Textbox.svelte'
 import viewport from '$lib/actions/useViewPort'
 import WhiteButton from '$lib/ui/WhiteButton.svelte'
 import type { Product } from '$lib/types'
+import {generateSeoProps} from "$lib/utils"
 
 const cookies = Cookie()
 const isServer = import.meta.env.SSR
@@ -65,7 +67,7 @@ export let data: Data
 let currentVariantId = $page.url.searchParams?.get('variant') || ''
 let currentVariantPrice = data.product?.price.raw / 100
 
-let seoProps = {
+let seoProps = generateSeoProps({
 	// addressCountry: 'India',
 	// addressLocality: 'Semiliguda, Koraput',
 	// addressRegion: 'Odisha',
@@ -131,7 +133,7 @@ let seoProps = {
 	// timeToRead: 0,
 	title: `${data.product?.name}`,
 	twitterImage: { url: `${data.product?.img}` }
-}
+})
 
 let bounceItemFromTop = false
 let cartButtonText = 'Add to Bag'
@@ -1309,8 +1311,8 @@ async function updateVariant(variant) {
 
 				<!-- Ratings & Reviews -->
 
-				{#if $page.data.store?.isProductReviewsAndRatings}
-					{#await data.streamed?.productReviews}
+				<!-- {#if true}
+					{#await data.streamed?.product}
 						<ul class="m-0 p-0 flex flex-col gap-5">
 							{#each { length: 3 } as _}
 								<li>
@@ -1318,7 +1320,7 @@ async function updateVariant(variant) {
 								</li>
 							{/each}
 						</ul>
-					{:then productReviews}
+					{:then product}
 						<div
 							id="ratings_and_reviews"
 							class="sticky top-14 sm:top-20 z-30 lg:static lg:z-0 bg-white lg:bg-transparent">
@@ -1359,7 +1361,7 @@ async function updateVariant(variant) {
 					{:catch error}
 						<Error err="{error}" />
 					{/await}
-				{/if}
+				{/if} -->
 
 				<!-- Promo video -->
 
@@ -1818,6 +1820,10 @@ async function updateVariant(variant) {
 				</div>
 			{/if}
 
+			<!-- Review -->
+			{#if true}
+				<Rating reviews={data.product.reviews}/>
+			{/if}
 			<!-- Recently viewed products -->
 
 			{#if recentlyViewed?.length > 1}
