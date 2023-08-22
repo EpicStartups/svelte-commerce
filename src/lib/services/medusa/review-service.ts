@@ -116,7 +116,7 @@ interface CreateReviewInput {
 }
 export const createReview = async (input: CreateReviewInput) => {
 	try {
-		const res: { review: any } = await postMedusajsApi(
+		const res: { review: MedusaReview } = await postMedusajsApi(
 			`reviews`,
 			{
 				order_id: input.orderId,

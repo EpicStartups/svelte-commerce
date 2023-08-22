@@ -9,6 +9,7 @@ import dayjs from 'dayjs'
 import PrimaryButton from '$lib/ui/PrimaryButton.svelte'
 import SEO from '$lib/components/SEO/index.svelte'
 import Textarea from '$lib/ui/Textarea.svelte'
+import { enhance } from '$app/forms'
 
 /*
 MODELS
@@ -181,7 +182,24 @@ async function saveReviewproduct(review: Review) {
 			</ul>
 		</div>
 
-		<form on:submit|preventDefault="{() => saveReviewproduct(review)}" class="w-full">
+		<form 
+			action="/my/reviews/create?/saveReview"
+			method="POST"
+			use:enhance={() => {
+				toast('Sending your rating and review', 'info')
+				return async ({result}) => {
+					console.log("save review res: ", result);
+					if (result.type && result.type === "error" || result.type === "failure") {
+						alert("something went wrong creating review")
+					} else {
+						toast('Successfully saved.', 'success');
+						goto(`/product/${data.product.slug}`)
+					}
+
+				}
+			}}
+			class="w-full"
+		>
 			<div class="flex flex-col gap-4 rounded border bg-white p-4 shadow-md">
 				<div class="flex flex-wrap items-center gap-2 sm:gap-4">
 					<h4 class="capitalize">Rate this business</h4>
@@ -296,6 +314,12 @@ async function saveReviewproduct(review: Review) {
 						</label>
 					</div>
 				</div> -->
+
+				<input type="hidden" name="rating" bind:value="{review.rating}"/>
+				<input type="hidden" name="heading" bind:value="{review.heading}"/>
+				<input type="hidden" name="description" bind:value="{review.message}"/>
+				<input type="hidden" name="productId" bind:value="{review.pid}"/>
+				<input type="hidden" name="orderId" bind:value="{review.oid}"/>
 
 				<div class="ml-auto max-w-max">
 					<PrimaryButton type="submit" class="w-40">RATE</PrimaryButton>
