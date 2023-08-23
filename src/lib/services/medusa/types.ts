@@ -1,3 +1,5 @@
+import type { StoreWidget } from '$lib/sections/shop/widgets/types'
+
 export type MedusaImage = {
 	id: string
 	created_at: string
@@ -38,6 +40,7 @@ export interface MedusaStore {
 	banner?: string
 	icon?: string
 	products?: MedusaProduct[]
+	widgets?: StoreWidget[] | null
 }
 
 export type MedusaValue = {

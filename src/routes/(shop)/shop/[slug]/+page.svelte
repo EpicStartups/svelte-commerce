@@ -5,6 +5,7 @@ import dayjs from 'dayjs'
 import Fuse from 'fuse.js'
 import SEO from '$lib/components/SEO/index.svelte'
 import type { Store } from '$lib/types.js'
+import ShopWidgets from '$lib/sections/shop/ShopWidgets.svelte'
 
 let today = dayjs(new Date()).toISOString()
 interface Data {
@@ -22,7 +23,7 @@ let seoProps = generateSeoProps({
 
 <SEO {...seoProps} />
 
-<div class="w-100 h-[500px] bg-gray-300 relative flex justify-center items-center">
+<div class="w-100 h-[500px] bg-gray-300 relative flex justify-center items-center font-jost">
 
 	<h1 class="text-3xl font-bold relative z-[50]">
 		{data.shop.name}
@@ -37,9 +38,9 @@ let seoProps = generateSeoProps({
 	{/if}
 </div>
 
-<div class="w-100 sticky top-0 h-[100px] bg-gray-100 px-12 flex flex-row justify-between items-center">
+<div class="w-100 sticky z-[80] top-0 h-[80px] bg-gray-100 px-12 flex flex-row justify-between items-center">
 
-	<div class="w-[100px] h-[60px]">
+	<div class="w-[100px] h-[40px]">
 		{#if data.shop.icon}
 			<img 
 			class="w-[100%] h-[100%] object-contain"
@@ -50,10 +51,10 @@ let seoProps = generateSeoProps({
 	</div>
 </div>
 
-<div class="w-100 min-h-[1000px] p-4">
-	<div class="">
+<ShopWidgets widgets={data.shop.widgets}/>
 
-	</div>
+<div class="w-full min-h-[1000px] p-4 font-jost">
+	<h2 class="text-center my-8">All Products</h2>
 	<div class="product-list w-100 max-w-[1500px] mx-auto min-h-[200px] mt-4 grid gap-12 ">
 		{#each data.shop.products as product}
 			<a 

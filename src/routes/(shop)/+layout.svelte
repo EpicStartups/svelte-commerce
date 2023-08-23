@@ -1,6 +1,7 @@
 <script lang="ts">
 import { Footer, Nav } from '$lib/theme-config'
 import { PageTransitions } from '$lib/components'
+import {Footer as FooterV2} from "$lib/components"
 
 export let data
 
@@ -24,11 +25,7 @@ let openSidebar = false
 	</PageTransitions>
 
 	<div class="hidden lg:block">
-		<Footer 
-			me={data["me"]}
-			store={data["store"]}
-			megamenu={[]}
-			popularSearches={undefined}
+		<FooterV2
 		/>
 	</div>
 </div>

@@ -12,6 +12,8 @@ interface Data {
     }
 }
 export let data: Data;
+
+
 </script>
 
 <ProductDetails data="{data}" />

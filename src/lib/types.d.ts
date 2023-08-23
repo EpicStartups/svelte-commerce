@@ -16,6 +16,7 @@ import {
 import { createReplyDto } from './schemas'
 import type { MedusaPrice, MedusaVariant } from './services/medusa/types'
 import type { Currency } from './utils/currency'
+import type { StoreWidget } from './sections/shop/widgets/types'
 
 interface Me {
 	id?: string
@@ -52,6 +53,7 @@ interface Store {
 	products?: Product[]
 	createdAt?: string
 	defaultCurrency?: string
+	widgets?: StoreWidget[]
 }
 
 interface Product {

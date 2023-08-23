@@ -19,7 +19,7 @@ export const load: PageServerLoad = async ({ url, request, locals, cookies, para
 			sid,
 			shopId
 		})
-		console.log('store: ', store)
+		//console.log('store: ', store.widgets)
 		return {
 			shop: mapMedusaJsStore(store)
 		}
