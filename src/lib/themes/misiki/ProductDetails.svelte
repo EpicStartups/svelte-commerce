@@ -48,6 +48,9 @@ import viewport from '$lib/actions/useViewPort'
 import WhiteButton from '$lib/ui/WhiteButton.svelte'
 import type { Product } from '$lib/types'
 import {generateSeoProps} from "$lib/utils"
+import ProductBanner from "$lib/sections/product/ProductBanner.svelte"
+import ProductWidget from "$lib/sections/product/ProductWidget.svelte"
+import ProductSpecs from "$lib/sections/product/ProductSpecs.svelte"
 
 const cookies = Cookie()
 const isServer = import.meta.env.SSR
@@ -417,8 +420,11 @@ async function updateVariant(variant) {
 
 		<div class="mb-5 grid grid-cols-1 items-start gap-5 sm:mb-10 sm:gap-10 lg:grid-cols-5">
 			<!-- Banner section -->
-
-			<div class="col-span-1 h-auto lg:col-span-3">
+			<ProductBanner 
+				product={data?.product}
+				product_image_dimension={product_image_dimension}
+			/>
+			<!-- <div class="col-span-1 h-auto lg:col-span-3">
 				<div
 					class="flex w-full grid-cols-2 flex-row gap-2 overflow-x-scroll scrollbar-none md:grid">
 					{#if data?.product?.images?.length}
@@ -465,7 +471,7 @@ async function updateVariant(variant) {
 						</div>
 					{/if}
 				</div>
-			</div>
+			</div> -->
 
 			<!-- Informatin section -->
 
@@ -603,7 +609,7 @@ async function updateVariant(variant) {
 
 				<!-- Delivery Options Mobile -->
 
-				{#if data.product?.deliveryDetails || $page.data.store?.isIndianPincodes}
+				<!-- {#if data.product?.deliveryDetails || $page.data.store?.isIndianPincodes}
 					<div class="sm:hidden block">
 						<div class="mb-2 flex items-center gap-2 uppercase">
 							<h5>Delivery Options</h5>
@@ -631,7 +637,7 @@ async function updateVariant(variant) {
 							<DeliveryOptions product="{data.product}" deliveryDetails="{data.deliveryDetails}" />
 						{/if}
 					</div>
-				{/if}
+				{/if} -->
 
 				<!-- prices desktop -->
 
@@ -678,7 +684,7 @@ async function updateVariant(variant) {
 
 				<!-- New and Tags -->
 
-				{#if ribbonTags?.length || data.product?.new}
+				<!-- {#if ribbonTags?.length || data.product?.new}
 					<div class="flex flex-wrap gap-1 text-xs font-semibold uppercase text-white">
 						{#if data.product?.new}
 							<div class="bg-accent-500 py-1 px-2">New</div>
@@ -694,7 +700,7 @@ async function updateVariant(variant) {
 							{/each}
 						{/if}
 					</div>
-				{/if}
+				{/if} -->
 
 				{#await data.streamed?.moreProductDetails}
 					<ul class="mb-5 p-0 list-none flex flex-wrap gap-4">
@@ -709,7 +715,7 @@ async function updateVariant(variant) {
 				{:then value}
 					<!-- Color -->
 
-					{#if value?.pg?.colorGroup?.length}
+					<!-- {#if value?.pg?.colorGroup?.length}
 						<div>
 							<div class="mb-2 flex items-center gap-2 uppercase">
 								<h5>Select Color</h5>
@@ -733,7 +739,7 @@ async function updateVariant(variant) {
 								{#each value?.pg.colorGroup as cg}
 									{#if cg?.color?.name && cg.img}
 										<li>
-											<!-- {#if cg.hasStock}
+											{#if cg.hasStock}
 												<a
 													href="/product/{cg.slug}"
 													class="relative border h-20 w-14 flex items-center justify-center p-1 group transition duration-300 focus:outline-none
@@ -775,17 +781,17 @@ async function updateVariant(variant) {
 
 													<hr class="absolute z-10 w-24 transform rotate-[56deg] border-zinc-300" />
 												</a>
-											{/if} -->
+											{/if} 
 										</li>
 									{/if}
 								{/each}
 							</ul>
 						</div>
-					{/if}
+					{/if} -->
 
 					<!-- Size -->
 
-					{#if value?.pg?.sizeGroup?.length}
+					<!-- {#if value?.pg?.sizeGroup?.length}
 						<div>
 							<div class="mb-2 flex flex-wrap items-center gap-2 justify-between">
 								<div class="flex items-center gap-2 uppercase">
@@ -806,14 +812,14 @@ async function updateVariant(variant) {
 									</svg>
 								</div>
 
-								<!-- {#if data.product.sizechart}
+								 {#if data.product.sizechart}
 									<button
 										type="button"
 										class="text-right text-sm text-secondary-500 underline focus:outline-none"
 										on:click="{() => (showSizeChart = !showSizeChart)}">
 										Size Chart
 									</button>
-								{/if} -->
+								{/if} 
 							</div>
 
 							<ul class="flex flex-wrap gap-3">
@@ -853,11 +859,11 @@ async function updateVariant(variant) {
 								{/each}
 							</ul>
 						</div>
-					{/if}
+					{/if} -->
 
 					<!-- Group Products -->
 
-					{#if value?.pg?.materialGroup?.length}
+					<!-- {#if value?.pg?.materialGroup?.length}
 						<div>
 							<div class="mb-2 flex items-center gap-2 uppercase">
 								<h5>Group Products</h5>
@@ -909,7 +915,7 @@ async function updateVariant(variant) {
 								{/each}
 							</ul>
 						</div>
-					{/if}
+					{/if} -->
 
 					<!-- Variant Products -->
 
@@ -1008,7 +1014,7 @@ async function updateVariant(variant) {
 
 				<!-- Linked Products -->
 
-				{#if data?.product?.linkedProducts?.length && data?.product?.linkedProducts[0] && (data?.product?.linkedProducts[0]._id || data?.product?.linkedProducts[0].id)}
+				<!-- {#if data?.product?.linkedProducts?.length && data?.product?.linkedProducts[0] && (data?.product?.linkedProducts[0]._id || data?.product?.linkedProducts[0].id)}
 					<div>
 						<div class="mb-2 flex items-center gap-2 uppercase">
 							<h5>Linked Products</h5>
@@ -1033,7 +1039,7 @@ async function updateVariant(variant) {
 							selectedItems="{selectedLinkiedProducts || []}"
 							on:change="{handleSelectedLinkiedProducts}" />
 					</div>
-				{/if}
+				{/if} -->
 
 				{#await data.streamed?.moreProductDetails then value}
 					{#if !data.product?.isCustomized}
@@ -1237,11 +1243,11 @@ async function updateVariant(variant) {
 					{/if}
 				{:catch error}
 					<Error err="{error}" />
-				{/await}
+				{/await} 
 
 				<!-- Long Description -->
 
-				{#await data.streamed?.moreProductDetails}
+				<!-- {#await data.streamed?.moreProductDetails}
 					<Skeleton small />
 				{:then value}
 					{#if value.longDescription}
@@ -1273,11 +1279,11 @@ async function updateVariant(variant) {
 					{/if}
 				{:catch error}
 					{error?.message}
-				{/await}
+				{/await} -->
 
 				<!-- Delivery Options Desktop -->
 
-				{#if data.product?.deliveryDetails || $page.data.store?.isIndianPincodes}
+				<!-- {#if data.product?.deliveryDetails || $page.data.store?.isIndianPincodes}
 					<div class="hidden sm:block">
 						<div class="mb-2 flex items-center gap-2 uppercase">
 							<h5>Delivery Options</h5>
@@ -1307,7 +1313,7 @@ async function updateVariant(variant) {
 					</div>
 
 					<hr class="hidden sm:block" />
-				{/if}
+				{/if} -->
 
 				<!-- Ratings & Reviews -->
 
@@ -1365,7 +1371,7 @@ async function updateVariant(variant) {
 
 				<!-- Promo video -->
 
-				{#if $page.data.store?.storePromoVideo?.active?.val && getIdFromYoutubeVideo($page.data.store?.storePromoVideo?.url?.val)}
+				<!-- {#if $page.data.store?.storePromoVideo?.active?.val && getIdFromYoutubeVideo($page.data.store?.storePromoVideo?.url?.val)}
 					<iframe
 						src="https://www.youtube.com/embed/{getIdFromYoutubeVideo(
 							$page.data.store?.storePromoVideo?.url?.val
@@ -1376,7 +1382,7 @@ async function updateVariant(variant) {
 						class="w-full max-w-md h-auto aspect-video"
 						allowfullscreen>
 					</iframe>
-				{/if}
+				{/if} -->
 
 				<!-- Add to Cart -->
 
@@ -1389,7 +1395,7 @@ async function updateVariant(variant) {
 					on:exitViewport="{cartButtonExitViewport}">
 				</div>
 
-				{#await data.streamed?.moreProductDetails then value}
+				<!-- {#await data.streamed?.moreProductDetails then value}
 					{#if showStickyCartButton && !data.product?.isCustomized}
 						<div
 							class="w-full grid md:hidden grid-cols-5 gap-2 items-center uppercase fixed inset-x-0 bottom-0 z-40 h-16 border-t bg-white p-3 box-shadow">
@@ -1790,14 +1796,14 @@ async function updateVariant(variant) {
 					{/if}
 				{:catch error}
 					<Error err="{error}" />
-				{/await}
+				{/await} -->
 			</div>
 		</div>
 
 		<div class="px-3 sm:px-10 lg:px-0 flex flex-col gap-5 sm:gap-10">
 			<!-- Frequently bought together -->
 
-			{#if data.product?.crossSells?.length}
+			<!-- {#if data.product?.crossSells?.length}
 				<hr />
 
 				<div class="sticky top-14 sm:top-20 z-30 lg:static lg:z-0 bg-white lg:bg-transparent">
@@ -1818,10 +1824,21 @@ async function updateVariant(variant) {
 						</div>
 					{/each}
 				</div>
+			{/if} -->
+			
+			{#if data?.product?.specifications}
+				<ProductSpecs 
+					specs={data.product.specifications} 
+					productName={data.product.name} 
+				/>
 			{/if}
+			{#if data?.product?.widgets}
+				<ProductWidget widgets={data.product.widgets} />
+			{/if}
+			
 
 			<!-- Review -->
-			{#if true}
+			{#if data.product.reviews}
 				<Rating reviews={data.product.reviews}/>
 			{/if}
 			<!-- Recently viewed products -->

@@ -14,9 +14,10 @@ import {
 	updateProductImagesDto
 } from '$lib/schemas'
 import { createReplyDto } from './schemas'
-import type { MedusaPrice, MedusaVariant } from './services/medusa/types'
+import type { MedusaPrice, MedusaProductSpecs, MedusaVariant } from './services/medusa/types'
 import type { Currency } from './utils/currency'
 import type { StoreWidget } from './sections/shop/widgets/types'
+import type { ProductWidget } from './sections/product/widgets/types'
 
 interface Me {
 	id?: string
@@ -99,7 +100,8 @@ interface Product {
 	size?: Size
 	sku: string
 	slug: string
-	specifications?: Specification[]
+	specifications?: MedusaProductSpecs
+	widgets?: ProductWidget[]
 	status: string
 	stock: number
 	tags: Tag[]

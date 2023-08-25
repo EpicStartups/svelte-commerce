@@ -1,3 +1,4 @@
+import type { ProductWidget } from '$lib/sections/product/widgets/types'
 import type { StoreWidget } from '$lib/sections/shop/widgets/types'
 
 export type MedusaImage = {
@@ -171,6 +172,22 @@ export type MedusaProduct = {
 	store?: MedusaStore | null
 	profile: MedusaProfile
 	reviews?: MedusaReview[] | null
+	specifications?: MedusaProductSpecs | null
+	widgets?: ProductWidget[] | null
+}
+
+export type MedusaProductSpecs = {
+	mainSpecs: {
+		header: string
+		description: string
+	}[]
+	specs: {
+		title: string
+		descriptions: {
+			key: string
+			value: string
+		}[]
+	}[]
 }
 
 export type FetchProductsResp = {
