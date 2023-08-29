@@ -1,6 +1,6 @@
 <script lang="ts">
 import { parseTextWidgetInput } from "$lib/services/medusa/medusa-utils"
-import type { ImageGridProps } from "./types"
+import type { ImageGridProps } from "$lib/types/productWidget"
 
 export let props: ImageGridProps = {
     type: "ImageGrid6Props",

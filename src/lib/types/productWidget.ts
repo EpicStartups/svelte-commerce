@@ -1,3 +1,5 @@
+import type { Img, Text, WidgetStyle } from './baseWidgets'
+
 export type ProductWidget = SimpleQuoteProps | SideQuoteProps | ParallelQuoteProps | ImageGridProps
 export type ProductWidgetType =
 	| 'SimpleQuote'
@@ -6,22 +8,23 @@ export type ProductWidgetType =
 	| 'ImageGrid6Props'
 	| 'ImageGrid12Props'
 
-export interface SimpleQuoteProps {
+export interface SimpleQuoteProps extends WidgetStyle {
 	type: 'SimpleQuote'
 	bgImg?: Img | null
 	heading: Text
 	description: Text
 }
 
-export interface SideQuoteProps {
+export interface SideQuoteProps extends WidgetStyle {
 	type: 'SideQuote'
 	bgImg?: Img | null
 	heading: Text
 	description: Text
 	isReverse: boolean
+	sideImg?: Img | null
 }
 
-export interface ParallelQuoteProps {
+export interface ParallelQuoteProps extends WidgetStyle {
 	type: 'ParallelQuote'
 	bgImg?: Img | null
 	firstQuote: {
@@ -38,22 +41,4 @@ export interface ImageGridProps {
 	type: 'ImageGrid6Props' | 'ImageGrid12Props'
 	header: Text
 	images: Img[]
-}
-
-export interface Img {
-	src: string
-	alt?: string
-}
-
-export interface Text {
-	text: string
-	color?: string
-	weight?: string
-	font?: string
-}
-
-export interface Button {
-	text: string
-	color?: string
-	link?: string
 }

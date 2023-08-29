@@ -1,7 +1,7 @@
 <script lang="ts">
+import type { StoreWidget } from "$lib/types/shopWidgets"
 import SideQuote from "./widgets/sideQuote.svelte"
 import SimpleQuote from "./widgets/simpleQuote.svelte";
-import type { StoreWidget } from "./widgets/types"
 
 export let widgets: StoreWidget[] = [];
 

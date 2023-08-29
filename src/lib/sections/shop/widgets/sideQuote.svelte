@@ -1,6 +1,6 @@
 <script lang="ts">
 import { parseTextWidgetInput } from "$lib/services/medusa/medusa-utils"
-import type { SideQuoteProps } from "./types"
+import type { SideQuoteProps } from "$lib/types/shopWidgets"
 
 
 export let props: SideQuoteProps = {
@@ -49,8 +49,14 @@ export let props: SideQuoteProps = {
             </p>
         </div>
 
-        <div>
-
+        <div class="w-full h-full flex justify-center items-center px-8 py-2 relative">
+            {#if props.sideImg && props.sideImg.src}
+                <img
+                    src={props.sideImg.src}
+                    alt={props.sideImg.alt ?? ""}
+                    class="w-full h-full object-contain absolute top-0 bottom-0"
+                />         
+            {/if}
         </div>
     </div>
 

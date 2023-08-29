@@ -1,6 +1,6 @@
 <script lang="ts">
 import { parseTextWidgetInput } from "$lib/services/medusa/medusa-utils"
-import type { ParallelQuoteProps } from "./types"
+import type { ParallelQuoteProps } from "$lib/types/productWidget"
 
 
 export let props: ParallelQuoteProps = {

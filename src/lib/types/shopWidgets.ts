@@ -1,29 +1,20 @@
+import type { WidgetStyle, Img, Text } from './baseWidgets'
+
 export type StoreWidget = SimpleQuoteProps | SideQuoteProps
 export type StoreWidgetType = 'SimpleQuote' | 'SideQuote'
 
-export interface SimpleQuoteProps {
+export interface SimpleQuoteProps extends WidgetStyle {
 	type: 'SimpleQuote'
 	bgImg?: Img | null
 	heading: Text
 	description: Text
 }
 
-export interface SideQuoteProps {
+export interface SideQuoteProps extends WidgetStyle {
 	type: 'SideQuote'
 	bgImg?: Img | null
 	heading: Text
 	description: Text
 	isReverse: boolean
-}
-
-export interface Img {
-	src: string
-	alt?: string
-}
-
-export interface Text {
-	text: string
-	color?: string
-	weight?: string
-	font?: string
+	sideImg?: Img | null
 }

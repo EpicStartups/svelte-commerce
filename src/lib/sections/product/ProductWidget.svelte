@@ -2,9 +2,9 @@
 import SideQuote from "./widgets/SideQuote.svelte"
 import SimpleQuote from "./widgets/SimpleQuote.svelte";
 import ParallelQuote from "./widgets/ParallelQuote.svelte";
-import type { ProductWidget } from "./widgets/types"
 import ImageGrid12 from "./widgets/ImageGrid12.svelte"
 import ImageGrid6 from "./widgets/ImageGrid6.svelte"
+import type { ProductWidget } from "$lib/types/productWidget"
 
 export let widgets: ProductWidget[] = [];
 
