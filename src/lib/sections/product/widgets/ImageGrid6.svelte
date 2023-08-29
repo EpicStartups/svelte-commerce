@@ -16,13 +16,13 @@ export let props: ImageGridProps = {
 </script>
 
 <div class="w-full relative min-h-[280px] px-6 py-12">
-    <h2 class="text-2xl text-center mb-10">{props.header.text}</h2>
-    <ul class="image-grid w-full grid  gap-4">
+    <h2 class="text-2xl text-center mb-4">{props.header.text}</h2>
+    <ul class="image-grid w-full grid gap-4">
         {#each props.images as img}
-            <li class="h-full aspect-square grid-item border">
+            <li class="h-full aspect-square grid-item shadow-lg p-3">
                 {#if img.src}
                     <img 
-                        class="w-full h-full object-cover"
+                        class="w-full h-full object-contain"
                         src={img.src}
                         alt={img.alt}
                     />
