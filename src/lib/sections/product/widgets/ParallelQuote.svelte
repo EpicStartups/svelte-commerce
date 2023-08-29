@@ -1,4 +1,5 @@
 <script lang="ts">
+import { parseTextWidgetInput } from "$lib/services/medusa/medusa-utils"
 import type { ParallelQuoteProps } from "./types"
 
 
@@ -43,6 +44,7 @@ export let props: ParallelQuoteProps = {
                     {props.firstQuote.heading.font ?? "font-jost"} 
                     {props.firstQuote.heading.weight ?? ""}
                 "
+                style={parseTextWidgetInput(props.firstQuote.heading)}
             >
             {props.firstQuote.heading.text}
             </h2>
@@ -52,6 +54,7 @@ export let props: ParallelQuoteProps = {
                     {props.firstQuote.description.font ?? "font-jost"} 
                     {props.firstQuote.description.weight ?? ""}
                 "
+                style={parseTextWidgetInput(props.firstQuote.description)}
             >
             {props.firstQuote.description.text}
             </p>
@@ -65,6 +68,7 @@ export let props: ParallelQuoteProps = {
                     {props.secondQuote.heading.font ?? "font-jost"} 
                     {props.secondQuote.heading.weight ?? ""}
                 "
+                style={parseTextWidgetInput(props.secondQuote.heading)}
             >
             {props.secondQuote.heading.text}
             </h2>
@@ -74,6 +78,7 @@ export let props: ParallelQuoteProps = {
                     {props.secondQuote.description.font ?? "font-jost"} 
                     {props.secondQuote.description.weight ?? ""}
                 "
+                style={parseTextWidgetInput(props.secondQuote.description)}
             >
             {props.secondQuote.description.text}
             </p>

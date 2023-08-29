@@ -1,3 +1,4 @@
+import type { Text } from '$lib/sections/shop/widgets/types'
 import type {
 	AllOrders,
 	AllProducts,
@@ -21,7 +22,8 @@ import type {
 	MedusaProduct,
 	MedusaReview,
 	MedusaShippingOption,
-	MedusaStore
+	MedusaStore,
+	WidgetText
 } from './types'
 export const mapMedusajsOrder = (o: any) => {
 	let tmp: any
@@ -384,4 +386,12 @@ export const mapMedusaJsReview = (review: MedusaReview): Review => {
 		listing: '',
 		store: ''
 	}
+}
+
+export const parseTextWidgetInput = (text: WidgetText) => {
+	return `
+		${text.color ? `color: ${text.color};` : ''}
+		${text.font ? `font-family: ${text.font};` : ''}
+		${text.weight ? `font-weight: ${text.weight};` : ''}
+	`
 }

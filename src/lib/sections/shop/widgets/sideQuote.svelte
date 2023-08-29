@@ -1,4 +1,5 @@
 <script lang="ts">
+import { parseTextWidgetInput } from "$lib/services/medusa/medusa-utils"
 import type { SideQuoteProps } from "./types"
 
 
@@ -32,6 +33,7 @@ export let props: SideQuoteProps = {
                     {props.heading.font ?? "font-jost"} 
                     {props.heading.weight ?? ""}
                 "
+                style={parseTextWidgetInput(props.heading)}
             >
             {props.heading.text}
             </h2>
@@ -41,6 +43,7 @@ export let props: SideQuoteProps = {
                     {props.description.font ?? "font-jost"} 
                     {props.description.weight ?? ""}
                 "
+                style={parseTextWidgetInput(props.description)}
             >
             {props.description.text}
             </p>

@@ -692,3 +692,21 @@ export enum PaymentStatus {
 	CANCELED = 'canceled',
 	REQUIRES_ACTION = 'requires_action'
 }
+
+export interface WidgetImg {
+	src: string
+	alt?: string
+}
+
+export interface WidgetText {
+	text: string
+	color?: string
+	weight?: string
+	font?: string
+}
+
+export interface WidgetButton {
+	text: string
+	color?: string
+	link?: string
+}
