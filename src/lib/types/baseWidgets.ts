@@ -1,13 +1,10 @@
-export interface Img {
+export interface Img extends WidgetStyle {
 	src: string
 	alt?: string
 }
 
-export interface Text {
+export interface Text extends WidgetStyle {
 	text: string
-	color?: string
-	weight?: string
-	font?: string
 }
 
 export interface WidgetStyle {

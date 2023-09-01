@@ -1,4 +1,3 @@
-import type { Text } from '$lib/sections/shop/widgets/types'
 import type {
 	AllOrders,
 	AllProducts,
@@ -13,6 +12,7 @@ import type {
 	Store,
 	Review
 } from '$lib/types'
+import type { WidgetStyle } from '$lib/types/baseWidgets'
 import { toPrice } from '$lib/utils'
 import { formatCurrency, type Currency } from '$lib/utils/currency'
 import type {
@@ -393,5 +393,13 @@ export const parseTextWidgetInput = (text: WidgetText) => {
 		${text.color ? `color: ${text.color};` : ''}
 		${text.font ? `font-family: ${text.font};` : ''}
 		${text.weight ? `font-weight: ${text.weight};` : ''}
+	`
+}
+
+export const parseWidgetStyle = (style: WidgetStyle) => {
+	return `
+		${style.color ? `color: ${style.color};` : ''}
+		${style.font ? `font-family: ${style.font};` : ''}
+		${style.weight ? `font-weight: ${style.weight};` : ''}
 	`
 }
