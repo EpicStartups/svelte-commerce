@@ -3,7 +3,7 @@ import { parseTextWidgetInput } from "$lib/services/medusa/medusa-utils"
 import type { ImageGridProps } from "$lib/types/shopWidgets"
 
 export let props: ImageGridProps = {
-    type: "ImageGrid6Props",
+    type: "ImageGrid6",
     header: {
         text: "As Seen On",
     },

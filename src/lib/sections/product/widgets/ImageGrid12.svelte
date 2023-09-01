@@ -3,7 +3,7 @@ import { parseTextWidgetInput } from "$lib/services/medusa/medusa-utils"
 import type { ImageGridProps } from "$lib/types/productWidget"
 
 export let props: ImageGridProps = {
-    type: "ImageGrid12Props",
+    type: "ImageGrid12",
     header: {
         text: "Loved By Celebrities & Influencers",
     },

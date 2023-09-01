@@ -47,7 +47,7 @@ export interface ParallelQuoteProps extends WidgetStyle {
 }
 
 export interface ImageGridProps extends WidgetStyle {
-	type: 'ImageGrid6Props' | 'ImageGrid12Props'
+	type: 'ImageGrid6' | 'ImageGrid12'
 	header: Text
 	images: Img[]
 }

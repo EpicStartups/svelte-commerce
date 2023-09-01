@@ -16,9 +16,9 @@ export let widgets: ProductWidget[] = [];
 			<SimpleQuote props={widget} />
 		{:else if widget.type === "SideQuote"}
 			<SideQuote props={widget} />
-        {:else if widget.type === "ImageGrid6Props"}
+        {:else if widget.type === "ImageGrid6"}
             <ImageGrid6 props={widget}/>
-        {:else if widget.type === "ImageGrid12Props"}
+        {:else if widget.type === "ImageGrid12"}
             <ImageGrid12 props={widget}/>
         {:else if widget.type === "ParallelQuote"}
             <ParallelQuote props={widget}/>

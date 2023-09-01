@@ -5,8 +5,8 @@ export type ProductWidgetType =
 	| 'SimpleQuote'
 	| 'SideQuote'
 	| 'ParallelQuote'
-	| 'ImageGrid6Props'
-	| 'ImageGrid12Props'
+	| 'ImageGrid6'
+	| 'ImageGrid12'
 
 export interface SimpleQuoteProps extends WidgetStyle {
 	type: 'SimpleQuote'
@@ -38,7 +38,7 @@ export interface ParallelQuoteProps extends WidgetStyle {
 }
 
 export interface ImageGridProps {
-	type: 'ImageGrid6Props' | 'ImageGrid12Props'
+	type: 'ImageGrid6' | 'ImageGrid12'
 	header: Text
 	images: Img[]
 }
