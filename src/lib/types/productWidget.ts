@@ -1,12 +1,21 @@
 import type { Img, Text, WidgetStyle } from './baseWidgets'
 
-export type ProductWidget = SimpleQuoteProps | SideQuoteProps | ParallelQuoteProps | ImageGridProps
+export type ProductWidget =
+	| SimpleQuoteProps
+	| SideQuoteProps
+	| ParallelQuoteProps
+	| ImageGridProps
+	| TextEditorProps
+	| RowSlidersProps
+
 export type ProductWidgetType =
 	| 'SimpleQuote'
 	| 'SideQuote'
 	| 'ParallelQuote'
 	| 'ImageGrid6'
 	| 'ImageGrid12'
+	| 'RowSliders'
+	| 'TextEditor'
 
 export interface SimpleQuoteProps extends WidgetStyle {
 	type: 'SimpleQuote'
@@ -41,4 +50,15 @@ export interface ImageGridProps {
 	type: 'ImageGrid6' | 'ImageGrid12'
 	header: Text
 	images: Img[]
+}
+
+export interface RowSlidersProps extends WidgetStyle {
+	type: 'RowSliders'
+	img: Img[]
+}
+
+export interface TextEditorProps extends WidgetStyle {
+	type: 'TextEditor'
+	content: string
+	bgImg?: Img | null
 }
