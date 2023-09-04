@@ -1,5 +1,5 @@
-import type { ProductWidget } from '$lib/sections/product/widgets/types'
-import type { StoreWidget } from '$lib/sections/shop/widgets/types'
+import type { ProductWidget } from '$lib/types/productWidget'
+import type { StoreWidget } from '$lib/types/shopWidgets'
 
 export type MedusaImage = {
 	id: string
@@ -174,6 +174,7 @@ export type MedusaProduct = {
 	reviews?: MedusaReview[] | null
 	specifications?: MedusaProductSpecs | null
 	widgets?: ProductWidget[] | null
+	rating?: number | null
 }
 
 export type MedusaProductSpecs = {

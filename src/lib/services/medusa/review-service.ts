@@ -128,7 +128,7 @@ export const createReview = async (input: CreateReviewInput) => {
 			input.sid ?? null
 		)
 
-		console.log('review: ', res.review)
+		//console.log('review: ', res.review)
 		return {
 			review: res.review
 		}

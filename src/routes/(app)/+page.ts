@@ -12,7 +12,7 @@ const isServer = import.meta.env.SSR
 export async function load({ parent }) {
 	const parentData = await parent()
 	const store = parentData['store']
-	console.log('store: ', store)
+	//console.log('store: ', store)
 	const origin = parentData['origin']
 	const sid = parentData['sid']
 	const home = await CollectionService.fetchCollections({

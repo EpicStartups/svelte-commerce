@@ -133,6 +133,7 @@ interface Product {
 	expiryDate?: string
 	store?: Store
 	reviews?: Review[]
+	rating?: number
 }
 
 interface Brand {

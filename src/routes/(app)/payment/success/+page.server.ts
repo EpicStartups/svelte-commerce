@@ -57,7 +57,7 @@ export async function load({ url, request, locals, cookies }) {
 			sid,
 			origin: locals['origin']
 		})
-		console.log('cart: ', cart)
+		//console.log('cart: ', cart)
 		if (cart) {
 			const cartObj: Cart = mapMedusajsCart(cart)
 			locals['cartId'] = cartObj.cart_id

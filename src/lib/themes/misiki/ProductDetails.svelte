@@ -1153,7 +1153,7 @@ async function updateVariant(variant) {
 												method="POST"
 												use:enhance="{() => {
 													return async ({ result }) => {
-														const data = result?.data
+														const data = result ? result['data'] : undefined;
 														// console.log('result of add to cart', result)
 														if (data === 'choose variant') {
 															scrollTo('variants_list')
@@ -1395,7 +1395,7 @@ async function updateVariant(variant) {
 					on:exitViewport="{cartButtonExitViewport}">
 				</div>
 
-				<!-- {#await data.streamed?.moreProductDetails then value}
+				{#await data.streamed?.moreProductDetails then value}
 					{#if showStickyCartButton && !data.product?.isCustomized}
 						<div
 							class="w-full grid md:hidden grid-cols-5 gap-2 items-center uppercase fixed inset-x-0 bottom-0 z-40 h-16 border-t bg-white p-3 box-shadow">
@@ -1796,7 +1796,7 @@ async function updateVariant(variant) {
 					{/if}
 				{:catch error}
 					<Error err="{error}" />
-				{/await} -->
+				{/await}
 			</div>
 		</div>
 
@@ -1839,7 +1839,10 @@ async function updateVariant(variant) {
 
 			<!-- Review -->
 			{#if data.product.reviews}
-				<Rating reviews={data.product.reviews}/>
+				<Rating 
+					reviews={data.product.reviews}
+					rating={data.product.rating}
+				/>
 			{/if}
 			<!-- Recently viewed products -->
 

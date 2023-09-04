@@ -3,6 +3,7 @@ import type { Review } from "$lib/types"
 import StarRating from "../StarRating.svelte"
 
 export let reviews: Review[] = []
+export let rating: number = 0;
 
 </script>
 
@@ -13,7 +14,11 @@ export let reviews: Review[] = []
             <h3 class="text-dark-800">The product not yet has any review.</h3>
         </div>
         {:else}
-        <h2 class="mb-8">Customer Reviews</h2>
+        <h2 class="mb-3">Customer Reviews</h2>
+        <div class="mb-12">
+            <h3>Average ratings</h3>
+            <StarRating rating={rating} size={'45px'}/>
+        </div>
         <div class="w-full flex flex-col justify-start items-start gap-10">
             {#each reviews as review}
                 <div class="w-full min-h-[100px]">

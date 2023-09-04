@@ -207,7 +207,8 @@ export const mapMedusajsProduct = (
 		stock: variant.inventory_quantity,
 		reviews: p.reviews ? p.reviews.map((review) => mapMedusaJsReview(review)) : undefined,
 		specifications: p.specifications,
-		widgets: p.widgets ?? undefined
+		widgets: p.widgets ?? undefined,
+		rating: p.rating ?? 0
 	}
 	return prod
 }
