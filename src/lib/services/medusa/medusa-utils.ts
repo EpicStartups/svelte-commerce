@@ -159,7 +159,7 @@ export const mapMedusajsProduct = (
 		height: variant.height,
 		width: variant.width,
 		length: variant.length,
-		price: formatCurrency(price.amount, currency2),
+		price: formatCurrency(price.amount ?? 0, currency2),
 		mrp: formatCurrency(variant.original_price_incl_tax, currency2),
 		discount:
 			variant.original_price_incl_tax && variant.calculated_price_incl_tax
@@ -345,7 +345,7 @@ export const mapMedusaJsShippingOptions = (
 			profileId: option.profile_id,
 			providerId: option.provider_id,
 			priceType: option.price_type,
-			amount: formatCurrency(option.amount, currency),
+			amount: formatCurrency(option.amount ?? 0, currency),
 			isReturn: option.is_return,
 			adminOnly: option.admin_only,
 			data: option.data,

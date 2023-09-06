@@ -10,7 +10,7 @@ import { handleApiError } from '$lib/utils'
 
 export const fetchOrders = async ({ origin, storeId, server = false, sid = null }: any) => {
 	try {
-		console.log('sid: ', sid)
+		//console.log('sid: ', sid)
 		// const med: { orders: MedusaOrder[]; count: number; offset: number; limit: number } =
 		// 	await getMedusajsApi(`customers/me/orders`, {}, sid)
 		const med: { orders: MedusaOrder[]; count: number; offset: number; limit: number } =

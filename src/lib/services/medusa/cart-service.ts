@@ -125,7 +125,7 @@ export const addToCartService = async ({
 		if (!cart_id) {
 			let defaultAddress: MedusaAddress | undefined
 			try {
-				console.log('sid: ', sid)
+				//console.log('sid: ', sid)
 				const shippingAddresses = await AddressService.fetchAddresses({
 					sid
 				})
