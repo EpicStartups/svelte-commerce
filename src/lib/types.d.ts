@@ -134,6 +134,7 @@ interface Product {
 	store?: Store
 	reviews?: Review[]
 	rating?: number
+	orders_completed?: number
 }
 
 interface Brand {

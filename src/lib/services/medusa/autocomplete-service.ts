@@ -1,16 +1,20 @@
-import { getMedusajsApi } from '$lib/utils/server'
+import { getMedusajsApi, postMedusajsApi } from '$lib/utils/server'
 import { serializeNonPOJOs } from '$lib/utils/validations'
 import { error } from '@sveltejs/kit'
+import type { MedusaProduct } from './types'
+import type { Product } from '$lib/types'
+import { mapMedusajsProduct } from './medusa-utils'
 
 export const fetchAutocompleteData = async ({ origin, storeId, q }: any) => {
 	try {
-		let res: any = {}
-		let data = []
+		const res: { products: MedusaProduct[]; count: number } = await postMedusajsApi(
+			`products/search`,
+			{
+				q
+			}
+		)
 
-		res = await getMedusajsApi(`autocomplete`, {})
-
-		// must return name:string, slug:string type:string
-		return data || []
+		return res.products
 	} catch (e) {
 		throw error(e.status, e.message)
 	}

@@ -208,7 +208,8 @@ export const mapMedusajsProduct = (
 		reviews: p.reviews ? p.reviews.map((review) => mapMedusaJsReview(review)) : undefined,
 		specifications: p.specifications,
 		widgets: p.widgets ?? undefined,
-		rating: p.rating ?? 0
+		rating: p.rating ?? 0,
+		orders_completed: p.orders_completed ?? 0
 	}
 	return prod
 }

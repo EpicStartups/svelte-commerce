@@ -171,7 +171,7 @@ async function onSearchSubmit({ detail }) {
 
 		<div class="hidden w-full min-w-[200px] max-w-4xl flex-1 lg:block font-jost">
 			<Autocomplete
-				placeholder="{$page?.data?.store?.searchbarText || 'Search...'}"
+				placeholder="{'Search...'}"
 				on:search="{onSearchSubmit}" />
 		</div>
 

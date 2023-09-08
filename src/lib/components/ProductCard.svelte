@@ -27,19 +27,21 @@
 }
 </style>
 
-<script>
+<script lang="ts">
 import { currency } from '$lib/utils'
 import { fly } from 'svelte/transition'
 import { page } from '$app/stores'
 import LazyImg from '$lib/components/Image/LazyImg.svelte'
 import productNonVeg from '$lib/assets/product/non-veg.png'
 import productVeg from '$lib/assets/product/veg.png'
+import type { Product } from '$lib/types'
+import StarRating from './StarRating.svelte'
 
-export let product = {}
+export let product: Product;
 
-if (product?._source) {
-	product = product?._source
-}
+// if (product?._source) {
+// 	product = product?._source
+// }
 
 let isWislisted = false
 let loadingForWishlist = false
@@ -456,30 +458,20 @@ if (product?.tags?.length) {
 							class="flex-1 text-xs sm:text-sm font-normal text-zinc-500 truncate w-full group-hover:underline">
 							{product.name || '_'}
 						</h4>
-
-						{#if $page?.data?.store?.isFnb && product.foodType}
-							<div>
-								{#if product.foodType === 'veg'}
-									<img src="{productVeg}" alt="veg" class="h-5 w-5" />
-								{:else if product.foodType === 'nonveg'}
-									<img src="{productNonVeg}" alt="non veg" class="h-5 w-5" />
-								{/if}
-							</div>
-						{/if}
 					</div>
 				</a>
+				{#if product.rating && product.rating > 0}
+					<StarRating rating="{product.rating}" size={"10px"} />
+				{:else}
+					<p>No reviews</p>
+				{/if}
 
-				{#if $page?.data?.store?.isMultiVendor && product?.vendor && product?.vendor?.slug && product?.vendor?.businessName}
+				{#if typeof product.orders_completed === "number"}
 					<div class="flex items-center gap-1 text-sm text-zinc-500">
-						<span> By </span>
-
-						<a
-							href="/store/{product?.vendor?.slug}"
-							class="block w-full truncate underline hover:text-zinc-800 capitalize">
-							{product?.vendor?.businessName}
-						</a>
+						<span> Order Completed ({product.orders_completed}) </span>
 					</div>
 				{/if}
+
 			</div>
 			<!-- {/if} -->
 
@@ -496,17 +488,17 @@ if (product?.tags?.length) {
 								? 'hidden'
 								: 'flex'} mt-1 flex-wrap items-baseline justify-start gap-1.5 text-xs leading-3">
 							<span class="text-base font-bold whitespace-nowrap leading-3">
-								{currency(product.price, $page.data?.store?.currencySymbol)}
+								{product.price.value}
 							</span>
 
 							{#if product.mrp > product.price}
 								<span class="text-zinc-500 line-through whitespace-nowrap">
-									{currency(product.mrp, $page.data?.store?.currencySymbol)}
+									{product.mrp.value}
 								</span>
 
-								{#if Math.floor(((product.mrp - product.price) / product.mrp) * 100) > 0}
+								{#if Math.floor(((product.mrp.raw - product.price.raw) / product.mrp.raw) * 100) > 0}
 									<span class="text-secondary-500 whitespace-nowrap">
-										({Math.floor(((product.mrp - product.price) / product.mrp) * 100)}% off)
+										({Math.floor(((product.mrp.raw - product.price.raw) / product.mrp.raw) * 100)}% off)
 									</span>
 								{/if}
 							{/if}
@@ -548,7 +540,8 @@ if (product?.tags?.length) {
 
 					<div class="h-full overflow-y-auto overflow-x-hidden p-4 pb-16">
 						<div class="grid grid-cols-2 sm:gap-4">
-							{#each product.relatedProducts as relatedProduct}
+							<!-- {#each product.relatedProducts as relatedProduct} -->
+							{#each [] as relatedProduct}
 								<a
 									href="/product/{relatedProduct.slug}"
 									rel="noopener noreferrer"

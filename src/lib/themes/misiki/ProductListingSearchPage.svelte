@@ -7,7 +7,7 @@ import {
 	Pagination,
 	ProductCard
 } from '$lib/components'
-import { currency, dateOnly, generatePriceRange, toast } from '$lib/utils'
+import { currency, dateOnly, generatePriceRange, generateSeoProps, toast } from '$lib/utils'
 import { fade, fly } from 'svelte/transition'
 import { goto, invalidateAll } from '$app/navigation'
 import { onMount } from 'svelte'
@@ -19,12 +19,24 @@ import dayjs from 'dayjs'
 import dotsLoading from '$lib/assets/dots-loading.gif'
 import noDataAvailable from '$lib/assets/no/no-data-available.png'
 import SEO from '$lib/components/SEO/index.svelte'
+import type { MedusaProduct } from '$lib/services/medusa/types'
+import type { SearchProductRes } from '$lib/services/medusa/product-service'
+import { mapMedusajsProduct } from '$lib/services/medusa/medusa-utils'
 
-export let data
+export let data: {
+	products: SearchProductRes,
+	query: string,
+	searchData: string,
+	sort: string,
+	store: any,
+	currentPage: number,
+	isLoading: boolean,
+	err: any,
+}
 // console.log('zzzzzzzzzzzzzzzzzz', data)
 let today = dayjs(new Date()).toISOString()
 
-let seoProps = {
+let seoProps = generateSeoProps({
 	brand: $page.data.store?.title,
 	// breadcrumbs: data.category?.children,
 	caption: $page.data.store?.title,
@@ -35,7 +47,7 @@ let seoProps = {
 	id: $page?.url?.href,
 	image: $page.data.store?.logo,
 	logo: $page.data.store?.logo,
-	ogSquareImage: { url: '', width: 56, height: 56 },
+	ogSquareImage: { url: '', width: 56, height: 56, alt: "squareImage" },
 	openingHours: ['Monday,Tuesday,Wednesday,Thursday,Friday,Saturday 10:00-20:00'],
 	timeToRead: 0,
 	updatedAt: today,
@@ -48,12 +60,13 @@ let seoProps = {
 		url: $page.data.store?.logo,
 		width: 675,
 		height: 380,
-		caption: $page.data.store?.title
+		caption: $page.data.store?.title,
+		alt: "featureImage"
 	},
 	keywords: $page.data.store?.keywords,
 	lastUpdated: today,
 	msapplicationTileImage: $page.data.store?.logo,
-	ogImage: { url: $page.data.store?.logo, width: 128, height: 56 },
+	ogImage: { url: $page.data.store?.logo, width: 128, height: 56, alt: "" },
 	ogImageSecureUrl: `${$page?.data?.store?.logo}`,
 	ogImageType: 'image/jpeg',
 	ogSiteName: `${$page.data.origin}/sitemap/sitemap.xml`,
@@ -62,29 +75,29 @@ let seoProps = {
 	productPriceCurrency: `${$page?.data?.store?.currencyCode}`,
 	slug: `/`,
 	title: data.searchData || 'Buy online',
-	twitterImage: { url: $page.data.store?.logo }
-}
+	twitterImage: { url: $page.data.store?.logo, alt: "twitter image" }
+});
 
 let currentPage = 1
 let hellobar = $page.data.store?.hellobar || {}
 let hidden = true
 let priceRange = []
 let reachedLast = false
-let selectedFilter
+let selectedFilter: any
 let showFilter = false
 let showOnPx = 600
 let showSort = false
 let y
 
-if (
-	data.products?.facets?.all_aggs?.price_stats?.max > 0 &&
-	data.products?.facets?.all_aggs?.price_stats?.min >= 0
-) {
-	priceRange = generatePriceRange(
-		data.products?.facets?.all_aggs?.price_stats,
-		data.store.currencySymbol
-	)
-}
+// if (
+// 	data.products?.facets?.all_aggs?.price_stats?.max > 0 &&
+// 	data.products?.facets?.all_aggs?.price_stats?.min >= 0
+// ) {
+// 	priceRange = generatePriceRange(
+// 		data.products?.facets?.all_aggs?.price_stats,
+// 		data.store.currencySymbol
+// 	)
+// }
 
 $: innerWidth = 0
 
@@ -92,7 +105,7 @@ $: if (data.products?.count === 0) {
 	saveSearchData(data?.searchData)
 }
 
-async function saveSearchData(searchData) {
+async function saveSearchData(searchData: string) {
 	try {
 		await PopularSearchService.savePopularSearch({
 			id: 'new',
@@ -151,7 +164,7 @@ async function loadNextPage() {
 			data.isLoading = true
 
 			const res = await ProductService.fetchNextPageProducts({
-				categorySlug: data.products?.category?.slug,
+				//categorySlug: data.products?.category?.slug,
 				origin: $page?.data?.origin,
 				storeId: $page?.data?.store?.id,
 				nextPage,
@@ -163,12 +176,12 @@ async function loadNextPage() {
 			const nextPageData = res?.nextPageData
 			currentPage = currentPage + 1
 			data.err = !res?.estimatedTotalHits ? 'No result Not Found' : null
-			data.products.category = res?.category
+			//data.products.category = res?.category
 			data.products.count = res?.count
 			data.products.products = data?.products?.products?.concat(nextPageData)
-			data.products.products.facets = res?.facets
+			//data.products.products.facets = res?.facets
 
-			if (data.product?.count && data.products?.length === data.product?.count) {
+			if (data.products.pageSize === currentPage) {
 				reachedLast = true
 			}
 		} catch (e) {
@@ -294,7 +307,7 @@ function handleFilterTags() {
 
 <svelte:window bind:scrollY="{y}" bind:innerWidth="{innerWidth}" on:scroll="{handleOnScroll}" />
 
-<CatelogNav me="{$page?.data?.me}" cart="{$page?.data?.cart}" store="{$page?.data?.store}">
+<CatelogNav me="{$page?.data?.me}" cart="{$page?.data?.cart}" showCartSidebar="{undefined}" openSidebar="{undefined}">
 	<div class="flex max-w-max flex-col items-start gap-1">
 		{#if data.searchData}
 			<h5 class="w-28 truncate capitalize leading-4">{data.searchData}</h5>
@@ -408,12 +421,12 @@ function handleFilterTags() {
 					class="lg:mt-5 grid grid-cols-2 items-start border-t sm:flex sm:flex-wrap sm:justify-between sm:gap-3 sm:border-t-0 lg:gap-6">
 					{#each data.products?.products as p, px}
 						<li in:fly="{{ y: 20, duration: 300, delay: 100 * px }}">
-							<ProductCard product="{p}" />
+							<ProductCard product="{mapMedusajsProduct(p)}" />
 						</li>
 
 						<!-- Filter by tags -->
 
-						{#if px % 40 === 39 && data.products?.facets?.all_aggs?.tags?.all?.buckets?.length}
+						<!-- {#if px % 40 === 39 && data.products?.facets?.all_aggs?.tags?.all?.buckets?.length}
 							<div class="col-span-2 block sm:hidden overflow-x-auto bg-primary-100 scrollbar-none">
 								<div class="w-full flex items-center gap-6 p-4">
 									<div class="shrink-0">
@@ -445,7 +458,7 @@ function handleFilterTags() {
 									</ul>
 								</div>
 							</div>
-						{/if}
+						{/if} -->
 					{/each}
 
 					{#each { length: 7 } as _}
@@ -478,7 +491,7 @@ function handleFilterTags() {
 					{/if}
 				{:else}
 					<Pagination
-						count="{Math.ceil((data.products?.count || 1) / data.products?.pageSize)}"
+						count="{Math.ceil(data.products?.pageSize)}"
 						current="{data?.currentPage || 1}"
 						providePaddingOnMobile />
 				{/if}

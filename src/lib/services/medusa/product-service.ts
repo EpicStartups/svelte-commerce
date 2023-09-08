@@ -6,29 +6,55 @@ import type { FetchProductsResp, MedusaProduct } from './types'
 
 // Search product
 
+interface SearchProductInput {
+	origin?: string
+	query?: string
+	searchData?: string
+	storeId?: string
+	server?: boolean
+	sid?: string
+	limit?: number
+	page?: number
+}
+
+export interface SearchProductRes {
+	products: MedusaProduct[]
+	count: number
+	facets: string
+	pageSize: number
+	err: any
+	isLoading: boolean
+}
+
 export const searchProducts = async ({
 	origin,
 	query,
 	searchData,
 	storeId,
+	limit = 3,
+	page = 1,
 	server = false,
 	sid = null
-}: any) => {
+}: SearchProductInput): Promise<SearchProductRes> => {
 	try {
-		let res: AllProducts | {} = {}
-		let products: Product[] = []
-		let count = 0
-		let facets = ''
-		let pageSize = 0
-		let category = ''
-		let err = ''
-		res = await postMedusajsApi(`products/search?q=${searchData}`, { q: searchData })
-		// products = res?.hits
-		// count = res?.count || 0
-		// facets = res?.facets || []
-		// pageSize = res?.pageSize || 25
-
-		return { products, count, facets, pageSize, err }
+		const res: { products: MedusaProduct[]; count: number } = await postMedusajsApi(
+			`products/search`,
+			{
+				q: query ?? '',
+				limit,
+				offset: (page - 1) * limit
+			},
+			null
+		)
+		//console.log('product: ', res.products[0])
+		return {
+			products: res.products,
+			count: res.products.length,
+			facets: '',
+			pageSize: Math.ceil(res.count / limit),
+			err: null,
+			isLoading: undefined
+		}
 	} catch (e) {
 		if (typeof e.status === 'number' && e.status >= 400 && e.status <= 599) {
 			throw error(e.status, e.message)

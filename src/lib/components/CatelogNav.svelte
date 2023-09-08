@@ -26,7 +26,7 @@ import userEmptyProfile from '$lib/assets/user-empty-profile.png'
 
 const dispatch = createEventDispatcher()
 
-export let me: Me, cart: Cart, data, showCartSidebar: boolean, openSidebar: boolean, store
+export let me: Me, cart: Cart, showCartSidebar: boolean, openSidebar: boolean
 
 let categories
 let hellobar = $page.data.store?.hellobar || {}

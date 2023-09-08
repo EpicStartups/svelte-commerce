@@ -160,14 +160,12 @@ onMount(async () => {
 
 <svelte:window bind:innerWidth="{innerWidth}" />
 
-{#if $page.data.store?.googleAnalytics?.active}
+{#if false}
 	<GoogleAnalytics properties="{[$page.data.store?.googleAnalytics.id.val]}" />
-
-	<!-- <GoogleAnalytics googleAnalyticsId="{$page.data.store?.googleAnalytics.id}" /> -->
 {/if}
 
-{#if $page.data.store?.facebookPixel?.active}
-	<FacebookPixel pixels="{[$page.data.store?.facebookPixel.id]}" />
+{#if false}
+	<FacebookPixel pixels="{"facebookPixedID"}" />
 {/if}
 
 {#if $navigating}
@@ -185,19 +183,6 @@ onMount(async () => {
 
 {#if showBackToTopButton}
 	<BackToTop />
-{/if}
-
-{#if $page.data.store?.whatsappChatButton?.active?.val && $page.data.store?.whatsappChatButton?.phone?.val}
-	<a
-		href="https://api.whatsapp.com/send?phone={$page.data.store?.whatsappChatButton?.phone?.val}"
-		target="_blank"
-		rel="noopener noreferrer"
-		class="fixed z-40 bottom-16 left-4">
-		<img
-			src="{whatsappIcon}"
-			alt=""
-			class="h-10 w-10 object-contain transform hover:scale-125 hover:-translate-y-2 transition duration-300" />
-	</a>
 {/if}
 
 <ToastContainer let:data>

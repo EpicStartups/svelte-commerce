@@ -7,15 +7,17 @@ import { page } from '$app/stores'
 import LazyImg from '$lib/components/Image/LazyImg.svelte'
 
 import Cookie from 'cookie-universal'
+import type { Product } from '$lib/types'
+import type { MedusaProduct } from '$lib/services/medusa/types'
 const cookies = Cookie()
 
 export let placeholder = 'Search products...'
 
-let autocomplete: { img: string; name: string }[] = []
+let autocomplete: MedusaProduct[] = []
 let categories: any = []
-let err
+let err: any;
 let pincode = null
-let product
+let product: Product;
 let q = ''
 let query = ''
 let searchInput: any
@@ -32,12 +34,12 @@ onMount(() => {
 
 function submit() {
 	showSuggestionOptions = false
-
-	if (autocomplete?.length && autocomplete[0].slug) {
-		goto(`/${autocomplete[0].slug}`)
-	} else {
-		goto(`/search?q=${q}`)
-	}
+	goto(`/search?q=${q}`)
+	// if (autocomplete?.length && autocomplete[0].handle) {
+	// 	goto(`/${autocomplete[0].handle}`)
+	// } else {
+	// 	goto(`/search?q=${q}`)
+	// }
 }
 
 function onselect(v: any) {
@@ -74,6 +76,7 @@ async function getData(e: any) {
 				origin: $page?.data?.origin,
 				storeId: $page?.data?.store?.id
 			})
+			console.log("autocomplete", autocomplete)
 		} catch (e) {}
 	}, 200)
 }
@@ -124,25 +127,24 @@ onMount(async () => {
 			</svg>
 		</button>
 	</button>
-
-	{#if autocomplete?.length > 0 && showSuggestionOptions}
+	<!-- {#if autocomplete?.length > 0}
 		<ul
 			class="absolute top-10 z-50 w-full border bg-white divide-y rounded shadow-xl overflow-hidden">
-			{#each autocomplete || [] as v}
+			{#each autocomplete || [] as v (v.handle)}
 				<button
 					type="button"
 					class="p-3 flex w-full items-center justify-between text-left text-zinc-500 hover:bg-zinc-100"
 					on:click="{() => onselect(v)}">
 					<div class="flex-1 flex items-center gap-2 justify-start">
-						{#if v.img}
+						{#if v.thumbnail}
 							<LazyImg
-								src="{v.img}"
+								src="{v.thumbnail}"
 								alt=""
 								height="40"
 								class="h-10 object-contain w-auto object-center" />
 						{/if}
 
-						<span class="w-full truncate text-sm capitalize">{v.key}</span>
+						<span class="w-full truncate text-sm capitalize">{v.title}</span>
 					</div>
 
 					<svg
@@ -166,5 +168,5 @@ onMount(async () => {
 			class="fixed inset-0 h-full w-full z-40 bg-black bg-opacity-0 cursor-default"
 			on:click="{() => (showSuggestionOptions = false)}">
 		</button>
-	{/if}
+	{/if} -->
 </form>

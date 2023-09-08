@@ -175,6 +175,7 @@ export type MedusaProduct = {
 	specifications?: MedusaProductSpecs | null
 	widgets?: ProductWidget[] | null
 	rating?: number | null
+	orders_completed?: number | null
 }
 
 export type MedusaProductSpecs = {
