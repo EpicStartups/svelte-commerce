@@ -1,8 +1,5 @@
 <style>
-.transition-outer {
-	display: grid;
-	grid-template: 1fr 1fr;
-}
+
 .transition-inner {
 	grid-row: 1;
 	grid-column: 1;

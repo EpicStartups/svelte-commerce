@@ -1,7 +1,5 @@
 <style>
-.minimum-width-rem {
-	min-width: 360px;
-}
+
 .frosted {
 	backdrop-filter: blur(15px);
 	background-color: hsla(0, 0%, 0%, 0.5);

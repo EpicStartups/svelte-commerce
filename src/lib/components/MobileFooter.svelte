@@ -1,7 +1,5 @@
 <style>
-.minimum-width-rem {
-	min-width: 360px;
-}
+
 
 .text-rem {
 	font-size: x-small;

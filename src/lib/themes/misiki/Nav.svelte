@@ -1,9 +1,3 @@
-<style>
-.minimum-width-rem {
-	min-width: 360px;
-}
-</style>
-
 <script lang="ts">
 import { Autocomplete } from '$lib/components'
 import { AutosuggestModal, MegaMenu, LazyImg } from '$lib/components'
@@ -20,6 +14,8 @@ import menu from '$lib/config/menu'
 import PincodeInputBox from '$lib/themes/misiki/PincodeInputBox.svelte'
 import userEmptyProfile from '$lib/assets/user-empty-profile.png'
 import Logo from "$lib/assets/shopolah-logo.png";
+import MobileLogo from "$lib/assets/logo.svg";
+import type { Cart, Me } from '$lib/types'
 
 const dispatch = createEventDispatcher()
 const cookies = Cookie()
@@ -123,7 +119,6 @@ async function onSearchSubmit({ detail }) {
 			{/if}
 
 			<!-- Website Logo/Name -->
-
 			<a href="/" aria-label="Go to home" class="block shrink-0">
 				<img 
 					class="h-[35px] object-cover"
@@ -587,3 +582,17 @@ async function onSearchSubmit({ detail }) {
 		</div>
 	</aside>
 {/if}
+
+
+<style>
+.desktop-logo {
+
+}
+
+.mobile-logo {
+
+}
+
+@media only screen and (min-width: 600px) {
+}
+</style>

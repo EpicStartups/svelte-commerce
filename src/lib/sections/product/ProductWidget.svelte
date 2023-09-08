@@ -12,7 +12,7 @@ export let widgets: ProductWidget[] = [];
 
 </script>
 
-<div class="w-full">    
+<div class="w-full overflow-x-hidden">    
 	{#each widgets as widget}
 		{#if widget.type === "SimpleQuote"}
 			<SimpleQuote props={widget} />

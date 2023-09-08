@@ -24,7 +24,7 @@ export let props: SideQuoteProps = {
 
 <div class="w-full relative min-h-[280px] px-6 py-8">
 
-    <div class="w-full min-h-[250px] max-w-[1300px] mx-auto h-full relative z-[50] grid grid-cols-[1fr_1fr] items-center gap-4 justify-center ">
+    <div class="widget w-full min-h-[250px] max-w-[1300px] mx-auto h-full relative z-[50] grid grid-cols-[1fr_1fr] items-center gap-4 justify-center ">
         <div class="w-full flex flex-col justify-center items-start text-start {props.isReverse ? "order-last" : ""}">
             <h2 
                 class="
@@ -69,3 +69,18 @@ export let props: SideQuoteProps = {
         />
     {/if}    
 </div>
+
+<style>
+.widget {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+@media only screen and (min-width: 600px) {
+.widget {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr;
+}
+
+}
+</style>

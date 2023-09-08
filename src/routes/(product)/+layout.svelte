@@ -8,7 +8,7 @@ let openSidebar = false
 let showCartSidebar = false
 </script>
 
-<div class="{showCartSidebar || openSidebar ? 'h-screen overflow-hidden' : 'h-full'}">
+<div class="{showCartSidebar || openSidebar ? 'h-screen overflow-hidden' : 'h-full'} ">
 	<div class="hidden lg:block">
 		<Nav
 			me="{data["me"]}"

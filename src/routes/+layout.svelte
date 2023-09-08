@@ -1,7 +1,4 @@
 <style>
-.minimum-width-rem {
-	min-width: 360px;
-}
 
 @font-face {
 	font-family: 'Jost';
