@@ -16,7 +16,7 @@ export let props: ImageGridProps = {
 }
 </script>
 
-<div class="w-full relative min-h-[280px] px-6 py-12">
+<div class="w-full relative min-h-[280px] px-6 py-12 overflow-hidden">
     <h2 
         class="text-2xl text-center mb-4"
         style={parseTextWidgetInput(props.header)}
