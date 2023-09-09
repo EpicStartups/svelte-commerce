@@ -52,7 +52,7 @@ const toggleSpecHandler = (val: boolean) => {
             X
         </button>
         <h2 class="text-white text-3xl text-center mb-12">{productName}</h2>
-        <div class="w-full grid auto-rows-auto grid-cols-[1fr_1fr] gap-8">
+        <div class="spec-tables w-full grid auto-rows-auto grid-cols-[1fr_1fr] gap-8">
             {#each specs.specs as spec (`table-${spec.title}`)}
             <div class="w-full">
                 <h3 class="px-4 py-4 text-start text-white mb-4 bg-black/80">{spec.title}</h3>
@@ -83,5 +83,15 @@ const toggleSpecHandler = (val: boolean) => {
 
 .spec-item:nth-child(1) {
     border-left: 0px;
+}
+
+.spec-tables {
+    grid-template-columns: 1fr;
+}
+
+@media only screen and (min-width: 630px) { 
+.spec-tables {
+    grid-template-columns: 1fr 1fr;
+}
 }
 </style>

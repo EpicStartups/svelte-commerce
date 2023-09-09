@@ -78,7 +78,7 @@ onMount(() => {
 
 <SEO {...seoProps} />
 
-<div class="bg-opacity-25 bg-center bg-repeat min-h-screen">
+<div class="bg-opacity-25 bg-center bg-repeat min-h-screen font-jost">
 	{#if $page.data.store?.isHyperlocal && showPinCodeEntryModal}
 		<PincodeInputBox on:close="{() => (showPinCodeEntryModal = false)}" />
 	{/if}	

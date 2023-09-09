@@ -18,13 +18,13 @@ export async function load({ params, url, parent }) {
 	}
 	const storeId = store?.id
 	const page = url.searchParams.get('page') || 1
-	const product = await ProductService.fetchProduct3({
-		origin,
-		server: isServer,
-		sid,
-		slug,
-		variant
-	})
+	// const product = await ProductService.fetchProduct3({
+	// 	origin,
+	// 	server: isServer,
+	// 	sid,
+	// 	slug,
+	// 	variant
+	// })
 
 	return {
 		product: ProductService.fetchProduct3({

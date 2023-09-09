@@ -5,7 +5,7 @@ export let rating: number = 0
 export let size: string = "30px";
 </script>
 
-<div class="flex flex-row justify-start items-start text-start">
+<div class="flex flex-row justify-start items-start text-start w-[100px]">
     <div class={`${rating >= 0.5 ? "text-primary-900" : "text-gray-500"}`} style={`height: ${size}`}>
         <MdStarBorder />
     </div>

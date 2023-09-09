@@ -16,7 +16,7 @@ export let props: ImageGridProps = {
 }
 </script>
 
-<div class="w-full relative min-h-[280px] px-6 py-12">
+<div class="w-[100%] min-h-[280px] px-4 py-12 overflow-hidden">
     <h2 
         class="text-2xl text-center mb-4"
         style={parseTextWidgetInput(props.header)}
@@ -25,18 +25,19 @@ export let props: ImageGridProps = {
     </h2>
     <ul class="image-grid w-full grid gap-4">
         {#each props.images as img}
-            <li class="h-full aspect-square grid-item shadow-lg p-3">
+            <li class="h-full aspect-square grid-item shadow-lg relative flex justify-center items-center">
                 {#if img.src}
                     <img 
-                        class="w-full h-full object-contain"
+                        class="object-contain"
                         src={img.src}
                         alt={img.alt}
                     />
                 {/if}
             </li>
-        {/each}
+        {/each} 
     </ul>
 </div>
+
 
 <style>
 .image-grid {
