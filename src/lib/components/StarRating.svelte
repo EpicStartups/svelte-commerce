@@ -5,6 +5,9 @@ export let rating: number = 0
 export let size: string = "30px";
 </script>
 
+{#if rating <= 0}
+    <p class="text-sm text-gray-500 font-jost">No Rating</p>
+{:else}
 <div class="flex flex-row justify-start items-start text-start w-[100px]">
     <div class={`${rating >= 0.5 ? "text-primary-900" : "text-gray-500"}`} style={`height: ${size}`}>
         <MdStarBorder />
@@ -22,4 +25,6 @@ export let size: string = "30px";
         <MdStarBorder />
     </div>
 </div>
+{/if}
+
 

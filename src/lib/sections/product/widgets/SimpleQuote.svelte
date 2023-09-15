@@ -18,7 +18,7 @@ export let props: SimpleQuoteProps = {
     <div class="w-full max-w-[1300px] mx-auto flex flex-col justify-center items-center text-center relative z-[50]">
         <h2 
             class="
-                mb-4 
+                mb-4 text-3xl
                 {props.heading.color ?? ""} 
                 {props.heading.font ?? "font-jost"} 
                 {props.heading.weight ?? ""}
@@ -28,7 +28,7 @@ export let props: SimpleQuoteProps = {
             {props.heading.text}
         </h2>
         <p
-            class="
+            class="text-base
                 {props.description.color ?? ""} 
                 {props.description.font ?? "font-jost"} 
                 {props.description.weight ?? ""}

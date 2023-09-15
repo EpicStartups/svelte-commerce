@@ -39,7 +39,7 @@ export let props: ParallelQuoteProps = {
         <div class="w-full flex flex-col justify-center items-start text-start">
             <h2 
                 class="
-                    mb-4 
+                    mb-4 text-3xl
                     {props.firstQuote.heading.color ?? ""} 
                     {props.firstQuote.heading.font ?? "font-jost"} 
                     {props.firstQuote.heading.weight ?? ""}
@@ -49,7 +49,7 @@ export let props: ParallelQuoteProps = {
             {props.firstQuote.heading.text}
             </h2>
             <p
-                class="
+                class="text-base
                     {props.firstQuote.description.color ?? ""} 
                     {props.firstQuote.description.font ?? "font-jost"} 
                     {props.firstQuote.description.weight ?? ""}
@@ -63,7 +63,7 @@ export let props: ParallelQuoteProps = {
         <div class="w-full flex flex-col justify-center items-start text-start">
             <h2 
                 class="
-                    mb-4 
+                    mb-4 text-3xl
                     {props.secondQuote.heading.color ?? ""} 
                     {props.secondQuote.heading.font ?? "font-jost"} 
                     {props.secondQuote.heading.weight ?? ""}
@@ -73,7 +73,7 @@ export let props: ParallelQuoteProps = {
             {props.secondQuote.heading.text}
             </h2>
             <p
-                class="
+                class="text-base
                     {props.secondQuote.description.color ?? ""} 
                     {props.secondQuote.description.font ?? "font-jost"} 
                     {props.secondQuote.description.weight ?? ""}

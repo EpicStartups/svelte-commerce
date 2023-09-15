@@ -28,7 +28,7 @@ export let props: SideQuoteProps = {
         <div class="w-full flex flex-col justify-center items-start text-start {props.isReverse ? "order-last" : ""}">
             <h2 
                 class="
-                    mb-4 
+                    mb-4 text-3xl
                     {props.heading.color ?? ""} 
                     {props.heading.font ?? "font-jost"} 
                     {props.heading.weight ?? ""}
@@ -38,7 +38,7 @@ export let props: SideQuoteProps = {
             {props.heading.text}
             </h2>
             <p
-                class="
+                class="text-base
                     {props.description.color ?? ""} 
                     {props.description.font ?? "font-jost"} 
                     {props.description.weight ?? ""}
