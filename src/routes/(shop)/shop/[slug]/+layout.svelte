@@ -3,6 +3,7 @@ import { Footer, Nav } from '$lib/theme-config'
 import { PageTransitions } from '$lib/components'
 import {Footer as FooterV2} from "$lib/components"
 import NavIcon from '$lib/assets/icons/nav-icon.svelte'
+import BannerWidgets from '$lib/sections/shop/BannerWidgets.svelte'
 
 export let data;
 
@@ -23,18 +24,17 @@ let openSidebar = false
 		bind:openSidebar="{openSidebar}"
 	/>
 		
-	<div class="w-100 h-[500px] bg-gray-300 relative flex justify-center items-center font-jost">
+	<div class="w-100 h-[500px] bg-gray-300 relative flex justify-center font-jost">
 
-		<h1 class="text-3xl font-bold relative z-[50]">
-			{data.shop.name}
-		</h1>
 
-		{#if data.shop.banner}
-			<img 
-				class="w-[100%] h-[100%] object-cover absolute top-0 bottom-0 left-0 right-0"
-				src={data.shop.banner}
-				alt={`banner for ${data.shop.name}`}
-			/>
+		{#if data.shop.heroWidgets && data.shop.heroWidgets.length > 0}
+			<BannerWidgets widgets={data.shop.heroWidgets} />
+		{:else}
+			<div class="w-full h-full flex justify-center items-center">
+				<h1 class="text-3xl font-bold relative z-[50] w-full text-center">
+					{data.shop.name}
+				</h1>
+			</div>
 		{/if}
 	</div>
 
@@ -44,9 +44,9 @@ let openSidebar = false
 
 		<div class="nav-wrapper w-full h-[40px] flex flex-row justify-start items-center gap-12">
 			{#if data.shop.icon}
-				<a href={`/shop/${data.shop.slug}`} data-sveltekit-preload-data>
+				<a href={`/shop/${data.shop.slug}`} class="h-full " data-sveltekit-preload-data>
 					<img 
-					class="w-[100px] h-[100%] object-contain"
+					class="h-full w-[100px] object-contain"
 					src={data.shop.icon}
 					alt={`icon for ${data.shop.name}`}
 					/>

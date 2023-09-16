@@ -21,6 +21,10 @@
 	font-family: "Jost"
 }
 
+.full-width-children > * {
+	width: 100%;
+}
+
 @layer base {
 	body {
 		@apply text-zinc-800;

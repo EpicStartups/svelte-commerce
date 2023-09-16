@@ -13,3 +13,7 @@ export interface WidgetStyle {
 	font?: string
 	backgroundColor?: string
 }
+
+export interface Text2 extends WidgetStyle {
+	content: string
+}

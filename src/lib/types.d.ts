@@ -18,6 +18,7 @@ import type { MedusaPrice, MedusaProductSpecs, MedusaVariant } from './services/
 import type { Currency } from './utils/currency'
 import type { StoreWidget } from './sections/shop/widgets/types'
 import type { ProductWidget } from './sections/product/widgets/types'
+import type { ShopHeroWidget } from './types/shopBannerWidgets'
 
 interface Me {
 	id?: string
@@ -55,6 +56,7 @@ interface Store {
 	createdAt?: string
 	defaultCurrency?: string
 	widgets?: StoreWidget[]
+	heroWidgets?: ShopHeroWidget[]
 }
 
 interface Product {

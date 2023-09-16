@@ -1,4 +1,5 @@
 import type { ProductWidget } from '$lib/types/productWidget'
+import type { ShopHeroWidget } from '$lib/types/shopBannerWidgets'
 import type { StoreWidget } from '$lib/types/shopWidgets'
 
 export type MedusaImage = {
@@ -42,6 +43,7 @@ export interface MedusaStore {
 	icon?: string
 	products?: MedusaProduct[]
 	widgets?: StoreWidget[] | null
+	hero_widgets?: ShopHeroWidget[] | null
 }
 
 export type MedusaValue = {

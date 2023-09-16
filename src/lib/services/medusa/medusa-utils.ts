@@ -371,7 +371,8 @@ export const mapMedusaJsStore = (store: MedusaStore): Store => {
 		),
 		createdAt: store.created_at,
 		defaultCurrency: store.default_currency_code,
-		widgets: store.widgets ?? []
+		widgets: store.widgets ?? [],
+		heroWidgets: store.hero_widgets ?? null
 	}
 }
 
