@@ -16,7 +16,7 @@ export async function load({ params, locals, cookies }) {
 	//console.log('order: ', order)
 	const orderTracking: MedusaFulfillment[] | null = order.fulfillments ?? null
 	//console.log('timelines: ', useBuildTimeline(order))
-	//console.log('order: ', order)
+	console.log('order: ', order)
 	return {
 		order,
 		orderTracking,

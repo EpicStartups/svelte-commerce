@@ -15,6 +15,8 @@ import SEO from '$lib/components/SEO/index.svelte'
 import TransparentButton from '../_TransparentButton.svelte'
 import { FulfillmentStatus, type MedusaOrder } from '$lib/services/medusa/types'
 import { formatCurrency } from '$lib/utils/currency'
+import { completeOrder } from '$lib/services/medusa/orders-service'
+import { OrdersService } from '$lib/services'
 
 export let data
 
@@ -44,11 +46,13 @@ onMount(() => {
 })
 
 const calcStatus = (order: MedusaOrder) => {
-	if (order.status === "completed" && order.payment_status === "captured") {
+	if (order.status === "completed") {
+		return "completed"
+	}
+	if (order.fulfillments[0].delivered_at) {
 		return "delivered"
 	}
-
-	if (order.status === "pending" && order.payment_status === "captured") {
+	if (order.status === "pending") {
 		switch (order.fulfillment_status) {
 			case FulfillmentStatus.NOT_FULFILLED:
 			case FulfillmentStatus.PARTIALLY_FULFILLED:
@@ -62,7 +66,24 @@ const calcStatus = (order: MedusaOrder) => {
 				return "processing"
 		}
 	}
-	
+}
+
+const completeOrderHandler = () => {
+	loading = true;
+	completeOrder({orderId: data.order.id}).then((order) => {
+		OrdersService.fetchOrderWithFulFillments({
+			id: order.id,
+		}).then((updatedOrder) => {
+			console.log("order: ", updatedOrder)
+			data.order = updatedOrder
+		}).catch((err) => {
+			console.error("error fetching new order: ", err);
+		}).finally(() => {
+			loading = false;
+		})
+	}).catch((error) => {
+
+	})
 }
 </script>
 
@@ -197,6 +218,13 @@ const calcStatus = (order: MedusaOrder) => {
 												Rate & Review Product
 											</a>
 										</div>
+									{:else if data.order.fulfillments.length && data.order.fulfillments.length === 1 && data.order.fulfillments[0].delivered_at}
+										<button 
+											class="whitespace-nowrap font-semibold text-primary-900 focus:outline-none hover:underline underline-offset-4 w-[100px]"
+											on:click="{completeOrderHandler}"
+										>
+											Complete Order
+										</button>
 									{/if}
 								</div>
 							</div>

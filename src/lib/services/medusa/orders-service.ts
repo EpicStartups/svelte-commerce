@@ -311,3 +311,24 @@ export const completePayment = async ({ cartId, sid = null }: CompletePaymentInp
 
 	return resp
 }
+
+interface CompleteOrderInput {
+	orderId: string
+	sid?: string | null
+}
+export const completeOrder = async ({ orderId, sid = null }: CompleteOrderInput) => {
+	try {
+		const res: { order: MedusaOrder } = await postMedusajsApi(
+			`order/complete`,
+			{
+				order_id: orderId
+			},
+			sid
+		)
+
+		return res.order
+	} catch (err) {
+		console.error('err completing order: ', err)
+		throw handleApiError(err)
+	}
+}

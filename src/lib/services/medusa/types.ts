@@ -636,6 +636,7 @@ export interface MedusaFulfillment {
 	idempotency_key: any
 	tracking_links: MedusaTrackingLink[] | null
 	items: MedusaItem[]
+	delivered_at: string
 }
 
 export interface MedusaTrackingLink {

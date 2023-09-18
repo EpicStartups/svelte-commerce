@@ -12,7 +12,7 @@ export async function load({ locals, cookies }) {
 			sid: cookies.get('connect.sid')
 		})
 
-		// console.log('res: ', res)
+		//console.log('res: ', res.data[0].fulfillments)
 
 		return {
 			orders: res.data,

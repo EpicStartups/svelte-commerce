@@ -21,10 +21,13 @@ let clazz = ''
 export { clazz as class }
 
 const calcStatus = (order: MedusaOrder) => {
-	if (order.status === "completed" && order.payment_status === "captured") {
+	if (order.status === "completed") {
+		return "completed"
+	}
+	if (order.fulfillments[0].delivered_at) {
 		return "delivered"
 	}
-	if (order.status === "pending" && order.payment_status === "captured") {
+	if (order.status === "pending") {
 		switch (order.fulfillment_status) {
 			case FulfillmentStatus.NOT_FULFILLED:
 			case FulfillmentStatus.PARTIALLY_FULFILLED:
@@ -394,7 +397,7 @@ const calcStatus = (order: MedusaOrder) => {
 												<p>Status :</p>
 
 												<b class="uppercase text-zinc-800">
-													{order.status}
+													{calcStatus(order)}
 												</b>
 											</div>
 										</div>
