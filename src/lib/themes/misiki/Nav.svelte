@@ -71,7 +71,7 @@ async function onSearchSubmit({ detail }) {
 
 <!-- {hellobar?.active?.val ? 'h-[88px] sm:h-28' : 'h-14 sm:h-20'} -->
 <nav
-	class="{clazz} minimum-width-rem  inset-x-0 top-0 w-full border-b bg-white shadow-xs
+	class="{clazz} minimum-width-rem  inset-x-0 top-0 w-full border-b bg-white shadow-xs 
 	{hellobar?.active?.val && $page.data.store?.isHyperlocal
 		? 'h-[112px] sm:h-[136px] lg:h-[112px]'
 		: ''}

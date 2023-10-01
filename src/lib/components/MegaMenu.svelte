@@ -71,12 +71,16 @@ async function getMegaMenu() {
 			const localMegamenu = localStorage.getItem('megamenu')
 
 			if (!!localMegamenu && localMegamenu !== 'undefined') {
+				console.log("local: ", localMegamenu)
 				megamenu = JSON.parse(localMegamenu)
 			} else {
+				
 				megamenu = await CategoryService.fetchMegamenuData({
 					storeId: $page.data.store?.id,
 					origin: $page.data.origin
 				})
+				megamenu 
+				console.log("megamenu api: ", megamenu)
 			}
 		} catch (e) {
 			toast(e, 'error')
@@ -89,6 +93,22 @@ async function getMegaMenu() {
 
 {#if megamenu?.length}
 	<ul class="flex flex-row items-center justify-center">
+		<li
+			class="hoverable mx-1"
+			on:mouseenter="{() => (selectedCategory = "home")}"
+			on:mouseleave="{() => (selectedCategory = '')}"
+		>
+			<a
+				href="/home"
+				aria-label="Home"
+				class="{clazz} transition-all hover:border-primary-900 font-jost mt-2 items-center relative flex shrink-0 justify-center gap-1 whitespace-nowrap border-b-4 border-transparent p-2">
+				<!-- Root category -->
+
+				<span>Home</span>
+
+				<!-- Down icon -->
+			</a>
+		</li>
 		{#each megamenu as category, index}
 			<li
 				class="hoverable mx-1"
