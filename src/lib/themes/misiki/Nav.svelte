@@ -20,7 +20,7 @@ import type { Cart, Me } from '$lib/types'
 const dispatch = createEventDispatcher()
 const cookies = Cookie()
 
-export let me: Me, cart: Cart, data, showCartSidebar: boolean, openSidebar: boolean, store
+export let me: Me, showCartSidebar: boolean, openSidebar: boolean
 export let sticky: boolean = true;
 let clazz = ''
 export { clazz as class }
@@ -585,13 +585,6 @@ async function onSearchSubmit({ detail }) {
 
 
 <style>
-.desktop-logo {
-
-}
-
-.mobile-logo {
-
-}
 
 @media only screen and (min-width: 600px) {
 }

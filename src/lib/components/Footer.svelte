@@ -16,9 +16,10 @@ import PaymentMethods from "./PaymentMethods.svelte"
 			<h3 class="text-lg text-dark-500 mb-5 font-[600]">ABOUT</h3>
 			<nav>
 				<ul class="flex flex-col justify-start items-start gap-3 font-jost">
-					<li><a href="/" class="text-dark-300">Platform</a></li>
-					<li><a href="/" class="text-dark-300">Influencers</a></li>
-					<li><a href="/" class="text-dark-300">Seller</a></li>
+					<li><a href="/home" class="text-dark-300">About Us</a></li>
+					<li><a href="/contact-us" class="text-dark-300">Contact Us</a></li>
+					<li><a href="/privacy-policy" class="text-dark-300">Privacy Policy</a></li>
+					<li><a href="/terms-conditions" class="text-dark-300">Terms Conditions</a></li>
 				</ul>
 			</nav>
 		</div>

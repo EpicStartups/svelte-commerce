@@ -88,7 +88,7 @@ onMount(() => {
 		{#await data?.streamed?.home then home}
 			{#if home?.categories?.length}
 				<div class="block sm:hidden">
-					<CategoriesMobile loading="{home.isFetching}" categories="{home?.categories}" />
+					<!-- <CategoriesMobile loading="{home.isFetching}" categories="{home?.categories}" /> -->
 				</div>
 			{/if}
 		{/await}

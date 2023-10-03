@@ -109,7 +109,7 @@ async function getMegaMenu() {
 				<!-- Down icon -->
 			</a>
 		</li>
-		{#each megamenu as category, index}
+		<!-- {#each megamenu as category, index}
 			<li
 				class="hoverable mx-1"
 				on:mouseenter="{() => (selectedCategory = category.name)}"
@@ -130,11 +130,11 @@ async function getMegaMenu() {
                 	{index % 6 == 3 && selectedCategory === category.name ? 'border-primary-900' : ''}
                 	{index % 6 == 4 && selectedCategory === category.name ? 'border-primary-900' : ''}
                 	{index % 6 == 5 && selectedCategory === category.name ? 'border-primary-900' : ''}">
-					<!-- Root category -->
+					Root category 
 
 					<span>{category.name}</span>
 
-					<!-- Down icon -->
+					 Down icon 
 
 					{#if category.children?.length}
 						<svg
@@ -161,7 +161,7 @@ async function getMegaMenu() {
 
 						<ul
 							class="relative z-10 flex max-h-[75vh] min-h-[50vh] flex-col flex-wrap items-start shadow-inner">
-							<!-- 2nd level child category  -->
+							 2nd level child category  --
 
 							{#each category.children as c}
 								<li class="mb-2 w-1/4 flex-1 shrink-0 grow-0 p-6 pr-2 text-sm">
@@ -174,7 +174,7 @@ async function getMegaMenu() {
 
 									{#if c && c.children}
 										<ul class="flex flex-col flex-wrap items-start gap-0.5">
-											<!-- 3rd level child category  -->
+											!-- 3rd level child category  --
 
 											{#each c.children as c1, ixx}
 												<li class="w-full">
@@ -191,7 +191,7 @@ async function getMegaMenu() {
 								</li>
 							{/each}
 
-							<!-- This dummy divs are required for proper alignment of child elements -->
+							!-- This dummy divs are required for proper alignment of child elements --
 
 							{#each { length: 10 } as _}
 								<li>
@@ -202,6 +202,6 @@ async function getMegaMenu() {
 					</div>
 				{/if}
 			</li>
-		{/each}
+		{/each} -->
 	</ul>
 {/if}

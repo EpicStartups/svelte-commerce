@@ -9,7 +9,7 @@ export let data = {}
 let showFooter = false
 </script>
 
-<div class="h-rem w-full flex-1">
+<div class="h-rem w-full flex-1 font-jost">
 	<Nav me="{$page.data.me}" cart="{$page.data.cart}" />
 
 	<PageTransitions url="{data.url}">
