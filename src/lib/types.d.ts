@@ -21,6 +21,7 @@ import type { ProductWidget } from './sections/product/widgets/types'
 import type { ShopHeroWidget } from './types/shopBannerWidgets'
 
 interface Me {
+	id?: string
 	active?: boolean
 	avatar?: string
 	email?: string
@@ -29,19 +30,6 @@ interface Me {
 	phone?: string
 	role?: string
 	verified?: boolean
-}
-
-interface Store {
-	id?: string
-	name?: string
-	icon?: string
-	banner?: string
-	slug?: string
-	products?: Product[]
-	createdAt?: string
-	defaultCurrency?: string
-	widgets?: StoreWidget[]
-	heroWidgets?: ShopHeroWidget[]
 }
 
 interface AllProducts {
@@ -58,6 +46,19 @@ interface EsProduct {
 	_source: Product
 }
 
+interface Store {
+	id?: string
+	name?: string
+	icon?: string
+	banner?: string
+	slug?: string
+	products?: Product[]
+	createdAt?: string
+	defaultCurrency?: string
+	widgets?: StoreWidget[]
+	heroWidgets?: ShopHeroWidget[]
+}
+
 interface Product {
 	id?: string
 	_id: string
@@ -65,7 +66,7 @@ interface Product {
 	barcode: string
 	brand?: Brand
 	brandName?: string
-	categoryPool: Category
+	categoryPool?: Category
 	countryOfOrigin: string
 	crossSells?: Product[]
 	deliveryDetails: string
@@ -87,12 +88,12 @@ interface Product {
 	length?: number
 	linkedProducts?: Product[]
 	longDescription?: string
-	mrp: number
+	mrp: FormattedAmount
 	name: string
 	new?: boolean
 	options?: Option[]
 	popularity?: number
-	price: number
+	price: FormattedAmount
 	replaceAllowed?: boolean
 	replaceValidityInDays?: number
 	returnAllowed?: boolean
@@ -101,7 +102,8 @@ interface Product {
 	size?: Size
 	sku: string
 	slug: string
-	specifications?: Specification[]
+	specifications?: MedusaProductSpecs
+	widgets?: ProductWidget[]
 	status: string
 	stock: number
 	tags: Tag[]
@@ -110,7 +112,31 @@ interface Product {
 	varified?: boolean
 	weight: number
 	width: number
-	variants?: any[]
+	variants?: MedusaVariant[]
+	collectionId?: string
+	createdAt?: string
+	updatedAt?: string
+	deletedAt?: string
+	discountable?: boolean
+	externalId?: string
+	allowBackOrder?: boolean
+	manageInventory?: boolean
+	midCode?: string
+	material?: string
+	metaTitle?: string
+	metaDescription?: string
+	metaKeywords?: string
+	priceWithoutTax?: FormattedAmount
+	mrpWithoutTax?: FormattedAmount
+	originalTax?: FormattedAmount
+	calculatedTax?: FormattedAmount
+	taxRates?: number
+	typeId?: string
+	expiryDate?: string
+	store?: Store
+	reviews?: Review[]
+	rating?: number
+	orders_completed?: number
 }
 
 interface Brand {
@@ -138,7 +164,7 @@ interface Category {
 	id?: string
 	name: string
 	slug: string
-	children: [Category]
+	children?: [Category]
 	link?: string
 	active?: boolean
 	new?: boolean
@@ -182,44 +208,99 @@ interface AllOrders {
 	data: Order[]
 }
 
+interface Shipping {
+	price: number
+	tax: number
+	formattedPrice?: FormattedAmount
+	charge?: number
+}
+
+interface CartItemV2 {
+	id: string
+	vid: string
+	name: string
+	description: string
+	sku: string
+	img: string
+	qty: number
+	price: number
+	mrp: number
+	discount: number
+	formattedItemAmount: {
+		price: string
+	}
+}
+
+interface Cart {
+	id: string
+	uid: string
+	cart_id: string
+	store: any
+	storeCurrency: string
+	qty: number
+	currencyCode: string
+	currencyName: string
+	currencySymbol: string
+	discount: CartDiscount
+	subtotal: number
+	shipping: Shipping
+	tax: number
+	total: number
+	offer_total: any
+	items: CartItem[]
+	active: boolean
+	sid: string
+	formattedAmount: {
+		subtotal: FormattedAmount
+		discount: FormattedAmount
+		shipping: FormattedAmount
+		tax: FormattedAmount
+		total: FormattedAmount
+	}
+	needAddress: boolean
+	needPrescription: boolean
+	selfTakeout: boolean
+	codAvailable: boolean
+	createdAt: string
+	updatedAt: string
+	unavailableItems?: any[]
+}
+
 interface CartItem {
+	id: string
 	pid: ID
 	vid: ID
-	barcode: string
+	barcode?: string
 	name: string
 	img: string
 	imgCdn: string
 	slug: string
-	price: Float
-	mrp: Float
+	price: FormattedAmount
+	mrp: FormattedAmount
 	customizedImg: string
 	isCustomized: boolean
-	shippingCharge: Float
-	orderStatus: [OrderStatusRes]
-	tracking: string
+	shippingCharge?: FormattedAmount
+	orderStatus?: OrderStatus[]
+	tracking?: string
 	qty: Int
 	time: string
-	options: [Option1]
-	usedOptions: [UsedOption]
-	brand: Brand
+	options?: any[]
+	usedOptions?: any[]
+	brand?: Brand
 	tax: Float
 	brandName: string
 	type: string
 	formattedItemAmount: CartItemAmount
-	vendor: ID
-	vendorSlug: string
-	vendorBusinessName: string
-	foodType: string
-	deliveryDetails: string
-	status: string
-	msg: string
+	store: ID
+	storeSlug: string
+	status?: string
+	msg?: string
 }
 
 interface CartItemAmount {
-	mrp: string
-	price: string
-	shippingCharge: string
-	tax: string
+	mrp: FormattedAmount
+	price: FormattedAmount
+	tax: FormattedAmount
 }
 
 interface CartAmount {
@@ -236,40 +317,15 @@ interface cartRes {
 	page: Int
 }
 
-interface Cart {
-	id: ID
-	uid: User
-	cart_id: Cart
-	store: Store
-	storeCurrency: ID
-	qty: Int
-	currencyCode: string
-	currencyName: string
-	currencySymbol: string
-	discount: CartDiscount
-	subtotal: Float
-	shipping: Shipping
-	tax: Float
-	total: Float
-	offer_total: Float
-	items: [CartItem]
-	unavailableItems: [CartItem]
-	active: Boolean
-	sid: string
-	formattedAmount: CartAmount
-	needAddress: Boolean
-	needPrescription: Boolean
-	selfTakeout: Boolean
-	codAvailable: Boolean
-	createdAt: string!
-	updatedAt: string!
-}
-
 interface CartDiscount {
 	code: string
-	value: Float
-	text: string
+	value?: Float
+	text?: string
 	amount: Float
+	formattedAmount?: {
+		value: number
+		currency: string
+	}
 }
 
 interface Order {
@@ -517,17 +573,17 @@ interface ReviewVote {
 	review: string
 }
 
-interface Review {
-	user: string
-	product: string
-	content: string
-	expand: {
-		user: User
-		'review_replies(review)': ReviewReply[] | undefined[]
-		'review_votes(review)': ReviewVote[]
-		reply?: Review
-	}
-}
+// interface Review {
+// 	user: string
+// 	product: string
+// 	content: string
+// 	expand: {
+// 		user: User
+// 		'review_replies(review)': ReviewReply[] | undefined[]
+// 		'review_votes(review)': ReviewVote[]
+// 		reply?: Review
+// 	}
+// }
 
 interface Error {
 	status: number
@@ -637,6 +693,7 @@ interface Review {
 	active: boolean
 	message: string
 	listing: string
+	title: string
 	pid: string
 	rating: number
 	store: string
@@ -652,4 +709,130 @@ interface Wishlist {
 	store: string
 	user: string
 	variant: string
+}
+
+interface FormattedAmount {
+	value: string
+	currency: Currency
+	raw: number
+}
+
+interface ShippingOption {
+	id: string
+	createdAt: string
+	updatedAt: string
+	deletedAt?: string | null
+	name: string
+	regionId: string
+	profileId: string
+	providerId: string
+	priceType: string
+	amount: FormattedAmount
+	isReturn: boolean
+	adminOnly: boolean
+	data: {
+		id: string
+	}
+	metadata: Record<string, any> | null
+	priceInclTax: FormattedAmount
+	taxRates: {
+		rate: number
+		name: string
+		code: string
+	}[]
+	taxAmount: FormattedAmount
+}
+
+interface SeoProps {
+	addressCountry: string
+	addressLocality: string
+	addressRegion: string
+	alternateJsonHref: string
+	alternateXml: {
+		title: string
+		href: string
+	}
+	article: boolean
+	brand: string
+	breadcrumbs: any[]
+	canonical: string
+	caption: string
+	category: string
+	contentUrl: string
+	createdAt: any
+	datePublished: any
+	depth: {
+		unitCode: string
+		value: string
+	}
+	description: string
+	dnsPrefetch: string
+	email: string
+	entityMeta: any
+	facebookPage: any
+	featuredImage: {
+		url: string
+		alt: string
+		width: any
+		height: any
+		caption: string
+	}
+	gtin: any
+	height: {
+		unitCode: string
+		value: string
+	}
+	id: any
+	image: any
+	keywords: string
+	lastUpdated: any
+	logo: string
+	metaDescription: string
+	msapplicationTileImage: string
+	ogImage: {
+		url: string
+		alt: string
+		width: any
+		height: any
+	}
+	ogImageSecureUrl: string
+	ogImageType: string
+	ogSiteName: string
+	ogSquareImage: {
+		url: string
+		alt: string
+		width: any
+		height: any
+	}
+	openingHours: string[]
+	popularity: number
+	postalCode: string
+	price: number
+	priceRange: string
+	productAvailability: string
+	productBrand: string
+	productName: any
+	productPriceAmount: any
+	productPriceCurrency: string
+	ratingCount: number
+	ratingValue: number
+	sku: any
+	slug: string
+	streetAddress: string
+	timeToRead: number
+	title: string
+	twitterImage: {
+		url: string
+		alt: string
+	}
+	updatedAt: any
+	weight: {
+		unitCode: string
+		value: string
+	}
+	width: {
+		unitCode: string
+		value: string
+	}
+	wlwmanifestXmlHref: string
 }
