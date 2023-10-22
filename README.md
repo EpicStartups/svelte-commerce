@@ -1,3 +1,11 @@
+#TODO
+
+1. UI props change to shopolah one, but need to discuss with najid
+
+#PROGRESS
+
+1. can locally run without any feature
+
 <div align="center">
 <h2>Svelte Commerce</h2>
 </div>
@@ -142,16 +150,17 @@ Thats all !
 Open http://localhost:3000 on chrome. Your app should be live with awesome sveltekit up and running
 
 ## Configuration
+
 There are 3 places to configure
 
 1. `src/lib/config/`
-All non secret and application wide configs are stored here, if required, change according to your requirement.
+   All non secret and application wide configs are stored here, if required, change according to your requirement.
 
 2. `.env`
-All secrets stored here
+   All secrets stored here
 
 3. `src/lib/services/index.ts`
-This is used to define which service to use. Only 1 of the listed service can be active at a time. Valid values are `Litekart Medusa Bigcommerce Shopify Woocommerce`
+   This is used to define which service to use. Only 1 of the listed service can be active at a time. Valid values are `Litekart Medusa Bigcommerce Shopify Woocommerce`
 
 ## Deployment
 
@@ -164,9 +173,11 @@ Click on the button to directly deploy to Netlify or Vercel. Zero configuration 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fitswadesh%2Fsvelte-commerce&env=PUBLIC_LITEKART_DOMAIN&envDescription=demo.litekart.in)
 
 The following envirnoment variable is mandatory
+
 ```
 PUBLIC_LITEKART_DOMAIN=demo.litekart.in
 ```
+
 You can replace the env variable with your store domain
 
 ### Docker
@@ -190,7 +201,7 @@ Latest update: 07-February-2023
 <details>
 <summary>Click here to see all the updates</summary>
 
-- 07-Jun-2023      - Deeplinking for social aharing buttons
+- 07-Jun-2023 - Deeplinking for social aharing buttons
 - 07-February-2023 - Prettified.
 - 06-February-2023 - Sveltekit 1.5
 - 15-December-2022 - Sveltekit 1.0 - Finally.

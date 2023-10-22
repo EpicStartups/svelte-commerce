@@ -1,0 +1,13 @@
+export type OrderBy =
+	| 'priceDesc'
+	| 'priceAsc'
+	| 'createdDesc'
+	| 'createdAsc'
+	| 'titleAsc'
+	| 'titleDesc'
+	| 'orderCompletedDesc'
+	| 'orderCompletedAsc'
+	| 'ratingDesc'
+	| 'ratingsAsc'
+	| 'reviewsCountDesc'
+	| 'reviewsCountAsc'

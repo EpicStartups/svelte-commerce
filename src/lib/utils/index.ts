@@ -2,6 +2,8 @@ import { currency as currencyConfig } from '../config'
 import { toasts } from 'svelte-toasts'
 import type { ToastType } from 'svelte-toasts/types/common'
 import { goto } from '$app/navigation'
+import { error } from '@sveltejs/kit'
+import type { SeoProps } from '$lib/types'
 
 let allToasts: any
 
@@ -55,7 +57,14 @@ export const getCdnImageUrl = ({ src, IMAGE_CDN_URL, IMAGE_CDN_PROVIDER, NO_QUER
 }
 
 const toast = (title, type) => {
-	title = title?.body?.message?.error || title?.body?.message || title?.message?.error || title?.message || title?.error || title || ''
+	title =
+		title?.body?.message?.error ||
+		title?.body?.message ||
+		title?.message?.error ||
+		title?.message ||
+		title?.error ||
+		title ||
+		''
 	allToasts?.remove()
 	allToasts = toasts.add({
 		title: title,
@@ -65,8 +74,8 @@ const toast = (title, type) => {
 		theme: 'dark',
 		placement: 'top-center',
 		showProgress: false,
-		onClick: () => { },
-		onRemove: () => { }
+		onClick: () => {},
+		onRemove: () => {}
 		// component: BootstrapToast, // allows to override toast component/template per toast
 	})
 }
@@ -240,4 +249,99 @@ export const navigateToProperPath = (url) => {
 	// } else {
 	// 	return url.trim();
 	// }
+}
+
+export const handleApiError = (e: any) => {
+	if (e.status && typeof e.status === 'number' && e.status >= 400 && e.status <= 599) {
+		return error(e.status, e.message)
+	} else {
+		return error(400, e)
+	}
+}
+
+export const toPrice = (price: number) => {
+	return (price / 100).toFixed(2)
+}
+
+export function generateSeoProps(inputData: Partial<SeoProps>): SeoProps {
+	const defaultData: SeoProps = {
+		addressCountry: '',
+		addressLocality: '',
+		addressRegion: '',
+		alternateJsonHref: '',
+		alternateXml: { title: '', href: '' },
+		article: false,
+		brand: 'LRNR',
+		breadcrumbs: [],
+		canonical: '',
+		caption: '',
+		category: '',
+		contentUrl: '',
+		createdAt: null,
+		datePublished: null,
+		depth: { unitCode: '', value: '' },
+		description: '',
+		dnsPrefetch: '',
+		email: '',
+		entityMeta: null,
+		facebookPage: null,
+		featuredImage: {
+			url: '',
+			alt: '', // I used empty string for defaultAlt since its value wasn't provided
+			width: null,
+			height: null,
+			caption: 'Home page'
+		},
+		gtin: null,
+		height: { unitCode: '', value: '' },
+		id: null,
+		image: null,
+		keywords: '',
+		lastUpdated: null,
+		logo: '',
+		metaDescription: '',
+		msapplicationTileImage: '',
+		ogImage: {
+			url: '',
+			alt: '', // defaultAlt value
+			width: null,
+			height: null
+		},
+		ogImageSecureUrl: '',
+		ogImageType: '',
+		ogSiteName: '',
+		ogSquareImage: {
+			url: '',
+			alt: '', // defaultAlt value
+			width: null,
+			height: null
+		},
+		openingHours: ['Monday,Tuesday,Wednesday,Thursday,Friday,Saturday 10:00-20:00'],
+		popularity: 1000,
+		postalCode: '',
+		price: 1,
+		priceRange: '',
+		productAvailability: '',
+		productBrand: '',
+		productName: null,
+		productPriceAmount: null,
+		productPriceCurrency: '',
+		ratingCount: 1,
+		ratingValue: 5,
+		sku: null,
+		slug: '',
+		streetAddress: '',
+		timeToRead: 0,
+		title: '',
+		twitterImage: {
+			url: '',
+			alt: '' // defaultAlt value
+		},
+		updatedAt: null,
+		weight: { unitCode: '', value: '' },
+		width: { unitCode: '', value: '' },
+		wlwmanifestXmlHref: ''
+	}
+
+	return { ...defaultData, ...inputData }
 }
