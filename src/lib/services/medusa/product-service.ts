@@ -2,65 +2,115 @@ import { error } from '@sveltejs/kit'
 import { getMedusajsApi, postMedusajsApi } from '$lib/utils/server'
 import type { AllProducts, Product } from '$lib/types'
 import { mapMedusajsAllProducts, mapMedusajsProduct } from './medusa-utils'
+import type { FetchProductsResp, MedusaProduct } from './types'
 
 // Search product
+
+interface SearchProductInput {
+	origin?: string
+	query?: string
+	searchData?: string
+	storeId?: string
+	server?: boolean
+	sid?: string
+	limit?: number
+	page?: number
+}
+
+export interface SearchProductRes {
+	products: MedusaProduct[]
+	count: number
+	facets: string
+	pageSize: number
+	err: any
+	isLoading: boolean
+}
 
 export const searchProducts = async ({
 	origin,
 	query,
 	searchData,
 	storeId,
+	limit = 3,
+	page = 1,
 	server = false,
 	sid = null
-}: any) => {
+}: SearchProductInput): Promise<SearchProductRes> => {
 	try {
-		let res: AllProducts | {} = {}
-		let products: Product[] = []
-		let count = 0
-		let facets = ''
-		let pageSize = 0
-		let category = ''
-		let err = ''
-		res = await postMedusajsApi(`products/search?q=${searchData}`, { q: searchData })
-		products = res?.hits
-		count = res?.count || 0
-		facets = res?.facets || []
-		pageSize = res?.pageSize || 25
-
-		return { products, count, facets, pageSize, err }
+		const res: { products: MedusaProduct[]; count: number } = await postMedusajsApi(
+			`products/search`,
+			{
+				q: query ?? '',
+				limit,
+				offset: (page - 1) * limit
+			},
+			null
+		)
+		//console.log('product: ', res.products[0])
+		return {
+			products: res.products,
+			count: res.products.length,
+			facets: '',
+			pageSize: Math.ceil(res.count / limit),
+			err: null,
+			isLoading: undefined
+		}
 	} catch (e) {
-		throw error(e.status, e.message)
+		if (typeof e.status === 'number' && e.status >= 400 && e.status <= 599) {
+			throw error(e.status, e.message)
+		} else {
+			throw error(400, e)
+		}
 	}
 }
 
-// Fetch all products
-
 export const fetchProducts = async ({ origin, slug, id, server = false, sid = null }: any) => {
 	try {
-		let res: AllProducts | {} = {}
-
-		const med = (await getMedusajsApi(`products`)).product
-		res = mapMedusajsAllProducts(med)
-
-		return res?.data || []
+		const response: FetchProductsResp = await getMedusajsApi(`products`)
+		return mapMedusajsAllProducts(response)
 	} catch (e) {
-		throw error(e.status, e.message)
+		if (typeof e.status === 'number' && e.status >= 400 && e.status <= 599) {
+			throw error(e.status, e.message)
+		} else {
+			throw error(400, e)
+		}
 	}
 }
 
 // Fetch single product
-
-export const fetchProduct = async ({ origin, slug, id, server = false, sid = null }: any) => {
+interface FetchProductInput {
+	origin?: string
+	id?: string
+	slug?: string
+	server?: boolean
+	sid?: string | null
+	variant?: string
+	currency?: string
+}
+export const fetchProduct = async ({
+	origin,
+	slug,
+	id,
+	server = false,
+	sid = null,
+	variant,
+	currency
+}: FetchProductInput) => {
 	try {
-		let res: Product | {} = {}
-		const med = await getMedusajsApi(
-			`products?handle=${slug}&expand=categories,variants,variants.prices,images&currency_code=usd`
+		const med: FetchProductsResp = await getMedusajsApi(
+			`products?handle=${slug}&expand=variants,variants.prices,images&currency_code=myr`
 		)
-		const productArray = med?.products || [] // fetch the products array value from the med variable
-		res = await mapMedusajsProduct(productArray[0]) // assuming we only want the first product in the array
-		return res || {}
+		console.log('med: ', med.products[0])
+		if (med.count !== 1) {
+			throw error(400, `there are ${med.count} products for ${slug}`)
+		}
+		return mapMedusajsProduct(med.products[0], variant, currency)
 	} catch (e) {
-		throw error(e.status, e.message)
+		if (typeof e.status === 'number' && e.status >= 400 && e.status <= 599) {
+			throw error(e.status, e.message)
+		} else {
+			throw error(400, e)
+		}
 	}
 }
 
@@ -69,8 +119,8 @@ export const fetchProduct = async ({ origin, slug, id, server = false, sid = nul
 export const fetchProduct2 = async ({ origin, slug, id, server = false, sid = null }: any) => {
 	try {
 		let res: Product | {} = {}
-		const med = await getMedusajsApi(
-			`products?handle=${slug}&expand=categories,variants,variants.prices,images`
+		const med: FetchProductsResp = await getMedusajsApi(
+			`products?handle=${slug}&expand=variants,variants.prices,images`
 		)
 
 		const productArray = med.products || [] // fetch the products array value from the med variable
@@ -79,10 +129,40 @@ export const fetchProduct2 = async ({ origin, slug, id, server = false, sid = nu
 
 		return res || {}
 	} catch (e) {
-		throw error(e.status, e.message)
+		if (typeof e.status === 'number' && e.status >= 400 && e.status <= 599) {
+			throw error(e.status, e.message)
+		} else {
+			throw error(400, e)
+		}
 	}
 }
 
+export const fetchProduct3 = async ({
+	origin,
+	slug,
+	id,
+	server = false,
+	sid = null,
+	variant,
+	currency
+}: FetchProductInput) => {
+	try {
+		const med: { product: MedusaProduct } = await getMedusajsApi(
+			`fetch-product?handle=${slug}&currency_code=myr`
+		)
+		if (!med.product) {
+			throw error(400, `there are no product for ${slug}`)
+		}
+		//console.log('med: ', med.product.reviews)
+		return mapMedusajsProduct(med.product, variant, currency)
+	} catch (e) {
+		if (typeof e.status === 'number' && e.status >= 400 && e.status <= 599) {
+			throw error(e.status, e.message)
+		} else {
+			throw error(400, e)
+		}
+	}
+}
 // Fetch products based on category
 
 export const fetchProductsOfCategory = async ({
@@ -94,58 +174,25 @@ export const fetchProductsOfCategory = async ({
 	sid = null
 }: any) => {
 	try {
-		let res1: any = {}
-		let res2: any = {}
-
-		let categories = []
-		let category = {}
+		let res: any = {}
+		let products: Product[] = []
 		let count = 0
-		let currentPage = 0
-		let err = ''
 		let facets = ''
 		let pageSize = 0
-		let products: Product[] = []
-
-
-		res1 = await getMedusajsApi(`product-categories`)
-
-		if (res1?.count) {
-
-			categories = res1?.product_categories.filter((c) => {
-				if (c.handle === categorySlug) {
-					return c
-				}
-			})
-
-			// console.log('categories', categories);
-
-			if (categories) {
-				category = categories[0]
-
-				try {
-					res2 = await getMedusajsApi(`products?category_id[]=${category?.id}`)
-
-					count = res2?.count
-					products = res2?.products.map((p) => mapMedusajsProduct(p))
-					currentPage = res2?.offset
-					pageSize = res2?.limit
-
-					return {
-						category,
-						count,
-						currentPage,
-						err,
-						facets,
-						pageSize,
-						products,
-					}
-				} catch (e) {
-					throw error(e.status, e.message)
-				}
-			}
-		}
+		let category = ''
+		let err = ''
+		res = await getMedusajsApi(`products?category_id[]=${categorySlug}`)
+		count = res?.count
+		products = res?.products.map((p) => mapMedusajsProduct(p))
+		const offset = res?.offset
+		const limit = res?.limit
+		return { products, count, facets, pageSize, category, err }
 	} catch (e) {
-		throw error(e.status, e.message)
+		if (typeof e.status === 'number' && e.status >= 400 && e.status <= 599) {
+			throw error(e.status, e.message)
+		} else {
+			throw error(400, e)
+		}
 	}
 }
 
@@ -173,7 +220,11 @@ export const fetchNextPageProducts = async ({
 			facets: res.facets
 		}
 	} catch (e) {
-		throw error(e.status, e.message)
+		if (typeof e.status === 'number' && e.status >= 400 && e.status <= 599) {
+			throw error(e.status, e.message)
+		} else {
+			throw error(400, e)
+		}
 	}
 }
 
@@ -192,9 +243,13 @@ export const fetchRelatedProducts = async ({
 		let relatedProducts: Product[] = []
 
 		relatedProducts = await getMedusajsApi(`products`)
-
+		console.log('relatedProducts: ', relatedProducts)
 		return relatedProducts || []
 	} catch (e) {
-		throw error(e.status, e.message)
+		if (typeof e.status === 'number' && e.status >= 400 && e.status <= 599) {
+			throw error(e.status, e.message)
+		} else {
+			throw error(400, e)
+		}
 	}
 }

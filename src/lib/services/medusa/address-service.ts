@@ -1,136 +1,113 @@
+import type { Address } from '$lib/types'
 import { deleteMedusajsApi, getMedusajsApi, postMedusajsApi } from '$lib/utils/server'
 import { error } from '@sveltejs/kit'
+import type { MedusaAddress, MedusaCustomer, MedusaProfile } from './types'
+import { handleApiError } from '$lib/utils'
 
-export const fetchAddresses = async ({ origin, storeId, server = false, sid }: any) => {
+export const fetchAddresses = async ({
+	origin,
+	storeId,
+	server = false,
+	sid = 's:rbsl8gACO6pZuNvSnQNo1LKTpxUKaQnl.3B6p9hkKCV4dQOGLNmCqA4fhj70AAhv2bSGRtCmom0I'
+}: any) => {
 	try {
-		let res: any = {}
-		let selectedAddress = {}
-		let myAddresses = []
+		//let res: any = {}
+		let selectedAddress: MedusaAddress | null = null
+		let myAddresses: MedusaAddress[] = []
 
-		res = await getMedusajsApi(`customers/me`, {}, sid)
+		const res: { customer: MedusaProfile } = await getMedusajsApi(`customers/me`, {}, sid)
+
 		myAddresses = res?.customer?.shipping_addresses
-		myAddresses.sort((a, b) => {
-			const da = new Date(a.updated_at),
-				db = new Date(b.updated_at)
-			return db - da
-		})
-
-		myAddresses = myAddresses.map((add) => {
-			return {
-				address: add.address_1,
-				city: add.city,
-				company: add.company,
-				country: add.country || add.country_code,
-				email: add.email,
-				firstName: add.first_name,
-				id: add.id || add._id,
-				lastName: add.last_name,
-				locality: add.address_2,
-				phone: add.phone,
-				state: add.province,
-				zip: add.postal_code,
-			}
-		})
-
 		if (myAddresses?.length) {
-			selectedAddress = myAddresses[0]?._id || myAddresses[0]?.id
+			selectedAddress = myAddresses[0]
 		}
-		return { myAddresses: { data: myAddresses }, selectedAddress, count: res?.count }
+		return {
+			myAddresses: { data: myAddresses },
+			selectedAddress,
+			count: res.customer.shipping_addresses.length
+		}
 	} catch (e) {
+		console.error(e)
 		throw error(e.status, e.message)
 	}
 }
 
 export const fetchAddress = async ({
-	cartId,
 	origin,
 	storeId,
 	server = false,
-	sid = null
-}: any) => {
-	return
-}
-
-export const saveAddress = async ({
-	id,
-	address,
-	city,
-	company,
-	country,
-	email,
-	firstName,
-	lastName,
-	locality,
-	phone,
-	state,
-	zip,
-	storeId,
-	origin,
-	sid = null
-}: any) => {
+	sid = null,
+	id
+}: any): Promise<MedusaAddress> => {
 	try {
-		let res: any = {}
-		const addr = {
-			address: {
-				address_1: address,
-				address_2: locality,
-				city,
-				company,
-				country_code: country || 'IN',
-				first_name: firstName,
-				last_name: lastName,
-				phone,
-				postal_code: zip,
-				province: state
+		const res: { customer: MedusaCustomer } = await getMedusajsApi(`customers/me`, {}, sid)
+
+		if (res?.customer?.shipping_addresses?.length) {
+			const address = res.customer.shipping_addresses.find((address) => address.id === id)
+			if (address) {
+				return address
+			} else {
+				throw { status: 404, message: `cannot find address for id: ${id}` }
 			}
-		}
-		res = await postMedusajsApi('customers/me/addresses', addr, sid)
-		const shipping_addresses = res?.customer?.shipping_addresses
-		if (shipping_addresses) {
-			return shipping_addresses[0]
 		} else {
-			throw error(404, 'Error occured while saving address')
+			throw { status: 404, message: `cannot find address for id: ${id}` }
 		}
-	} catch (err) {
-		throw error(err.status || 400, err.message)
+	} catch (e) {
+		throw error(e.status, e.message)
 	}
 }
 
-export const editAddress = async ({
-	id,
+interface SaveAddressInput {
+	address: string
+	locality: string
+	city: string
+	country: string
+	email?: string
+	landmark?: string
+	firstName: string
+	lastName: string
+	phone: string
+	state: string
+	zip: string
+	sid?: string | null
+	id?: string
+}
+
+export const saveAddress = async ({
 	address,
 	city,
-	company,
 	country,
 	email,
 	firstName,
+	landmark,
 	lastName,
 	locality,
 	phone,
 	state,
 	zip,
-	storeId,
-	origin,
+	id,
 	sid = null
-}: any) => {
+}: SaveAddressInput) => {
 	try {
-		let res: any = {}
 		const addr = {
 			address_1: address,
 			address_2: locality,
 			city,
-			company,
-			country_code: country || 'IN',
+			country_code: country.toUpperCase(),
 			first_name: firstName,
+			landmark,
 			last_name: lastName,
 			phone,
 			postal_code: zip,
 			province: state
+			//email
 		}
-
-		res = await postMedusajsApi(`customers/me/addresses/${id}`, addr, sid)
-
-		const shipping_addresses = res?.customer?.shipping_addresses
+		const res: { customer: MedusaProfile } = await postMedusajsApi(
+			id !== 'new' ? `customers/me/addresses/${id}` : 'customers/me/addresses',
+			id !== 'new' ? addr : { address: addr },
+			sid
+		)
+		const shipping_addresses = res.customer.shipping_addresses
 		if (shipping_addresses) {
 			return shipping_addresses[0]
 		} else {
@@ -141,10 +118,17 @@ export const editAddress = async ({
 	}
 }
 
-export const deleteAddress = async ({ id, storeId, origin, sid = null }: any) => {
+interface DeleteAddressInput {
+	addressId: string
+	sid?: string | null
+}
+
+export const deleteAddress = async ({ addressId, sid = null }: DeleteAddressInput) => {
 	try {
-		deleteMedusajsApi(`customers/me/addresses/${id}`, sid)
+		const res = await deleteMedusajsApi(`customers/me/addresses/${addressId}`, {}, sid)
+		console.log('delete address res: ', res)
+		return res
 	} catch (err) {
-		throw error(err.status || 400, err.message)
+		throw handleApiError(err)
 	}
 }

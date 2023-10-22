@@ -7,7 +7,6 @@ export const fetchDeals = async ({ origin, query, storeId, server = false, sid =
 		let res: any = {}
 
 		res = await getMedusajsApi(`products`, {}, sid)
-
 		return res || {}
 	} catch (e) {
 		throw error(e.status, e.message)

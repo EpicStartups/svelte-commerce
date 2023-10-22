@@ -10,23 +10,25 @@ import {
 	domain,
 	DOMAIN,
 	email,
-	fontFamily,
 	GOOGLE_ANALYTICS_ID,
 	GOOGLE_CLIENT_ID,
-	IMAGE_CDN_URL,
 	keywords,
 	loginUrl,
 	logo,
 	phone,
-	saasDomain,
-	saasName,
 	searchbarText,
 	siteTitle,
 	websiteLegalName,
 	websiteName,
+	saasName,
+	saasDomain,
 	weightUnit,
+	IMAGE_CDN_URL
 } from '$lib/config'
+import { getMedusajsApi } from '$lib/utils/server'
+import { error } from '@sveltejs/kit'
 import { fetchInit } from './init-service'
+import type { MedusaStore } from './types'
 
 export const getStoreData = async ({
 	cookieStore,
@@ -42,7 +44,6 @@ export const getStoreData = async ({
 		address,
 		adminUrl,
 		alert,
-		allowBackOrder: false,
 		close: {},
 		currencyCode,
 		currencySymbol,
@@ -52,13 +53,11 @@ export const getStoreData = async ({
 		DOMAIN,
 		email,
 		facebookPixel: {},
-		fontFamily,
 		GOOGLE_ANALYTICS_ID,
 		GOOGLE_CLIENT_ID,
 		googleAnalytics: {},
 		guaranteed_response_time: null,
 		hellobar: {},
-		homePageSliderBannerImageHeight: null,
 		IMAGE_CDN_URL: IMAGE_CDN_URL,
 		isBulkOrder: false,
 		isDeals: false,
@@ -86,11 +85,9 @@ export const getStoreData = async ({
 		websiteLegalName,
 		websiteName,
 		weightUnit,
-		whatsappChatButton: {},
+		whatsappChatButton: {}
 	}
-
 	let megamenu = null
-
 	if (
 		!cookieStore ||
 		cookieStore === 'undefined' ||
@@ -98,15 +95,12 @@ export const getStoreData = async ({
 		cookieMegamenu == 'undefined'
 	) {
 		const uri = new URL(url)
-
 		storeRes = await fetchInit(uri.host)
-
 		store = {
 			id: storeRes?.storeOne?._id,
 			address: storeRes?.storeOne?.address,
 			adminUrl: storeRes?.storeOne?.adminUrl || storeRes?.settings?.adminUrl, // storeRes?.storeOne?.adminUrl used for arialmall
 			alert: storeRes?.storeOne?.alert,
-			allowBackOrder: storeRes.storeOne?.allowBackOrder,
 			close: storeRes?.storeOne?.close,
 			currencyCode: storeRes?.storeOne?.storeCurrency?.isoCode || 'USD',
 			currencySymbol: storeRes?.storeOne?.storeCurrency?.symbol || '$',
@@ -119,7 +113,6 @@ export const getStoreData = async ({
 				active: storeRes?.storeOne?.facebookPixel?.active?.val,
 				id: storeRes?.storeOne?.facebookPixel?.id?.val || ''
 			},
-			fontFamily: storeRes?.storeOne?.fontFamily,
 			GOOGLE_ANALYTICS_ID: storeRes?.storeOne?.GOOGLE_ANALYTICS_ID,
 			GOOGLE_CLIENT_ID: storeRes?.storeOne?.GOOGLE_CLIENT_ID,
 			googleAnalytics: {
@@ -128,7 +121,6 @@ export const getStoreData = async ({
 			},
 			guaranteed_response_time: storeRes?.storeOne?.guaranteed_response_time,
 			hellobar: storeRes?.storeOne?.hellobar,
-			homePageSliderBannerImageHeight: storeRes?.storeOne?.homePageSliderBannerImageHeight,
 			IMAGE_CDN_URL: storeRes?.storeOne?.IMAGE_CDN_URL,
 			isBulkOrder: storeRes?.storeOne?.isBulkOrder,
 			isDeals: storeRes?.storeOne?.isDeals,
@@ -156,20 +148,33 @@ export const getStoreData = async ({
 			websiteLegalName: storeRes?.storeOne?.websiteLegalName,
 			websiteName: storeRes?.storeOne?.websiteName,
 			weightUnit: storeRes?.storeOne?.weightUnit,
-			whatsappChatButton: storeRes?.storeOne?.whatsappChatButton,
+			whatsappChatButton: storeRes?.storeOne?.whatsappChatButton
 		}
-
 		megamenu = storeRes.megamenu
-
 		cookies.set('store', JSON.stringify(store), { path: '/' })
 		cookies.set('megamenu', JSON.stringify(megamenu), { path: '/' })
 	} else {
 		store = JSON.parse(cookieStore)
 		megamenu = JSON.parse(cookieMegamenu)
 	}
-
 	storeRes.storeOne = store
 	storeRes.megamenu = megamenu
-
 	return storeRes
+}
+
+interface GetShopByIdInput {
+	sid?: string | null
+	shopId: string
+}
+export const getShopById = async ({ sid = null, shopId }: GetShopByIdInput) => {
+	try {
+		const store: { store: MedusaStore } = await getMedusajsApi(`/fetch-store/${shopId}`, {}, sid)
+		return store.store
+	} catch (err) {
+		if (typeof err.status === 'number' && err.status >= 400 && err.status <= 599) {
+			throw error(err.status, err.message)
+		} else {
+			throw error(400, err)
+		}
+	}
 }

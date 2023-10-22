@@ -1,23 +1,35 @@
-import { deleteMedusajsApi, getMedusajsApi, postMedusajsApi } from '$lib/utils/server'
+import type { Me } from '$lib/types'
+import { delBySid, getMedusajsApi, postMedusajsApi } from '$lib/utils/server'
 import { error } from '@sveltejs/kit'
+import type { MedusaCustomer, MedusaProfile } from './types'
 
-export const fetchMeData = async ({ origin, storeId, server = false, cookies }: any) => {
+export const fetchMeData = async ({
+	origin,
+	storeId,
+	server = false,
+	cookies
+}: any): Promise<Me | null> => {
 	try {
-		let res: any = {}
-
 		const sid = cookies.get('connect.sid')
-		// console.log(sid)
-		const response = await getMedusajsApi(`customers/me`, null, sid)
-		const customerResponse = response.customer
+		const response: { customer: MedusaProfile } = await getMedusajsApi(`customers/me`, null, sid)
+		const customer = response.customer
+		//console.log('customer: ', customer)
 
-		res.firstName = customerResponse.first_name
-		res.lastName = customerResponse.last_name
-		res.active = customerResponse.has_account
-		res.id = customerResponse.id
+		const me: Me = {
+			firstName: customer.first_name,
+			lastName: customer.last_name,
+			active: customer.has_account,
+			email: customer.email,
+			phone: customer.phone,
+			id: customer.id
+		}
 
-		return res || {}
+		//console.log('me: ', me)
+
+		return me
 	} catch (e) {
-		throw error(e.status, e.message)
+		console.error('e: ', e)
+		return null
 	}
 }
 
@@ -57,7 +69,6 @@ export const signupService = async ({
 export const loginService = async ({
 	email,
 	password,
-	cartId = null,
 	storeId,
 	origin,
 	server = false,
@@ -75,10 +86,6 @@ export const loginService = async ({
 		res.lastName = res.last_name
 		res.active = res.has_account
 		res.sid = response.sid
-		if (cartId) {
-			await postMedusajsApi(`carts/${cartId}`, { customer_id: res?.id }, sid)
-		}
-
 		return res
 	} catch (e) {
 		if (e.status === 401) e.message = 'email or password is invalid'
@@ -171,7 +178,7 @@ export const logoutService = async ({ storeId, origin, server = false, sid = nul
 	try {
 		let res: any = {}
 
-		res = await deleteMedusajsApi(`auth`, sid)
+		res = await delBySid(`auth`, origin)
 
 		return res
 	} catch (e) {
@@ -179,19 +186,22 @@ export const logoutService = async ({ storeId, origin, server = false, sid = nul
 	}
 }
 
-export const updateProfileService = async ({
-	storeId,
-	e,
-	origin,
-	server = false,
-	sid = null
-}: any) => {
+interface UpdateProfileServiceInput {
+	sid?: string | null
+	input: UpdateProfileInput
+}
+
+interface UpdateProfileInput {
+	first_name?: string
+	last_name?: string
+	phone?: string
+}
+
+export const updateProfileService = async ({ input, sid = null }: UpdateProfileServiceInput) => {
 	try {
-		let res: any = {}
+		const res: { customer: MedusaCustomer } = await postMedusajsApi(`customers/me`, input, sid)
 
-		res = await getMedusajsApi(`customers/me`, {}, sid)
-
-		return res
+		return res.customer
 	} catch (e) {
 		throw error(e.status, e.message)
 	}

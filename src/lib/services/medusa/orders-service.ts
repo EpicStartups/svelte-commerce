@@ -1,50 +1,30 @@
 import { error } from '@sveltejs/kit'
 import { getMedusajsApi, postMedusajsApi } from '$lib/utils/server'
 import type { AllOrders, Error } from '$lib/types'
-import { mapMedusajsAllOrders } from './medusa-utils'
-
-// export const fetchOrders = async ({ origin, storeId, server = false, sid = null }: any) => {
-// 	try {
-// 		let res: AllOrders | {} = {}
-
-// 		const res = await getMedusajsApi(`customers/me/orders`, {}, sid)
-// 		console.log('res', res);
-// 		res = mapMedusajsAllOrders(res)
-// 		return res || {}
-// 	} catch (e) {
-// 		throw error(e.status, e.message)
-// 	}
-// }
+import type { MedusaAddress, MedusaCart, MedusaOrder } from './types'
+import type { Stripe, StripeCardNumberElement, StripeCardElement } from '@stripe/stripe-js'
+import { CartService } from '.'
+import { appUrl } from '$lib/config'
+import { updatePaymentProvider } from './cart-service'
+import { handleApiError } from '$lib/utils'
 
 export const fetchOrders = async ({ origin, storeId, server = false, sid = null }: any) => {
 	try {
-		let res: AllOrders | {} = {}
-
-		res = await getMedusajsApi(`customers/me/orders`, {}, sid)
+		//console.log('sid: ', sid)
+		// const med: { orders: MedusaOrder[]; count: number; offset: number; limit: number } =
+		// 	await getMedusajsApi(`customers/me/orders`, {}, sid)
+		const med: { orders: MedusaOrder[]; count: number; offset: number; limit: number } =
+			await getMedusajsApi('customers/me/orders', null, sid)
+		const res = med.orders.filter(
+			(order) => order.order_parent_id && order.order_parent_id !== null
+		)
 
 		return {
-			count: res?.count,
-			pageSize: res?.limit,
-			noOfPage: res?.noOfPage || 1,
-			page: res?.page || 1,
-			data: res.orders.map((order) => {
-				return {
-					_id: order.id,
-					orderNo: order.id,
-					createdAt: order.created_at,
-					orderItems: order.items.map((item) => {
-						return {
-							img: item.thumbnail,
-							name: item.title,
-							qty: item.quantity,
-							price: item.unit_price,
-							shippingCharge: item.shipping_total,
-							total: item.total,
-							status: order.status,
-						}
-					})
-				}
-			}) || {}
+			data: res,
+			count: res.length
+			// pageSize: res.pageSize,
+			// noOfPage: res.noOfPage,
+			// page: res.page
 		}
 	} catch (e) {
 		throw error(e.status, e.message)
@@ -53,121 +33,93 @@ export const fetchOrders = async ({ origin, storeId, server = false, sid = null 
 
 export const fetchOrder = async ({ origin, storeId, id, server = false, sid = null }: any) => {
 	try {
-		let res: any = {}
+		const med: { orders: MedusaOrder[] } = await getMedusajsApi(
+			`customers/me/orders?id=${id}&expand=items.variant.product,shipping_address,billing_address`,
+			{},
+			sid
+		)
 
-		res = (await getMedusajsApi(`orders/${id}`, {}, sid)).order
-		// console.log('res', res);
-
-		return {
-			id: res?.id,
-			orderId: res?.id,
-			orderNo: res?.id,
-			createdAt: res?.created_at,
-			items: res?.items?.map((item) => {
-				return {
-					slug: item.handle,
-					img: item.thumbnail,
-					name: item.title,
-					qty: item.quantity,
-					price: item.unit_price,
-					mrp: item.total,
-					brandName: '',
-					size: '',
-					color: '',
-					variant: item.variant,
-					total: item.total,
-
-				}
-			}),
-			address: {
-				firstName: res?.shipping_address.first_name,
-				lastName: res?.shipping_address.last_name,
-				address: res?.shipping_address.address_1,
-				locality: res?.shipping_address.address_2,
-				city: res?.shipping_address.city,
-				country: res?.shipping_address.country_code,
-				state: res?.shipping_address.province,
-				zip: res?.shipping_address.postal_code,
-				phone: res?.shipping_address.phone,
-			},
-			billingAddress: {
-				firstName: res?.shipping_address.first_name,
-				lastName: res?.shipping_address.last_name,
-				address: res?.shipping_address.address_1,
-				locality: res?.shipping_address.address_2,
-				city: res?.shipping_address.city,
-				country: res?.shipping_address.country_code,
-				state: res?.shipping_address.province,
-				zip: res?.shipping_address.postal_code,
-				phone: res?.shipping_address.phone,
-			},
-			invoiceLink: '',
-			replaceValidTill: '',
-			status: res?.status
-				|| {}
+		if (med.orders.length !== 1) {
+			throw { status: 400, message: 'order is not single' }
 		}
+		return med.orders[0]
 	} catch (e) {
 		throw error(e.status, e.message)
+	}
+}
+
+interface FetchOrderWithFulFillmentsInput {
+	sid?: string | null
+	id: string
+}
+export const fetchOrderWithFulFillments = async ({
+	sid = null,
+	id
+}: FetchOrderWithFulFillmentsInput) => {
+	try {
+		const med: { orders: MedusaOrder[] } = await getMedusajsApi(
+			`customers/me/orders?id=${id}&expand=items.variant.product,shipping_address,billing_address,fulfillments,fulfillments.tracking_links,reviews`,
+			{},
+			sid
+		)
+
+		if (med.orders.length !== 1) {
+			throw { status: 400, message: 'order is not single' }
+		}
+		return med.orders[0]
+	} catch (err) {
+		throw handleApiError(err)
 	}
 }
 
 export const fetchTrackOrder = async ({ origin, storeId, id, server = false, sid = null }: any) => {
 	try {
-		return []
+		let res: any = {}
+
+		res = await getMedusajsApi(`orders/me`, {}, sid)
+
+		return res.data || []
 	} catch (e) {
-		throw error(e.status, e.message)
+		throw handleApiError(e)
 	}
 }
 
 export const paySuccessPageHit = async ({
-	orderId,
-	cartId,
 	origin,
+	paymentMode,
+	orderId,
 	storeId,
+	status,
+	id,
 	server = false,
 	sid = null
 }: any) => {
 	try {
 		let res: any = {}
-		if (orderId && orderId != 'undefined') {
-			res = await getMedusajsApi(`orders/${orderId}`, {}, sid)
-			return res.order || {}
-			// return { paymentReferenceId: 'complete', message: 'Order success' }
-		} else {
-			res = await postMedusajsApi(`carts/${cartId}/complete`, {}, sid)
-			return res.data || {}
-		}
+
+		res = await getMedusajsApi(`orders/me`, {}, sid)
+
+		return res || {}
 	} catch (e) {
-		console.log('error at medusa cart complete', e)
-		// return {}
 		throw error(e.status, e.message)
 	}
 }
 
 export const codCheckout = async ({
 	address,
-	cartId,
-	origin,
 	paymentMethod,
-	paymentProviderId,
 	prescription,
+	storeId,
+	origin,
 	server = false,
-	sid = null,
-	storeId
+	sid = null
 }: any) => {
 	try {
 		let res: any = {}
 
-		res = await postMedusajsApi(
-			`carts/${cartId}/payment-session`,
-			{ provider_id: paymentProviderId },
-			sid
-		)
+		res = await getMedusajsApi(`orders/me`, {}, sid)
 
-		// const paymentCartId = res?.cart?.id
-		res.id = '' //paymentCartId
-
-		return res
+		return res || {}
 	} catch (e) {
 		throw error(e.status, e.message)
 	}
@@ -232,21 +184,151 @@ export const razorpayCapture = async ({
 	}
 }
 
+type CheckoutFailed = {
+	type: 'cart'
+	data: MedusaCart
+}
+
+type CheckoutSucceed = {
+	type: 'order'
+	data: any
+}
+
+interface StripeCheckoutServiceOption {
+	clientSecret: string
+	cartId: string
+	sid?: string | null
+	server?: boolean
+	stripe: Stripe
+	card: StripeCardElement
+	cart: MedusaCart
+	address: MedusaAddress
+}
+
 export const stripeCheckoutService = async ({
-	paymentMethodId,
-	address,
-	storeId,
-	origin,
 	server = false,
-	sid = null
-}: any) => {
+	cartId,
+	sid = null,
+	clientSecret,
+	stripe,
+	card,
+	cart,
+	address
+}: StripeCheckoutServiceOption) => {
 	try {
-		let res: any = {}
+		if (!cart.customer_id || cart.customer_id === '') {
+			const user = await getMedusajsApi(`customers/me`, {}, sid)
+			const updateCartRes = await postMedusajsApi(
+				`carts/${cartId}`,
+				{
+					customer_id: user.id
+					// billing_address_id: address.id,
+					// shipping_address_id: address.id
+				},
+				sid
+			)
+			console.log('updateCartRes: ', updateCartRes)
+		}
 
-		res = await getMedusajsApi(`orders/me`, {}, sid)
+		const updateProvider = await updatePaymentProvider({
+			sid,
+			cartId,
+			providerId: 'stripe'
+		})
 
-		return res.data || []
+		const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
+			payment_method: {
+				card: card,
+				billing_details: {
+					name: address.first_name + ' ' + address.last_name,
+					address: {
+						city: address.city ?? undefined,
+						line1: address.address_1 ?? undefined,
+						line2: address.address_2 ?? undefined,
+						postal_code: address.postal_code ?? undefined,
+						state: address.province ?? undefined
+					},
+					email: cart.email
+				}
+			}
+		})
+		console.log('payment intent: ', paymentIntent)
+		console.log('payment error: ', error)
+		if (error) {
+			const pi = error.payment_intent
+			if (!pi || (pi.status !== 'requires_capture' && pi.status !== 'succeeded')) {
+				throw { status: 400, message: `paymentIntent error: ${error}` }
+			}
+		}
+		if (paymentIntent.status !== 'requires_capture' && paymentIntent.status !== 'succeeded') {
+			throw { status: 400, message: `paymentIntent failed: ${paymentIntent}` }
+		}
+
+		// complete cart
+		const resp: CheckoutFailed | CheckoutSucceed = await postMedusajsApi(
+			`carts/${cartId}/complete`,
+			{},
+			sid
+		)
+		if (resp.type === 'order') {
+			return {
+				refId: paymentIntent.id,
+				orderId: resp.data.id as string
+			}
+		} else {
+			console.log('complete cart res:', resp)
+			throw { status: 400, message: `error completing cart: ${JSON.stringify(resp.data)}` }
+		}
 	} catch (e) {
 		throw error(e.status, e.message)
+	}
+}
+
+interface CompletePaymentInput {
+	cartId: string
+	sid?: string | null
+}
+
+export const completePayment = async ({ cartId, sid = null }: CompletePaymentInput) => {
+	const resp: CheckoutFailed | CheckoutSucceed = await postMedusajsApi(
+		`carts/${cartId}/complete`,
+		{},
+		sid
+	)
+	if (resp.type === 'order') {
+		// return {
+		// 	orderId: resp.data.id as string,
+		// 	data: resp
+		// }
+	} else {
+		// console.log('complete cart res:', resp)
+		// throw { status: 400, message: `error completing cart: ${JSON.stringify(resp.data)}` }
+		// return {
+		// 	orderId: resp.data.id as string,
+		// 	data: resp
+		// }
+	}
+
+	return resp
+}
+
+interface CompleteOrderInput {
+	orderId: string
+	sid?: string | null
+}
+export const completeOrder = async ({ orderId, sid = null }: CompleteOrderInput) => {
+	try {
+		const res: { order: MedusaOrder } = await postMedusajsApi(
+			`order/complete`,
+			{
+				order_id: orderId
+			},
+			sid
+		)
+
+		return res.order
+	} catch (err) {
+		console.error('err completing order: ', err)
+		throw handleApiError(err)
 	}
 }

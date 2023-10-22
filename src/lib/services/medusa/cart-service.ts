@@ -1,8 +1,13 @@
-import type { Error } from '$lib/types'
-import { getMedusajsApi, postMedusajsApi } from '$lib/utils/server'
+import type { Cart, Error } from '$lib/types'
+import { deleteMedusajsApi, getMedusajsApi, postMedusajsApi } from '$lib/utils/server'
 import { error } from '@sveltejs/kit'
 import { mapMedusajsCart } from './medusa-utils'
-import { REGION_ID } from '.'
+import { AddressService, REGION_ID } from '.'
+import { fetchShippingOptions } from './shipping-options'
+import type { MedusaAddress, MedusaCart } from './types'
+import GlobalStore from '$lib/store/global'
+import { handleApiError } from '$lib/utils'
+import { setShippingOption } from './shipping-options'
 
 export const fetchCartData = async ({ origin, storeId, server = false, sid = null }: any) => {
 	try {
@@ -12,8 +17,18 @@ export const fetchCartData = async ({ origin, storeId, server = false, sid = nul
 
 		return res || {}
 	} catch (err) {
-		const e = err as Error
-		throw error(e.status, e.data.message)
+		throw handleApiError(err)
+	}
+}
+
+export const fetchOne = async ({ origin, storeId, server = false, sid = null, cartId }: any) => {
+	try {
+		const cartRes: { cart: MedusaCart } = await getMedusajsApi(`carts/${cartId}`, sid)
+
+		return cartRes.cart
+	} catch (e) {
+		console.error('fetchOne cart error: ', e)
+		throw handleApiError(e)
 	}
 }
 
@@ -23,19 +38,54 @@ export const fetchRefreshCart = async ({
 	cookies,
 	server = false,
 	sid = null
-}: any) => {
+}: any): Promise<MedusaCart | null> => {
 	try {
-		let res: any = {}
+		if (!cookies || !cookies.get('cartId') || cookies.get('cartId') == 'undefined') return null
 		const cart_id = cookies.get('cartId')
-
-		if (!cart_id || cart_id == 'undefined') return []
-
-		const cartRes = await getMedusajsApi(`carts/${cart_id}`)
-		res = mapMedusajsCart(cartRes?.cart)
-
-		return res || {}
+		const cartRes: { cart: MedusaCart } = await getMedusajsApi(
+			`carts/${cart_id}?expand=items.variant.product.store`
+		)
+		return cartRes.cart
 	} catch (e) {
-		throw error(e.status, e.message)
+		console.error('fetchRefreshCart error: ', e)
+		throw handleApiError(e)
+	}
+}
+
+export const newCart = async ({
+	origin,
+	storeId,
+	cookies,
+	server = false,
+	sid = null
+}: any): Promise<MedusaCart | null> => {
+	try {
+		let cart: MedusaCart
+		const shippingOptions = await fetchShippingOptions({
+			regionId: REGION_ID,
+			is_return: false
+		})
+
+		const cartRes: { cart: MedusaCart } = await postMedusajsApi(
+			`carts`,
+			{
+				region_id: REGION_ID
+			},
+			sid
+		)
+		cart = cartRes.cart
+
+		if (shippingOptions && shippingOptions.length > 0) {
+			cart = await setShippingOption({
+				sid,
+				cartId: cartRes.cart.id,
+				shippingOptionId: shippingOptions[0].id
+			})
+		}
+
+		return cart
+	} catch (e) {
+		throw { status: 400, message: 'error creating new cart' }
 	}
 }
 
@@ -47,7 +97,7 @@ export const fetchMyCart = async ({ origin, storeId, server = false, sid = null 
 
 		return res || {}
 	} catch (err) {
-		throw error(e.status, e.message)
+		throw error(err.status, err.message)
 	}
 }
 
@@ -60,40 +110,92 @@ export const addToCartService = async ({
 	storeId,
 	server = false,
 	cookies,
+	me,
 	sid = null
 }: any) => {
 	try {
 		let cart_id = cookies.get('cartId')
-
-		if (cart_id === undefined || cart_id === 'undefined') {
-			cart_id = null
-		}
+		if (cart_id == 'undefined') cart_id = null
 
 		const body = {
 			variant_id: vid || pid,
 			quantity: qty
 		}
-
 		let res: any = {}
-
 		if (!cart_id) {
-			const cartRes = await postMedusajsApi(`carts`, { region_id: REGION_ID }, sid)
+			let defaultAddress: MedusaAddress | undefined
+			try {
+				//console.log('sid: ', sid)
+				const shippingAddresses = await AddressService.fetchAddresses({
+					sid
+				})
+				defaultAddress = shippingAddresses.selectedAddress
+			} catch {
+				console.log('creating cart for visitor...')
+			}
 
-			cart_id = cartRes.cart?.id
+			if (defaultAddress && defaultAddress.region_id) {
+				const shippingOptions = await fetchShippingOptions({
+					regionId: defaultAddress.region_id,
+					is_return: false
+				})
+
+				const cartRes: { cart: MedusaCart } = await postMedusajsApi(
+					`carts`,
+					{
+						region_id: defaultAddress.region_id
+					},
+					sid
+				)
+
+				if (shippingOptions && shippingOptions.length > 0) {
+					const cart = await setShippingOption({
+						sid,
+						cartId: cartRes.cart.id,
+						shippingOptionId: shippingOptions[0].id
+					})
+				}
+
+				cart_id = cartRes.cart?.id
+			} else {
+				const cartRes: { cart: MedusaCart } = await postMedusajsApi(
+					`carts`,
+					{
+						region_id: REGION_ID
+					},
+					sid
+				)
+				cart_id = cartRes.cart?.id
+			}
 		}
 
-		const res_data = await postMedusajsApi(`carts/${cart_id}/line-items`, body, sid)
+		const res_data: { cart: MedusaCart } = await postMedusajsApi(
+			`carts/${cart_id}/line-items?expand=items.variant.product.store`,
+			body,
+			sid
+		)
 
-		if (cart_id) {
-			const res_cartRes = await postMedusajsApi(`carts/${cart_id}`, { customer_id: res?.id }, sid)
+		//if (res_data.cart.ad)
+
+		//console.log('resdata: ', res_data.cart.sh)
+
+		const gs = GlobalStore.getter()
+		if (gs.me && gs.me.id) {
+			await postMedusajsApi(
+				`carts/${cart_id}`,
+				{
+					customer_id: gs.me.id
+				},
+				sid
+			)
 		}
 
 		res = mapMedusajsCart(res_data?.cart)
 
 		return res || {}
 	} catch (e) {
-		// console.error(e)
-		throw error(e.status, e.message)
+		console.error(e)
+		throw handleApiError(e)
 	}
 }
 
@@ -111,7 +213,7 @@ export const applyCouponService = async ({
 
 		return res || {}
 	} catch (e) {
-		throw error(e.status, e.message)
+		throw handleApiError(e)
 	}
 }
 
@@ -129,64 +231,73 @@ export const removeCouponService = async ({
 
 		return res || {}
 	} catch (e) {
-		throw error(e.status, e.message)
+		throw handleApiError(e)
 	}
 }
 
-export const updateCart = async ({
-	cartId,
-	billingAddress,
-	email,
-	customer_id,
-	shippingAddress,
-	cookies,
-	sid = null
-}: any) => {
+interface UpdatePaymentProviderInput {
+	sid?: string | null
+	providerId: string
+	cartId: string
+}
+
+export const updatePaymentProvider = async ({
+	sid = null,
+	providerId,
+	cartId
+}: UpdatePaymentProviderInput) => {
 	try {
-		const body = {
-			billing_address: {
-				address_1: billingAddress.address_1,
-				address_2: billingAddress.address_2,
-				city: billingAddress.city,
-				// country_code: billingAddress.country_code,
-				country_code: billingAddress.country || 'in',
-				first_name: billingAddress.first_name,
-				landmark: billingAddress.landmark,
-				last_name: billingAddress.last_name,
-				phone: billingAddress.phone,
-				postal_code: billingAddress.postal_code,
-				province: billingAddress.province
+		const resp = await postMedusajsApi(
+			`carts/${cartId}/payment-session`,
+			{
+				provider_id: providerId
 			},
-			shipping_address: {
-				address_1: shippingAddress.address_1,
-				address_2: shippingAddress.address_2,
-				city: shippingAddress.city,
-				// country_code: shippingAddress.country_code,
-				country_code: shippingAddress.country || 'in',
-				first_name: shippingAddress.first_name,
-				landmark: shippingAddress.landmark,
-				last_name: shippingAddress.last_name,
-				phone: shippingAddress.phone,
-				postal_code: shippingAddress.postal_code,
-				province: shippingAddress.province
+			sid
+		)
+
+		return resp
+	} catch (err) {
+		throw handleApiError(err)
+	}
+}
+
+interface UpdateBillingInput {
+	addressId: string
+	sid?: string | null
+	cartId: string
+}
+export const updateBilling = async ({ sid = null, addressId, cartId }: UpdateBillingInput) => {
+	try {
+		const resp = await postMedusajsApi(
+			`carts/${cartId}`,
+			{
+				billing_address: addressId,
+				shipping_address: addressId
 			},
-			email: billingAddress.email,
-			customer_id
-		}
-		// console.log('body', body);
-		// console.log('cartId', cartId);
+			sid
+		)
+		return resp.cart as MedusaCart
+	} catch (err) {
+		throw handleApiError(err)
+	}
+}
 
-		let res: any = {}
+interface DeleteLineItemInput {
+	sid?: string | null
+	cartId: string
+	lineItemId: string
+}
 
-		if (cartId) {
-			const res_data = await postMedusajsApi(`carts/${cartId}`, body, sid)
-
-			res = mapMedusajsCart(res_data?.cart)
-
-			return res || {}
-		}
-	} catch (e) {
-		// console.error(e)
-		throw error(e.status, e.message)
+export const deleteLineItem = async ({ sid = null, cartId, lineItemId }: DeleteLineItemInput) => {
+	try {
+		const res: { cart: MedusaCart } = await deleteMedusajsApi(
+			`carts/${cartId}/line-items/${lineItemId}`,
+			{},
+			sid
+		)
+		console.log('delete line item: ', res)
+		return mapMedusajsCart(res.cart)
+	} catch (err) {
+		throw handleApiError(err)
 	}
 }

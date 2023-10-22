@@ -14,6 +14,11 @@ import {
 	updateProductImagesDto
 } from '$lib/schemas'
 import { createReplyDto } from './schemas'
+import type { MedusaPrice, MedusaProductSpecs, MedusaVariant } from './services/medusa/types'
+import type { Currency } from './utils/currency'
+import type { StoreWidget } from './sections/shop/widgets/types'
+import type { ProductWidget } from './sections/product/widgets/types'
+import type { ShopHeroWidget } from './types/shopBannerWidgets'
 
 interface Me {
 	active?: boolean
@@ -26,6 +31,19 @@ interface Me {
 	verified?: boolean
 }
 
+interface Store {
+	id?: string
+	name?: string
+	icon?: string
+	banner?: string
+	slug?: string
+	products?: Product[]
+	createdAt?: string
+	defaultCurrency?: string
+	widgets?: StoreWidget[]
+	heroWidgets?: ShopHeroWidget[]
+}
+
 interface AllProducts {
 	count: number
 	currentPage?: number
@@ -35,7 +53,7 @@ interface AllProducts {
 	facets: Facet[]
 }
 
-interface Facet { }
+interface Facet {}
 interface EsProduct {
 	_source: Product
 }

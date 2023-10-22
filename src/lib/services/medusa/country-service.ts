@@ -1,19 +1,13 @@
 import { getMedusajsApi } from '$lib/utils/server'
 import { error } from '@sveltejs/kit'
+import type { MedusaCountry, MedusaRegion } from './types'
 
 export const fetchCountries = async ({ origin, storeId, server = false, sid = null }: any) => {
 	try {
-		let res: any = {}
-
-		const cres = await getMedusajsApi(`regions`, {}, sid)
-		res = cres.regions[0].countries
-		res = res.map((c) => {
-			return {
-				name: c.name,
-				code: c.iso_2
-			}
-		})
-		return res || []
+		const cres: { regions: MedusaRegion[] } = await getMedusajsApi(`regions`, {}, sid)
+		const res: MedusaCountry[] = cres.regions.flatMap((region) => region.countries)
+		console.log('countries: ', res)
+		return res
 	} catch (e) {
 		throw error(e.status, e.message)
 	}
