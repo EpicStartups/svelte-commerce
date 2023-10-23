@@ -1,6 +1,7 @@
 import { DOMAIN, HTTP_ENDPOINT } from '$lib/config'
 import { error } from '@sveltejs/kit'
 import type { LayoutServerLoad } from './$types'
+import { fetchMeData } from '$lib/services/medusa/user-service'
 
 export const prerender = false
 
@@ -20,8 +21,26 @@ export const load: LayoutServerLoad = async ({ url, locals, cookies, request, pa
 		locals.sid = cookies.get('connect.sid')
 		locals.cartQty = cookies.get('cartQty')
 		if (zip) locals.zip = JSON.parse(zip)
+
+		try {
+			const me = await fetchMeData({ cookies })
+			locals['me'] = me
+		} catch (err) {
+			console.warn('no logged in user')
+		}
+
 		// me,
-		return { ...locals, pathname }
+		return {
+			...locals,
+			me: locals['me'],
+			currentPage: locals['currentPage'],
+			q: locals['q'],
+			sid: locals['sid'],
+			cartQty: locals['cartQty'],
+			url: locals['url'],
+			zip: locals['zip'],
+			pathname
+		}
 	} catch (e) {
 		throw error(
 			404,

@@ -1,13 +1,27 @@
 <style>
-.minimum-width-rem {
+/* .minimum-width-rem {
 	min-width: 360px;
+} */
+
+@font-face {
+	font-family: 'Jost';
+	src: url('../lib/assets/fonts/jost/Jost-Italic-VariableFont_wght.ttf') format('truetype');
+	font-weight: normal;
+	font-style: italic;
+}
+
+@font-face {
+	font-family: 'Jost';
+	src: url('../lib/assets/fonts/jost/Jost-VariableFont_wght.ttf') format('truetype');
+	font-weight: normal;
+	font-style: normal;
 }
 </style>
 
 <script lang="ts">
 // import { pwaInfo } from 'virtual:pwa-info'
-// import FetchInit from '$lib/components/FetchInit.svelte'
 import './../app.css'
+import FetchInit from '$lib/components/FetchInit.svelte'
 import { BackToTop, LazyImg } from '$lib/components' // Can not dynamically import Google Analytics, it throws gtag not found error, not even party town
 import { browser } from '$app/environment'
 import { CategoryService } from '$lib/services'
@@ -22,6 +36,7 @@ import noStoreFound from '$lib/assets/no/no_store_found.png'
 import PreloadingIndicator from '$lib/PreloadingIndicator.svelte'
 import storeClosed from '$lib/assets/store-closed.png'
 import whatsappIcon from '$lib/assets/social-media/whatsapp.png'
+import globalStore from '$lib/store/global'
 
 // console.log('$page', $page)
 
@@ -64,6 +79,7 @@ onMount(async () => {
 	// 		// 	window.location.href = `zapviin://m.zapvi.in/?slug=${$page.url.pathname.substring(1)}`
 	// 		// }
 	// 	}
+	globalStore.setMe(data['me'])
 })
 
 // $: webManifest = pwaInfo ? pwaInfo.webManifest.linkTag : ''
@@ -178,81 +194,25 @@ onMount(async () => {
 		<PreloadingIndicator />
 	{/if}
 
-	{#if !$page?.data?.store}
-		<!-- If store not found -->
-
-		<div class="h-screen w-full bg-white flex items-center justify-center">
-			<a
-				href="https://litekart.in/"
-				class="fixed top-0 inset-x-0 z-10 p-5 px-10 flex items-center justify-center border-b shadow-md">
-				<img
-					src="/litekart-rectangular-logo-black.png"
-					alt=""
-					class="h-10 w-auto object-contain object-center" />
-			</a>
-
-			<div class="flex items-center justify-center p-10 bg-white text-center">
-				<img src="{noStoreFound}" alt="" class="h-80 w-auto object-contain object-center" />
-			</div>
+	<section class="minimum-width-rem relative flex min-h-screen flex-col bg-white antialiased">
+		<div class="h-rem w-full flex-1">
+			<slot />
 		</div>
-	{:else if !$page.data?.store?.closed}
-		<!-- If store found and is not closed -->
+	</section>
 
-		<section class="minimum-width-rem relative flex min-h-screen flex-col bg-white antialiased">
-			<div class="h-rem w-full flex-1">
-				<slot />
-			</div>
-		</section>
+	<!-- <PartytownSnippet /> -->
 
-		<!-- <PartytownSnippet /> -->
-
-		{#if showBackToTopButton}
-			<BackToTop />
-		{/if}
-
-		{#if $page.data.store?.whatsappChatButton?.active?.val && $page.data.store?.whatsappChatButton?.phone?.val}
-			<a
-				href="https://wa.me/{$page.data.store?.whatsappChatButton?.phone?.val.replace('+', '')}"
-				target="_blank"
-				rel="noopener noreferrer"
-				class="fixed z-40 bottom-16 left-4">
-				<img
-					src="{whatsappIcon}"
-					alt=""
-					class="h-10 w-10 object-contain transform hover:scale-125 hover:-translate-y-2 transition duration-300" />
-			</a>
-		{/if}
-
-		<ToastContainer let:data>
-			<FlatToast data="{data}" />
-		</ToastContainer>
-
-		<!-- {#if ReloadPrompt}
-		<svelte:component this="{ReloadPrompt}" />
-	{/if} -->
-	{:else}
-		<!-- If store found and is closed -->
-
-		<div class="h-screen w-full bg-white flex items-center justify-center">
-			<div
-				class="fixed top-0 inset-x-0 z-10 p-5 px-10 flex items-center justify-center border-b shadow-md">
-				<LazyImg
-					src="{$page.data.store?.logo || '/litekart-rectangular-logo-black.png'}"
-					class="h-10 w-auto object-contain object-center" />
-			</div>
-
-			<div class="flex items-center justify-center p-10 bg-white text-center">
-				<div
-					class="p-10 flex flex-col gap-2 items-center justify-center border-4 rounded-3xl shadow-2xl">
-					<img src="{storeClosed}" alt="" class="h-52 w-auto object-contain object-center" />
-
-					<p>
-						{$page.data.store?.closedMessage}
-					</p>
-				</div>
-			</div>
-		</div>
+	{#if showBackToTopButton}
+		<BackToTop />
 	{/if}
 
-	<!-- <FetchInit /> -->
+	<ToastContainer let:data>
+		<FlatToast data="{data}" />
+	</ToastContainer>
+
+	<!-- {#if ReloadPrompt}
+	<svelte:component this="{ReloadPrompt}" />
+{/if} -->
+
+	<FetchInit />
 </main>
