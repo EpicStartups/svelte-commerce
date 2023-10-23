@@ -1,10 +1,28 @@
-#TODO
+# TODO
 
 1. UI props change to shopolah one, but need to discuss with najid
 
-#PROGRESS
+# PROGRESS
 
 1. can locally run without any feature
+
+# NOTE
+
+## UPDATED COMPONENTS
+
+1. Autocomplete
+2. LazyImg
+3. Breadcrumb
+4. DesktopFilter
+5. Error
+6. MobileFilter
+7. SplideJs
+8. TrustBaggeContainer
+
+## NEW COMPONENTS
+
+1. DealCountDown
+2. PopUpReviews
 
 <div align="center">
 <h2>Svelte Commerce</h2>

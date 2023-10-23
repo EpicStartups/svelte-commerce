@@ -1,82 +1,58 @@
 <script lang="ts">
 import { createEventDispatcher, onMount } from 'svelte'
 import { fly } from 'svelte/transition'
-import { goto } from '$app/navigation'
+import { goto, invalidateAll } from '$app/navigation'
 import { OrdersService } from './../services'
 import { page } from '$app/stores'
 import { PrimaryButton } from '$lib/ui'
 import { toast } from '$lib/utils'
 import Error from './Error.svelte'
-import type { PaymentMethod } from './../types'
+import {
+	loadStripe,
+	type Stripe,
+	type StripeCardElement,
+	type PaymentMethod
+} from '@stripe/stripe-js'
+import type { MedusaAddress, MedusaCart } from '$lib/services/medusa/types'
 
 const dispatch = createEventDispatcher()
 
-export let address = null
 export let isStripeSelected = false
 export let stripePublishableKey: string //process.env.VITE_STRIPE_PUBLISHABLE_KEY
+export let clientSecret: string
+export let cartId: string
+export let address: MedusaAddress
+export let cart: MedusaCart
 
-let card: any
+let card: StripeCardElement
 let isCardValid = false
 let loading = false
 let mounted = false
 let paySuccess = false
 let stripeCardMounting = true
-let stripeReady = false
+let stripeReady: boolean = true
 
 let errorMessage = { text: '', show: false }
 let errors
-let stripe: any
-
-async function payWithCard(clientSecret: string, orderId: string) {
-	// This is for 3d authentication
-
-	try {
-		loading = true
-		const result = await stripe.confirmCardPayment(clientSecret, {
-			payment_method: { card: card }
-		})
-		if (result.error) {
-			errorMessage.show = true
-			errorMessage.text = result.error.message
-			toast(result.error.message, 'error')
-		} else if (result.paymentIntent) {
-			errorMessage.show = false
-			errorMessage.text = ''
-			goto(
-				`/payment/success?payment_reference_id=${result.paymentIntent.id}&id=${orderId}&provider=Stripe`
-			)
-		}
-	} catch (e) {
-		toast(e, 'error')
-	} finally {
-		loading = false
-	}
-}
+let stripe: Stripe
 
 const payWithStripe = async (pm: PaymentMethod) => {
 	try {
 		loading = true
 		toast('Contacting Payment Server...', 'warning')
-		const paymentMethodId = pm.id
-		const res: any = await OrdersService.stripeCheckoutService({
-			paymentMethodId,
+		const res = await OrdersService.stripeCheckoutService({
 			address,
-			storeId: $page.data.store?.id,
-			origin: $page.data.origin
+			clientSecret,
+			cartId,
+			card,
+			stripe,
+			cart
 		})
-		if (res.errors) {
-			errorMessage = { show: true, text: res.errors[0].message }
-			return
-		} else {
-			if (!res.paid) {
-				await payWithCard(res.clientSecret, res?.orderId)
-			} else if (res) {
-				goto(
-					`/payment/success?payment_reference_id=${res.referenceId}&id=${res?.orderId}&provider=Stripe`
-				)
-				paySuccess = true
-			}
-		}
+		paySuccess = true
+		console.log('success: ', res)
+		goto(
+			`/payment/success?payment_reference_id=${res.refId}&order_id=${res?.orderId}&provider=stripe`
+		)
 	} catch (e: any) {
 		errorMessage = { show: true, text: e.toString() }
 	} finally {
@@ -86,24 +62,15 @@ const payWithStripe = async (pm: PaymentMethod) => {
 
 onMount(() => {
 	mounted = true
-
-	if (stripeReady) {
+	loadStripe(stripePublishableKey).then((obj) => {
+		stripe = obj
 		loadStripeElements()
-	}
+	})
 })
-
-function stripeLoaded() {
-	stripeCardMounting = true
-	stripeReady = true
-
-	if (mounted) {
-		loadStripeElements()
-	}
-}
 
 function submit() {
 	loading = true
-	stripe.createPaymentMethod({ type: 'card', card }).then(async function (result: any) {
+	stripe.createPaymentMethod({ type: 'card', card }).then(async function (result) {
 		if (result.error) {
 			// Inform the customer that there was an error.
 			errorMessage.text = result.error.message
@@ -118,13 +85,31 @@ function submit() {
 	})
 }
 
-async function loadStripeElements() {
-	// @ts-ignore
-	stripe = Stripe(stripePublishableKey)
+function loadStripeElements() {
 	var elements = stripe.elements()
-	card = await elements.create('card', {})
-	await card.mount('#mount-point-for-stripe-elements')
-	stripeCardMounting = false
+	card = elements.create('card', {
+		style: {
+			base: {
+				fontWeight: '500',
+				fontFamily: 'Roboto, Open Sans, Segoe UI, sans-serif',
+				fontSize: '16px',
+				fontSmoothing: 'antialiased',
+				':-webkit-autofill': {
+					color: '#fce883'
+				},
+				'::placeholder': {
+					color: 'grey'
+				}
+			},
+			invalid: {
+				iconColor: '#FFC7EE',
+				color: '#FFC7EE'
+			}
+		},
+		hidePostalCode: true
+	})
+	card.mount('#mount-point-for-stripe-elements')
+
 	card.on('change', function (event: any) {
 		isCardValid = event.complete
 		dispatch('isStripeCardValid', isCardValid)
@@ -139,44 +124,28 @@ async function loadStripeElements() {
 }
 </script>
 
-<svelte:head>
-	<script src="https://js.stripe.com/v3/" on:load="{stripeLoaded}"></script>
-</svelte:head>
+<form
+	transition:fly="{{ y: 50, duration: 150 }}"
+	on:submit|preventDefault="{submit}"
+	class="rounded border p-4 shadow-md flex flex-col gap-4
+	{isStripeSelected ? 'block' : 'hidden'}">
+	{#if errorMessage.show}
+		<Error err="{errorMessage.text}" />
+	{/if}
 
-{#if stripeReady}
-	<form
-		transition:fly="{{ y: 50, duration: 150 }}"
-		on:submit|preventDefault="{submit}"
-		class="flex flex-col gap-4
-		{isStripeSelected ? 'block' : 'hidden'}">
-		<script src="https://js.stripe.com/v3/"></script>
+	<label for="mount-point-for-stripe-elements" class="font-semibold"> Enter Cart Details </label>
 
-		{#if errorMessage.show}
-			<Error err="{errorMessage.text}" />
-		{/if}
-
-		<label for="mount-point-for-stripe-elements" class="font-semibold">
-			{#if stripeCardMounting} Please wait... {:else} Enter Card Details {/if}
-		</label>
-
-		<div id="mount-point-for-stripe-elements">
-			<!-- A Stripe Element will be inserted here. -->
-		</div>
-
-		<div id="error-message" role="alert" class="text-sm text-red-500"></div>
-
-		<PrimaryButton
-			type="submit"
-			loading="{loading}"
-			disabled="{loading || !stripeReady || !isCardValid}"
-			class="w-60">
-			Make Payment
-		</PrimaryButton>
-	</form>
-{:else}
-	<div
-		transition:fly="{{ y: 50, duration: 150 }}"
-		class="rounded border border-yellow-500 bg-yellow-50 p-4 text-yellow-500 text-sm">
-		Warn: Pleae wait...Stripe is getting ready .
+	<div id="mount-point-for-stripe-elements">
+		<!-- A Stripe Element will be inserted here. -->
 	</div>
-{/if}
+
+	<div id="error-message" role="alert" class="text-sm text-red-500"></div>
+
+	<PrimaryButton
+		type="submit"
+		loading="{loading}"
+		disabled="{loading || !stripeReady || !isCardValid}"
+		class="w-60">
+		Make Payment
+	</PrimaryButton>
+</form>

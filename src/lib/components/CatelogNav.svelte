@@ -1,7 +1,7 @@
 <style>
-.minimum-width-rem {
+/* .minimum-width-rem {
 	min-width: 360px;
-}
+} */
 </style>
 
 <script lang="ts">

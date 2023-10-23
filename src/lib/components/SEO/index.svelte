@@ -6,13 +6,13 @@ import SchemaOrg from './SchemaOrg.svelte'
 import Twitter from './Twitter.svelte'
 import { page } from '$app/stores'
 const {
-	author,
-	facebookAuthorPage,
-	facebookPageName,
-	githubPage,
-	linkedinProfile,
-	telegramUsername,
-	twitterUsername
+	author
+	// facebookAuthorPage,
+	// facebookPageName,
+	// githubPage,
+	// linkedinProfile,
+	// telegramUsername,
+	// twitterUsername
 } = authorInfo
 
 const defaultAlt = 'LRNR'
@@ -111,19 +111,19 @@ const schemaOrgProps = {
 	description,
 	entity,
 	entityMeta,
-	facebookPageName,
+	// facebookPageName,
 	featuredImage,
-	githubPage,
+	// githubPage,
 	lastUpdated,
-	linkedinProfile,
+	// linkedinProfile,
 	name: productName,
 	siteLanguage,
 	siteTitle: $page.data?.store?.websiteName,
 	siteTitleAlt: siteShortTitle,
 	siteUrl: WWW_URL,
-	telegramUsername,
+	// telegramUsername,
 	title: pageTitle,
-	twitterUsername,
+	// twitterUsername,
 	url,
 	addressCountry,
 	addressLocality,
@@ -161,7 +161,7 @@ const twitterProps = {
 	description: metaDescription,
 	article,
 	author,
-	twitterUsername,
+	// twitterUsername,
 	image: twitterImage,
 	timeToRead
 }
@@ -201,7 +201,7 @@ const productProps = {
 	<!-- <html lang="{siteLanguage}"></html> -->
 </svelte:head>
 
-<Twitter {...twitterProps} />
+<!-- <Twitter {...twitterProps} /> -->
 
 <Product {...productProps} />
 
