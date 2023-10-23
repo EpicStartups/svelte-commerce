@@ -53,6 +53,7 @@ export const getStoreData = async ({
 		DOMAIN,
 		email,
 		facebookPixel: {},
+		fontFamily: '',
 		GOOGLE_ANALYTICS_ID,
 		GOOGLE_CLIENT_ID,
 		googleAnalytics: {},
