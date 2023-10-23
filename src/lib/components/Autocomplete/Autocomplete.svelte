@@ -32,20 +32,20 @@ onMount(() => {
 
 function submit() {
 	showSuggestionOptions = false
-
+	goto(`/search?q=${q}`)
 	// console.log('autocomplete', autocomplete)
 
-	if (autocomplete?.length && autocomplete[0].slug && autocomplete[0].type === 'products') {
-		goto(`/product/${autocomplete[0].slug}`)
-	} else if (
-		autocomplete?.length &&
-		autocomplete[0].slug &&
-		autocomplete[0].type === 'categories'
-	) {
-		goto(`/${autocomplete[0].slug}`)
-	} else {
-		goto(`/search?q=${q}`)
-	}
+	// if (autocomplete?.length && autocomplete[0].slug && autocomplete[0].type === 'products') {
+	// 	goto(`/product/${autocomplete[0].slug}`)
+	// } else if (
+	// 	autocomplete?.length &&
+	// 	autocomplete[0].slug &&
+	// 	autocomplete[0].type === 'categories'
+	// ) {
+	// 	goto(`/${autocomplete[0].slug}`)
+	// } else {
+	// 	goto(`/search?q=${q}`)
+	// }
 }
 
 function onselect(v: any) {
@@ -135,7 +135,7 @@ onMount(async () => {
 		</button>
 	</button>
 
-	{#if autocomplete?.length && showSuggestionOptions}
+	<!-- {#if autocomplete?.length && showSuggestionOptions}
 		<ul
 			transition:slide="{{ duration: 300 }}"
 			class="absolute top-10 z-50 m-0 p-0 list-none w-full border bg-white divide-y rounded shadow-xl overflow-hidden">
@@ -179,5 +179,5 @@ onMount(async () => {
 			class="fixed inset-0 h-full w-full z-40 bg-black bg-opacity-0 cursor-default"
 			on:click="{() => (showSuggestionOptions = false)}">
 		</button>
-	{/if}
+	{/if} -->
 </form>
