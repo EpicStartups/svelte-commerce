@@ -24,6 +24,7 @@ export const icon = 'static/logo.png'
 export const backgroundColor = '#1b4079'
 export const themeColor = '#d62828'
 export const favicon = './favicon.ico'
+export const fontFamily = 'Montserrat'
 export const shortcuts = [
 	// {
 	// 	name: 'Buy Mobile covers',
